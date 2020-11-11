@@ -16,8 +16,8 @@ return [
     'select_category' => 'Select Category',
     'select_attribute' => 'Select Attribute',
     'select_modifier' => 'Select Modifier',
-    'name_exists' => 'Name already exists.',
-    'product_sku_exists' => 'SKU already exists.',
+    'name_exists' => 'The Product name is already exists!',
+    'product_sku_exists' => 'The Product SKU is already exists!',
     'edit_product' => 'Edit Product',
     'del_product' => 'Delete Product',
     'delete_product' => 'Are you sure want to delete this Product?',
@@ -27,5 +27,5 @@ return [
     'select_printer' => 'Select Printer',
     'quantity' => 'Quantity',
     'select_product' => 'Select Product',
-	'has_setmeal' => 'Has Setmeal',
+    'has_setmeal' => 'Has Setmeal',
 ];

@@ -1,0 +1,123 @@
+@media (max-width:1200px) {
+    .header-search-section {
+        width: 150px;
+    }
+    .product-list-col {
+        -ms-flex: 0 0 25%;
+        flex: 0 0 25%;
+        max-width: 25%;
+    }
+}
+
+
+@media (max-width:991px) {
+    .custom-navbar {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    .header-search-section {
+        width: 150px;
+    }
+    .product-list-col {
+        -ms-flex: 0 0 33.33%;
+        flex: 0 0 33.33%;
+        max-width: 33.33%;
+    }
+    .custom-modal .modal-dialog {
+        max-width: 700px;
+    }
+    .header-right ul li{
+        margin-right: 10px;
+    }
+    .header-signin .btn-login,.header-signin .btn-register{
+        padding: 4px 10px;
+        display: flex;
+    }
+}
+
+@media (max-width:767px) {
+    .header-icon img {
+        height: 25px!important;
+    }
+    .header-icon .custom-badge{
+        font-size: 9px;
+    }
+    .header-right ul li{
+        margin-top: 4px;
+    }
+    .innerpage-banner-section .banner-title {
+        font-size: 30px;
+    }
+    .innerpage-banner-section .list-bannerofcontent {
+        width: 92%;
+        left: 0;
+        right: 0;
+        top: 75%;
+        margin: auto;
+        max-width: 100%;
+        transform: translateY(-50%);
+    }
+    .category-title {
+        font-size: 24px;
+    }
+    .custom-navbar {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    .product-list-col {
+        -ms-flex: 0 0 100%;
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    .category-img-box {
+        width: 100px;
+        height: 100px;
+    }
+    .category-section {
+        padding: 30px 0 130px 0;
+    }  
+    .category-title-section{
+        justify-content: space-between;
+    } 
+    .category-name-sec{
+        position: relative;
+    }
+    .custom-modal .btn-add-extra{
+        float: right;
+        margin-right: 0;
+    }
+    table .cust-email,table .cust-mobile{
+        width: auto;
+    }
+    
+    .about .about-item{
+        margin-bottom: 30px;
+        display: block;
+    }
+    .header-signin .btn-login,.header-signin .btn-register{
+        padding: 3px 10px;
+        font-size: 10px;    
+    }
+    .product-price-row{
+        margin: 0 auto;
+    }
+    
+    .btn-apply{
+        margin-top: 0px;
+    }
+}
+
+
+.list-banneroflist_mobile
+{ display: none}
+
+@media only screen and (min-width:1px) and (max-width:767px){
+    .list-banneroflist_mobile
+    { display: block}
+
+    .list-banneroflist
+    { display: none}
+
+    /*.category-section
+    { margin-top: 0px !important;}*/
+}

@@ -190,15 +190,33 @@ class ApiController extends Controller
                 if (!empty($terminalData)) {
                     $terminalId = $terminalData->terminal_id;
                     $branchId = $terminalData->branch_id;
-                    $updateData = [
-                        'terminal_device_id' => $ter_device_id,
-                        'terminal_device_token' => $ter_device_token,
-                        'terminal_verified_at' => config('constants.date_time'),
-                    ];
-                    Terminal::where('terminal_key',$key)->update($updateData);
-                    DB::commit();
-                    Helper::log('Terminal key verify: finish');
-                    return response()->json(['status' => 200, 'show' => true, 'message' => trans('api.success'), 'terminal_id' => $terminalId, 'branch_id' => $branchId]);
+					$terminal_device_id = $terminalData->terminal_device_id;
+					if(!empty($terminal_device_id)){
+						if($terminal_device_id == $ter_device_id){
+                            $updateData = [
+                                'terminal_device_id' => $ter_device_id,
+                                'terminal_device_token' => $ter_device_token,
+                                'terminal_verified_at' => config('constants.date_time'),
+                            ];
+                            Terminal::where('terminal_key', $key)->update($updateData);
+                            DB::commit();
+                            Helper::log('Terminal key verify: finish');
+                            return response()->json(['status' => 200, 'show' => true, 'message' => trans('api.success'), 'terminal_id' => $terminalId, 'branch_id' => $branchId]);
+                        } else {
+                            Helper::log('Terminal key verify: Device invalid');
+                            return response()->json(['status' => 422, 'show' => true, 'message' => trans('api.device_invalid'), 'terminal_id' => 0, 'branch_id' => 0]);
+                        }
+					} else {
+						$updateData = [
+							'terminal_device_id' => $ter_device_id,
+							'terminal_device_token' => $ter_device_token,
+							'terminal_verified_at' => config('constants.date_time'),
+						];
+						Terminal::where('terminal_key',$key)->update($updateData);
+						DB::commit();
+						Helper::log('Terminal key verify: finish');
+						return response()->json(['status' => 200, 'show' => true, 'message' => trans('api.success'), 'terminal_id' => $terminalId, 'branch_id' => $branchId]);
+					}
                 } else {
                     Helper::log('Terminal key verify: key invalid');
                     return response()->json(['status' => 422, 'show' => true, 'message' => trans('api.key_invalid'), 'terminal_id' => 0, 'branch_id' => 0]);

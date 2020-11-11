@@ -108,6 +108,14 @@
                                                         <strong>{{trans('backend/order.order_date')}}</strong>:
                                                         <span>@if($orderData->order_date){{date('d-m-Y g:i A', strtotime($orderData->order_date))}}@endif</span>
                                                     </p>
+													
+													@if(!empty($orderData->terminal_name))
+                                                        <p>
+                                                            <strong>{{trans('backend/order.terminal_name')}}</strong>:
+                                                            <span>{{$orderData->terminal_name}}</span>
+                                                        </p>
+                                                    @endif
+													
                                                     @if(!empty($orderData->remark))
                                                         <p>
                                                             <strong>{{trans('backend/order.remark')}}</strong>:
@@ -238,6 +246,17 @@
                                                                 <strong>{{number_format($orderData->sub_total_after_discount,2)}}</strong>
                                                             </td>
                                                         </tr>
+														@if($orderData->service_charge_percent > 0)
+                                                            <tr>
+                                                                <td class="border-0" colspan="4"></td>
+                                                                <td>
+                                                                    <strong>{{trans('backend/order.service_charge')}}({{$orderData->service_charge_percent}}%)</strong>
+                                                                </td>
+                                                                <td>
+                                                                    <strong>{{number_format($orderData->service_charge,2)}}</strong>
+                                                                </td>
+                                                            </tr>
+                                                        @endif
                                                         @if(isset($orderData->taxDetail) && !empty($orderData->taxDetail))
 
                                                             @foreach($orderData->taxDetail as $key=>$value)

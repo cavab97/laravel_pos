@@ -12,4 +12,5 @@ return [
     'delete_price_type_msg' => 'Are you sure want to delete this Price type?',
     'edit_price_type' => 'Edit Price type',
     'name_exists' => 'The price type name is already exists.',
+    'not_delete_price_type_msg' => 'You can not delete this Price type already occupied.',
 ];

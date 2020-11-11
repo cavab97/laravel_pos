@@ -342,7 +342,7 @@ class ProductController extends Controller
                                 'asset_type' => 1,
                                 'asset_type_id' => $productId,
                                 'asset_path' => $image,
-                                'updated_at' => config('constants.date_time'),
+                                'updated_at' => date('Y-m-d H:i:s'),//config('constants.date_time'),
                                 'updated_by' => Auth::user()->id
                             ];
                             Assets::create($imageData);
@@ -755,7 +755,7 @@ class ProductController extends Controller
                                 'asset_type' => 1,
                                 'asset_type_id' => $productId,
                                 'asset_path' => $image,
-                                'updated_at' => config('constants.date_time'),
+                                'updated_at' => date('Y-m-d H:i:s'),//config('constants.date_time'),
                                 'updated_by' => Auth::user()->id
                             ];
                             Assets::create($imageData);
@@ -1238,7 +1238,7 @@ class ProductController extends Controller
         try {
             $updateData = [
                 'status' => 0,
-                'updated_at' => config('constants.date_time'),
+                'updated_at' => date('Y-m-d H:i:s'),//config('constants.date_time'),
                 'updated_by' => Auth::user()->id
             ];
             Assets::where('asset_id', $id)->update($updateData);

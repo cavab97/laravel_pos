@@ -40,6 +40,7 @@
                     {"data": 'order_id', sortables: false},
                     {"data": 'invoice_no', sortables: false},
                     {"data": 'customer_name', sortables: false},
+                    {"data": 'terminal_name', sortables: false},
                     {"data": 'grand_total', sortables: false},
                     {"data": 'order_source', sortables: false},
                     {"data": 'order_status', sortables: false},
@@ -239,6 +240,7 @@
                                         <th id="id">{{trans('backend/common.no')}}</th>
                                         <th id="invoice_no">{{trans('backend/order.invoice_no')}}</th>
                                         <th id="customer_name">{{trans('backend/order.customer_name')}}</th>
+                                        <th id="terminal_name">{{trans('backend/order.terminal_name')}}</th>
                                         <th id="grand_total">{{trans('backend/order.grand_total')}}</th>
                                         <th id="order_source">{{trans('backend/order.order_source')}}</th>
                                         <th id="order_status">{{trans('backend/order.order_status')}}</th>

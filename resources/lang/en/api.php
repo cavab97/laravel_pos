@@ -12,6 +12,7 @@ return [
     'email_required' => 'Email must be required',
     'pin_required' => 'Pin number must be required',
     'key_required' => 'Key must be required',
+    'device_invalid' => 'Terminal is registered on another device',
     'key_invalid' => 'Key Invalid',
     'terminal_id_required' => 'Terminal id must be required',
     'password_required' => 'Password must be required',

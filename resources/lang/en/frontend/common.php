@@ -26,5 +26,7 @@ return [
     'email_sent_successfully' => 'Email sent successfully',
     'registration_sucess' => 'Registration successfully',
     'username_exists' => 'Username already exists!',
-    'delete_cart_item' => 'You are changing branch, your cart will be empty.',
+    'delete_cart_item' => 'Are you sure you want to remove product from cart?',
+    'branch_product_exist_in_cart' => 'You are changing branch, your cart will be empty.',
+    'success' => 'Success',
 ];

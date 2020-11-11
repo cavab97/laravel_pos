@@ -19,6 +19,6 @@ return [
     'select_type' => 'Select type',
     'terminal_is_mother' => 'Is mother?',
     'status' => 'Status',
-    'terminal_exists' => 'Name already exists.',
+    'terminal_exists' => 'The terminal name is already exists.',
     'delete_terminal_msg' => 'Are you sure want to delete this terminal?.',
 ];

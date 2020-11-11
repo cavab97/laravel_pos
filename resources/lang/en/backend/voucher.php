@@ -21,7 +21,7 @@ return [
     'status' => 'Status',
     'fix' => 'Fixed',
     'percentage' => 'Percentage',
-    'voucher_exists' => 'Name already exists.',
+    'voucher_exists' => 'The voucher name is already exists.',
     'delete_voucher_msg' => 'Are you sure want to delete this voucher?.',
     'voucher_name_code' => 'Name/Code',
     'minimum_amount' => 'Minimum Amount',

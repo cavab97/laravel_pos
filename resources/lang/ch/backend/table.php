@@ -17,4 +17,7 @@ return [
     'delete_table_msg' => 'Are you sure want to delete this table?',
     'status' => 'Status',
     'table_exists' => 'The table name is already exists.',
+    'not_generate' => 'Table QR code not generated.',
+    'qr_generate' => 'Table QR code generated.',
+    'table_service_charge' => 'Service Charge',
 ];

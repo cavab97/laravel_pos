@@ -5,7 +5,7 @@
 @section('scripts')
     <script src="{{asset('backend/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js')}}"></script>
     <script src="{{asset('backend/plugins/jquery-validation/jquery.validate.min.js')}}"></script>
-    <script src="{{asset('backend/dist/js/pages/users.js')}}"></script>
+    <script src="{{asset('backend/dist/js/pages/branch.js')}}"></script>
     <script>
         $(function () {
             var oTable = $('#branch-list').dataTable({

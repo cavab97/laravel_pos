@@ -20,4 +20,6 @@ return [
     'backend' => 'Backend',
     'name_exists' => 'The category name is already exists.',
     'delete_category_msg' => 'Are you sure want to delete this category?.',
+    'has_rac_managemant' => 'Has Rac Managemant',
+    'is_setmeal' => 'Is Setmeal'
 ];

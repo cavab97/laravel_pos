@@ -15,6 +15,6 @@ return [
     'status' => 'Status',
     'select_branch' => 'Select branch',
     'select_printer' => 'Select Printer',
-    'kitchen_name_exists' => 'Name already exists.',
+    'kitchen_name_exists' => 'The kitchen name is already exists.',
     'delete_kitchen_msg' => 'Are you sure want to delete this kitchen?.',
 ];

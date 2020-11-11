@@ -1467,12 +1467,7 @@ class SyncOrderController extends Controller
 													$productStoreInventoryLog = ProductStoreInventoryLog::create($productStoreInventoryLog->toArray());
 													$ilId = $productStoreInventoryLog->il_id;
 													$setinventoryLog['server_id'] = $ilId;
-													/* Calculate Stock Inventory */
-													if($setinventoryLog['il_type'] == 2){
-														//$total_deduct_qty += $setinventoryLog['qty_before_change'] - $setinventoryLog['qty_after_change'];
-													} else {
-														//$total_add_qty += $setinventoryLog['qty_after_change'] - $setinventoryLog['qty_before_change'];
-													}
+													
                                                 }
 											} else {	
 												$productStoreInventoryLog->uuid = Helper::getUuid();

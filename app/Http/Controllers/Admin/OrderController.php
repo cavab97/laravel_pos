@@ -10,6 +10,7 @@ use App\Models\Order;
 use App\Models\OrderAttributes;
 use App\Models\OrderDetail;
 use App\Models\Permissions;
+use App\Models\Terminal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -128,6 +129,13 @@ class OrderController extends Controller
             $orderData->branch_name = $branchName->name;
             $orderData->taxDetail = json_decode($orderData->tax_json, true);
         }
+		
+		if ($orderData->terminal_id) {
+            $terminal_id = $orderData->terminal_id;
+            $terminalData = Terminal::select('terminal_name')->where('terminal_id',$terminal_id)->first();
+            $orderData->terminal_name = $terminalData->terminal_name;
+        }
+		
         $orderDetails = OrderDetail::where('order_id', $orderData->order_id)->get()->toArray();
         $orderDetail_discount1 = 0;
         $orderDetail_discount2 = 0;

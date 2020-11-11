@@ -251,8 +251,8 @@
                                         <th>{{trans('backend/common.no')}}</th>
                                         <th>{{trans('backend/customer.name')}}</th>
                                         <th>{{trans('backend/common.email')}}</th>
-                                        <th>{{trans('backend/users.mobile')}}</th>
-                                        <th id="profile">{{trans('backend/users.profile')}}</th>
+                                        <th>{{trans('backend/common.mobile')}}</th>
+                                        <th id="profile">{{trans('backend/common.profile')}}</th>
                                         <th id="status">{{trans('backend/common.status')}}</th>
                                         <th>{{trans('backend/common.created_at')}}</th>
                                         <th>{{trans('backend/common.action')}}</th>
