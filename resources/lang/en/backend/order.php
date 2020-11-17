@@ -1,8 +1,8 @@
 <?php
 return [
-    'orders' => 'Orders',
+    'orders' => 'Report',
     'order' => 'Order',
-    'list_order' => 'List orders',
+    'list_order' => 'List Report',
     'order_date' => 'Order date',
     'order_status' => 'Order status',
     'grand_total' => 'Grand total',
