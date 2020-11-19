@@ -67,7 +67,8 @@ class TableController extends Controller
             $table_type = $request->table_type;
             $table_qr = Helper::randomString(10);
             $table_capacity = $request->table_capacity;
-			$table_service_charge = $request->table_service_charge;
+            $table_service_charge = $request->table_service_charge;
+            $table_section = $request->table_section;
             $checkExists = Table::where('table_name', $name)->count();
             if ($checkExists > 0) {
                 Helper::log('Table store : is exists');
@@ -81,6 +82,7 @@ class TableController extends Controller
                     'table_qr' => $table_qr,
                     'table_capacity' => $table_capacity,					
                     'status' => $request->status,
+                    'table_section' => $table_section,
                     'updated_by' => $loginId,
                 ];
 				if($table_type == 1) {
@@ -156,7 +158,8 @@ class TableController extends Controller
             $table_type = $request->table_type;
             $table_qr = $request->table_qr;
             $table_capacity = $request->table_capacity;
-			$table_service_charge = $request->table_service_charge;
+            $table_service_charge = $request->table_service_charge;
+            $table_section = $request->table_section;
             $tableId = $request->table_id;
             $checkExists = Table::where('table_name', $name)->where('table_id', '!=', $tableId)->count();
             if ($checkExists > 0) {
@@ -168,7 +171,8 @@ class TableController extends Controller
                     'branch_id' => $branch_id,
                     'table_type' => $table_type,
                     'table_qr' => $table_qr,
-                    'table_capacity' => $table_capacity,					
+                    'table_capacity' => $table_capacity,	
+                    'table_section' => $table_section,				
                     'status' => $request->status,
                     'updated_at' => date('Y-m-d H:i:s'),
                     'updated_by' => $loginId,

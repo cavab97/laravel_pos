@@ -121,7 +121,7 @@ class ApiController extends Controller
             Helper::log($exception);
             return response()->json(['status' => 500, 'show' => true, 'message' => trans('api.ooops')]);
         }
-    }
+    }  
 
     /* Get User Profile Details*/
     public function profile(Request $request, $locale)
