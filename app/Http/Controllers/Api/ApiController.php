@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Helper;
 use App\Models\Terminal;
 use App\Models\Roles;
+use App\Models\UserBranch;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -122,7 +123,41 @@ class ApiController extends Controller
             return response()->json(['status' => 500, 'show' => true, 'message' => trans('api.ooops')]);
         }
     }
+    public function verifyPIN(Request $request, $locale) {
 
+        DB::beginTransaction();
+        Helper::log('API user login : start');
+        try {
+
+            App::setLocale($locale);
+            $branchId = $request->branch_id;
+            $userPin = $request->user_pin;
+            $deviceType = $request->device_type;
+            $deviceId = $request->device_id;
+            $terminalId = $request->terminal_id;
+            if (empty($userPin)) {
+                return response()->json(['status' => 422, 'show' => true, 'message' => trans('api.pin_required')]);
+            } elseif (empty($deviceType)) {
+                return response()->json(['status' => 422, 'show' => true, 'message' => trans('api.device_type_required')]);
+            } elseif (empty($terminalId)) {
+                return response()->json(['status' => 422, 'show' => true, 'message' => trans('api.terminal_id_required')]);
+            } else {
+                $userList = UserBranch::where('branch_id',$branchId)->get();
+                $userData = User::whereIn('user_id', $userList)->where('user_pin', $userPin)->first();
+                $response = Helper::replaceNullWithEmptyString($userData);
+                Log::debug($response);
+                return response()->json(['status' => 200, 'show' => false, 'message' => trans('api.login_success'), 'data' => $response]);
+            }
+            Helper::log('API user login : finish');
+            DB::commit();
+        } catch (\Exception $exception) {
+
+            DB::rollBack();
+            Helper::log('API user login : exception');
+            Helper::log($exception);
+            return response()->json(['status' => 500, 'show' => true, 'message' => trans('api.ooops')]);
+        }
+    }
     /* Get User Profile Details*/
     public function profile(Request $request, $locale)
     {

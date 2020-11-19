@@ -22,6 +22,7 @@ Route::group(['prefix' => 'v1/{locale}', 'namespace' => 'Api'], function () {
     Route::post('configs', 'ApiController@configs');
     Route::get('test', 'ApiController@test');
     Route::post('login', 'ApiController@login');
+    Route::post('verifyPIN', 'ApiController@verifyPIN');
     Route::post('verifyTerminalkey','ApiController@verifyTerminalKey');
     Route::post('synch-table','SynchronizeController@actionTableData');
     Route::post('app-data-table','SynchronizeController@appDataTable');
@@ -44,9 +45,9 @@ Route::group(['prefix' => 'v1/{locale}', 'namespace' => 'Api'], function () {
     Route::post('create-cancel-order-data','SyncOrderController@creatbulkorderscancel');
 
     Route::post('update-product-inventory-data','SyncOrderController@updateStockInventory');
-	
+
 	Route::post('update-customer-liquor-inventory-data','SyncOrderController@updateCustomerLiquorInventory');
-	
+
 	Route::post('create-customer-data','SyncOrderController@createCustomer');
 
     /* For Attendance API*/
