@@ -54,7 +54,7 @@ return [
     'modifier' => 'Modifier',
     'images' => 'Images',
     'profile' => 'Profile',
-    'master_data' => 'Definitions',
+    'master_data' => 'User Setting',
     'product_master' => 'Product Master',
     'inventory' => 'Inventory',
     'update_profile' => 'Update Profile',
