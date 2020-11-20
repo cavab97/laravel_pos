@@ -13,7 +13,6 @@ class User extends Authenticatable
     use SoftDeletes;
     protected $table = "users";
     protected $primaryKey = "id";
-
     protected $guarded = ['id'];
 
     /**
@@ -31,7 +30,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token', 'user_pin'
     ];
 
     /**

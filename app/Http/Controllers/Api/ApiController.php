@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class ApiController extends Controller
 {
@@ -135,18 +136,26 @@ class ApiController extends Controller
             $deviceType = $request->device_type;
             $deviceId = $request->device_id;
             $terminalId = $request->terminal_id;
-            if (empty($userPin)) {
+            if (empty($branchId)) {
+                return response()->json(['status' => 422, 'show' => true, 'message' => trans('api.branch_id_required')]);
+            } elseif (empty($userPin)) {
                 return response()->json(['status' => 422, 'show' => true, 'message' => trans('api.pin_required')]);
             } elseif (empty($deviceType)) {
                 return response()->json(['status' => 422, 'show' => true, 'message' => trans('api.device_type_required')]);
             } elseif (empty($terminalId)) {
                 return response()->json(['status' => 422, 'show' => true, 'message' => trans('api.terminal_id_required')]);
             } else {
-                $userList = UserBranch::where('branch_id',$branchId)->get();
-                $userData = User::whereIn('user_id', $userList)->where('user_pin', $userPin)->first();
-                $response = Helper::replaceNullWithEmptyString($userData);
-                Log::debug($response);
-                return response()->json(['status' => 200, 'show' => false, 'message' => trans('api.login_success'), 'data' => $response]);
+                $userList = UserBranch::where('branch_id',$branchId)->pluck('user_id');
+                $userData = User::whereIn('id', $userList)->where('user_pin', $userPin);
+                if ($userData->exists()) {
+                    $response = Helper::replaceNullWithEmptyString($userData->first())->attributes;
+                    unset($response['user_pin']);
+                    unset($response['password']);
+                    unset($response['remember_token']);
+                    return response()->json(['status' => 200, 'show' => false, 'message' => trans('api.login_success'), 'data' => $response]);
+                } else {
+                    return response()->json(['status' => 404, 'show' => false, 'message' => trans('api.username_pin_not_exists')]);
+                }
             }
             Helper::log('API user login : finish');
             DB::commit();

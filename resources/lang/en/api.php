@@ -115,5 +115,5 @@ return [
     'retrive_attendance_updated_data' => 'Retrive attendance level updated data.',
     'retrive_user_branch_updated_data' => 'Retrive user branch level updated data.',
     'bulk_order_created' => 'Bulk order created successfully',
-
+    'branch_id_required' => 'Branch Id required'
 ];
