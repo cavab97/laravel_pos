@@ -20,4 +20,5 @@ return [
     'not_generate' => 'Table QR code not generated.',
     'qr_generate' => 'Table QR code generated.',
     'table_service_charge' => 'Service Charge',
+    'table_section' => 'Section',
 ];

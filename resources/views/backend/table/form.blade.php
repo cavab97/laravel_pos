@@ -40,6 +40,20 @@
             </div>
         </div>
         <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="table_section">{{trans('backend/table.table_section')}}</label>
+                    {{ Form::text('table_section', old('table_section'), ["class"=>"form-control form-control-sm","placeholder"=>trans('backend/table.table_section'),"id"=>"table_section","name"=>"table_section"]) }}
+                </div>
+            </div>
+            <div class="col-md-3 @if(isset($tableData)) {{ ($tableData->table_type=="2")? "display-none" : "" }}@endif" id="service_charge_sel">
+                <div class="form-group">
+                    <label for="table_service_charge">{{trans('backend/table.table_service_charge')}}</label>
+                    {{ Form::number('table_service_charge', old('table_service_charge'), ["min"=>0,"class"=>"form-control form-control-sm","placeholder"=>trans('backend/table.table_service_charge'),"id"=>"table_service_charge","name"=>"table_service_charge","max"=>100]) }}
+                </div>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-md-2 required">
                 <div class="form-group">
                     <label for="table_capacity">{{trans('backend/table.table_capacity')}}</label>
@@ -62,12 +76,6 @@
                         <option value="1" @if(isset($tableData)) {{ ($tableData->status=="1")? "selected" : "" }}@endif>{{trans('backend/common.active')}}</option>
                         <option value="0" @if(isset($tableData)) {{ ($tableData->status=="0")? "selected" : "" }}@endif>{{trans('backend/common.inactive')}}</option>
                     </select>
-                </div>
-            </div>
-			<div class="col-md-3 @if(isset($tableData)) {{ ($tableData->table_type=="2")? "display-none" : "" }}@endif" id="service_charge_sel">
-                <div class="form-group">
-                    <label for="table_service_charge">{{trans('backend/table.table_service_charge')}}</label>
-                    {{ Form::number('table_service_charge', old('table_service_charge'), ["min"=>0,"class"=>"form-control form-control-sm","placeholder"=>trans('backend/table.table_service_charge'),"id"=>"table_service_charge","name"=>"table_service_charge","max"=>100]) }}
                 </div>
             </div>
             @if(isset($tableData))
