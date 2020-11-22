@@ -44,34 +44,50 @@ class GeneratePermission extends Command
      */
     public function handle()
     {
-        Helper::log('Generate for user permission starts');
         $users = User::all();
         
         /*User POS Permission*/
         $getPosPermission = PosPermission::all();
-        
-        Helper::log($getPosPermission);
 
-        $getPosPermission = PosRolePermission::join('pos_permission', 'pos_permission.pos_permission_id', 'pos_role_permission.pos_rp_permission_id')
-            ->where('pos_role_permission.pos_rp_role_id', $role_id)
-            ->where('pos_role_permission.pos_rp_permission_status',1)
-            ->select('pos_permission.pos_permission_id')
-            ->get();
-        
-        if (!empty($getPosPermission)) {
-            foreach ($getPosPermission as $value) {
-                $insertPermission = [
-                    'up_pos_uuid' => Helper::getUuid(),
-                    'user_id' => $userId,
-                    'pos_permission_id' => $value->pos_permission_id,
-                    'updated_at' => date('Y-m-d H:i:s'),
-                    'updated_by' => Auth::user()->id,
-                ];
-                UserPosPermission::create($insertPermission);
-            }
+        foreach($users as $user) {
+
+            $user_id = $user->id;
+            $getUserPosPermission = UserPosPermission::where('user_id', $user_id)->pluck('pos_permission_id')->toArray();
+
+            if(!empty($getUserPosPermission)) {
+                foreach ($getPosPermission as $posPermission) {
+
+                    $posPermissionId = $posPermission->pos_permission_id;
+
+                    if(!empty($getUserPosPermission)) {
+                        if(!in_array($posPermissionId, $getUserPosPermission)) {
+                            $insertPermission = [
+                                'up_pos_uuid' => Helper::getUuid(),
+                                'user_id' => $user_id,
+                                'pos_permission_id' => $value->pos_permission_id,
+                                'updated_at' => date('Y-m-d H:i:s'),
+                                'updated_by' => 1,
+                            ];
+                            UserPosPermission::create($insertPermission);
+                        }
+                    } 
+                }
+            } else {
+                foreach ($getPosPermission as $value) {
+                    $insertPermission = [
+                        'up_pos_uuid' => Helper::getUuid(),
+                        'user_id' => $user_id,
+                        'pos_permission_id' => $value->pos_permission_id,
+                        'updated_at' => date('Y-m-d H:i:s'),
+                        'updated_by' => 1,
+                    ];
+                    UserPosPermission::create($insertPermission);
+                }
+            } 
+            
         }
 
-        Helper::log('End');
+        Helper::log('Generate for user permission ends');
 
         return 0;
     }

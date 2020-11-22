@@ -17,7 +17,27 @@ class PosPermission extends Model
         'order','item','report'
     ];
 
-    static $actionListPOS = ['view', 'add', 'edit', 'delete'];
+    static $actionPOSPermissionList = [
+        'delete_item',
+        'delete_order',
+        'open_drawer',
+        'cash_in',
+        'cash_out',
+        'payment',
+        'discount_item',
+        'discount_order',
+        'entertainment_bill',
+        'change_table',
+        'join_table',
+        'cancel_table',
+        'change_pax',
+        'split_table',
+        'print_qr',
+        'opening',
+        'closing'
+    ];
+
+    static $actionListPOS = ['action'];
 
     static function allPOSPermissions()
     {
@@ -41,5 +61,12 @@ class PosPermission extends Model
             }
         }
         return $permissionList;
+    }
+
+    static function actionPOSPermissions()
+    {
+        $permissionsList = self::$actionPOSPermissionList;
+
+        return $permissionsList;
     }
 }

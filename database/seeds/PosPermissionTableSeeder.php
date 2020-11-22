@@ -12,7 +12,8 @@ class PosPermissionTableSeeder extends Seeder
      */
     public function run()
     {
-        $permissionList = PosPermission::allPOSPermissions();
+        //$permissionList = PosPermission::allPOSPermissions();   
+        $permissionList = PosPermission::actionPosPermissions();
 
         foreach ($permissionList as $value) {
             $count = PosPermission::where('pos_permission_name', $value)->count();
