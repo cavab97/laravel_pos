@@ -19,6 +19,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -96,7 +97,7 @@ class UserController extends Controller
             if (!empty($from) && !empty($to)) {
                 $defaultCondition .= " AND DATE_FORMAT(`users`.created_at, '%Y-%m-%d') BETWEEN '" . $from . "' AND '" . $to . "'";
             }
-			
+
 			if ($userData->role != 1) {
                 $branchIds = UserBranch::where('user_id', $userData->id)->where('status',1)->select("branch_id")->get();
                 $userIds = UserBranch::where('user_id','!=',$userData->id)->whereIn('branch_id',$branchIds)->select('user_id')->get();
@@ -113,7 +114,7 @@ class UserController extends Controller
                     $defaultCondition .= " AND id IN ($implodeIds)";
                 }
             }
-			
+
             $userCount = User::whereNotIn('role', Roles::$notIn)
                 ->whereRaw($defaultCondition)
                 ->count();
@@ -211,7 +212,7 @@ class UserController extends Controller
             $user_pin = $request->user_pin;
 
             $status = $request->status;
-			
+
 			$loginuserData = Auth::user();
 
             $checkMobile = User::where('mobile', $mobile)->count();
@@ -313,14 +314,16 @@ class UserController extends Controller
                     ->get();
                 if (!empty($getPosPermission)) {
                     foreach ($getPosPermission as $value) {
-                        $insertPermission = [
-                            'up_pos_uuid' => Helper::getUuid(),
-                            'user_id' => $userId,
-                            'pos_permission_id' => $value->pos_permission_id,
-                            'updated_at' => date('Y-m-d H:i:s'),
-                            'updated_by' => Auth::user()->id,
-                        ];
-                        UserPosPermission::create($insertPermission);
+                        if(!empty($value)) {
+                            $insertPermission = [
+                                'up_pos_uuid' => Helper::getUuid(),
+                                'user_id' => $userId,
+                                'pos_permission_id' => $value->pos_permission_id,
+                                'updated_at' => date('Y-m-d H:i:s'),
+                                'updated_by' => Auth::user()->id,
+                            ];
+                            UserPosPermission::create($insertPermission);
+                        }
                     }
                 }
 
@@ -529,7 +532,7 @@ class UserController extends Controller
                                     UserBranch::where(['branch_id' => $value, 'user_id' => $userId])->update($updateObj);
                                 }
                             }
-                        }                    
+                        }
 
 						if ($is_exist == true) {
 							if (isset($existBranchArray) && !empty($existBranchArray)) {
@@ -544,7 +547,7 @@ class UserController extends Controller
 							}
 						}
 					}
-					
+
                 } else {
                     if (isset($branch_id) && !empty($branch_id)) {
                         foreach ($branch_id as $key => $value) {
@@ -748,14 +751,13 @@ class UserController extends Controller
 
         $pospermissionList = UserPosPermission::leftjoin('pos_permission', 'pos_permission.pos_permission_id', 'user_pos_permission.pos_permission_id')
             ->where('user_pos_permission.user_id', $userId)->where('status', 1)->get();
-        foreach ($pospermissionList as $value) {
+        /* foreach ($pospermissionList as $value) {
             array_push($allowPosPermissionList, $value->pos_permission_name);
-        }
-        $userData->allowPosPermission = $allowPosPermissionList;
+        } */
+        $userData->allowPosPermission = $pospermissionList->pluck('pos_permission_name')->toArray();//$allowPosPermissionList;
         $userData->posactionList = PosPermission::$actionListPOS;
-        $userData->posmoduleList = PosPermission::$allPOSPermissionList;
-        $userData->posPermissionList = PosPermission::allPOSPermissions();
-
+        $userData->posmoduleList = PosPermission::pluck('pos_permission_name')->toArray();//PosPermission::$allPOSPermissionList;
+        $userData->posPermissionList = PosPermission::allPOSPermissions();//PosPermission::pluck('pos_permission_name')->toArray();//
         return view('backend.users.permissions', compact('uuid', 'userData'));
     }
 
@@ -893,6 +895,10 @@ class UserController extends Controller
                     $oldPermissionArray = array_diff($existPosPermissionArray, $pos_permissions);
                     $updatePermissionArray = array_intersect($existPosPermissionArray, $pos_permissions);
                     $removePermissionArray = array_diff($oldPermissionArray, $pos_permissions);
+                    Log::debug('newPermission', $newPermission);
+                    Log::debug('oldPermissionArray', $oldPermissionArray);
+                    Log::debug('updatePermissionArray', $updatePermissionArray);
+                    Log::debug('removePermissionArray', $removePermissionArray);
                     if (empty($oldPermissionArray) && empty($updatePermissionArray) && empty($newPermission)) {
                         $is_exist = true;
                     } else {
@@ -900,7 +906,12 @@ class UserController extends Controller
                         /*New insert*/
                         if (isset($newPermission) && !empty($newPermission)) {
                             foreach ($newPermission as $key => $value) {
-                                $permissionData = PosPermission::where('pos_permission_name', $value)->first();
+                                $permissionData = '';
+                                if (strpos($value, 'action') === 0) {
+                                    $permissionData = PosPermission::where('pos_permission_name', substr($value, strpos($value, "_")+1))->first();
+                                } else {
+                                    $permissionData = PosPermission::where('pos_permission_name', $value)->first();
+                                }
                                 $insertUserPosPermission = [
                                     'up_pos_uuid' => Helper::getUuid(),
                                     'user_id' => $userId,
@@ -915,7 +926,12 @@ class UserController extends Controller
                         /*status update*/
                         if (isset($updatePermissionArray) && !empty($updatePermissionArray)) {
                             foreach ($updatePermissionArray as $key => $value) {
-                                $permissionData = PosPermission::where('pos_permission_name', $value)->first();
+                                $permissionData = '';
+                                if (strpos($value, 'action') === 0) {
+                                    $permissionData = PosPermission::where('pos_permission_name', substr($value, strpos($value, "_")+1))->first();
+                                } else {
+                                    $permissionData = PosPermission::where('pos_permission_name', $value)->first();
+                                }
                                 $updateObj = [
                                     'status' => 1,
                                     'updated_at' => date('Y-m-d H:i:s'),
@@ -927,7 +943,12 @@ class UserController extends Controller
                         }
                         if (isset($removePermissionArray) && !empty($removePermissionArray)) {
                             foreach ($removePermissionArray as $key => $value) {
-                                $permissionData = PosPermission::where('pos_permission_name', $value)->first();
+                                $permissionData = '';
+                                if (strpos($value, 'action') === 0) {
+                                    $permissionData = PosPermission::where('pos_permission_name', substr($value, strpos($value, "_")+1))->first();
+                                } else {
+                                    $permissionData = PosPermission::where('pos_permission_name', $value)->first();
+                                }
                                 $updateObj = [
                                     'status' => 2,
                                     'updated_at' => date('Y-m-d H:i:s'),
@@ -943,7 +964,12 @@ class UserController extends Controller
                 if ($is_exist == true) {
                     if (isset($existPosPermissionArray) && !empty($existPosPermissionArray)) {
                         foreach ($existPosPermissionArray as $key => $value) {
-                            $permissionData = PosPermission::where('pos_permission_name', $value)->first();
+                            $permissionData = '';
+                            if (strpos($value, 'action') === 0) {
+                                $permissionData = PosPermission::where('pos_permission_name', substr($value, strpos($value, "_")+1))->first();
+                            } else {
+                                $permissionData = PosPermission::where('pos_permission_name', $value)->first();
+                            }
                             $updateObj = [
                                 'status' => 2,
                                 'updated_at' => date('Y-m-d H:i:s'),
@@ -956,16 +982,24 @@ class UserController extends Controller
             } else {
                 if (isset($pos_permissions) && !empty($pos_permissions)) {
                     foreach ($pos_permissions as $key => $value) {
-                        $permissionData = PosPermission::where('pos_permission_name', $value)->first();
-                        $insertUserPosPermission = [
-                            'up_pos_uuid' => Helper::getUuid(),
-                            'user_id' => $userId,
-                            'pos_permission_id' => $permissionData->pos_permission_id,
-                            'status' => 1,
-                            'updated_at' => date('Y-m-d H:i:s'),
-                            'updated_by' => Auth::user()->id
-                        ];
-                        UserPosPermission::create($insertUserPosPermission);
+                        $permissionData = '';
+                        if (strpos($value, 'action') === 0) {
+                            $permissionData = PosPermission::where('pos_permission_name', substr($value, strpos($value, "_")+1))->first();
+                        } else {
+                            $permissionData = PosPermission::where('pos_permission_name', $value)->first();
+                        }
+                        if (!empty($permissionData)) {
+                            $insertUserPosPermission = [
+                                'up_pos_uuid' => Helper::getUuid(),
+                                'user_id' => $userId,
+                                'pos_permission_id' => $permissionData->pos_permission_id,
+                                'status' => 1,
+                                'updated_at' => date('Y-m-d H:i:s'),
+                                'updated_by' => Auth::user()->id
+                            ];
+                            UserPosPermission::create($insertUserPosPermission);
+                            # code...
+                        }
                     }
                 }
             }

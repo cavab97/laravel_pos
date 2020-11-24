@@ -45,12 +45,12 @@ class GeneratePermission extends Command
     public function handle()
     {
         $users = User::all();
-        
+
         /*User POS Permission*/
         $getPosPermission = PosPermission::all();
 
         foreach($users as $user) {
-
+            if ($user->id === 1) continue;
             $user_id = $user->id;
             $getUserPosPermission = UserPosPermission::where('user_id', $user_id)->pluck('pos_permission_id')->toArray();
 
@@ -64,13 +64,13 @@ class GeneratePermission extends Command
                             $insertPermission = [
                                 'up_pos_uuid' => Helper::getUuid(),
                                 'user_id' => $user_id,
-                                'pos_permission_id' => $value->pos_permission_id,
+                                'pos_permission_id' => $posPermission->pos_permission_id,
                                 'updated_at' => date('Y-m-d H:i:s'),
                                 'updated_by' => 1,
                             ];
                             UserPosPermission::create($insertPermission);
                         }
-                    } 
+                    }
                 }
             } else {
                 foreach ($getPosPermission as $value) {
@@ -83,8 +83,8 @@ class GeneratePermission extends Command
                     ];
                     UserPosPermission::create($insertPermission);
                 }
-            } 
-            
+            }
+
         }
 
         Helper::log('Generate for user permission ends');

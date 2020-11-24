@@ -7,6 +7,7 @@ use App\Models\Helper;
 use App\Models\Terminal;
 use App\Models\Roles;
 use App\Models\UserBranch;
+use App\Models\UserPosPermission;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -272,6 +273,41 @@ class ApiController extends Controller
             Helper::log('Terminal key verify : exception');
             Helper::log($exception);
             return response()->json(['status' => 500, 'show' => true, 'message' => trans('api.ooops'), 'terminal_id' => 0, 'branch_id' => 0]);
+        }
+    }
+
+    public function getPermissionList(Request $request, $locale) {
+        try{
+            Helper::log('Get Permission List : start');
+            DB::beginTransaction();
+            App::setLocale($locale);
+            App::setLocale($locale);
+            $branch_id = $request->branch_id;
+            /*
+            $user_id = $request->user_id;
+             if (empty($user_id)) {
+                Helper::log('Get Permission List verify: user id is required');
+                return response()->json(['status' => 422, 'show' => true, 'message' => trans('api.user_id_required')]);
+            } */
+            if (empty($branch_id)) {
+                return response()->json(['status' => 422, 'show' => true, 'message' => trans('api.branch_id_required')]);
+            } else {
+                $PermissionData = UserPosPermission::where('user_pos_permission.status',1)
+                ->select(['up_pos_uuid as pos_uuid', 'users.uuid as user_uuid', 'permission.permission_name'])
+                ->join('permission', 'permission.permission_id', 'user_pos_permission.pos_permission_id')
+                ->join('users', 'users.id', 'user_pos_permission.user_id')
+                ->join('user_branch', 'user_branch.user_id', 'users.id')
+                ->where('user_branch.branch_id', $branch_id)
+                ->where('user_branch.status', 1)
+                ->get();
+                Helper::log('Get Permission List: finish');
+                return response()->json(['status' => 200, 'show' => true, 'message' => trans('api.permission_get_sucess'), 'permissions' => $PermissionData]);
+            }
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            Helper::log('Get Permission List : exception');
+            Helper::log($exception);
+            return response()->json(['status' => 500, 'show' => true, 'message' => trans('api.ooops')]);
         }
     }
 

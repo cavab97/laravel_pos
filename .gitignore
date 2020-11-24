@@ -2,6 +2,10 @@
 /public/backend
 /public/frontend
 /public/upload
+/public/uploads
+/public/js
+/public/css
+/public/*.json
 /public/hot
 /public/storage
 /storage/*.key
@@ -13,4 +17,5 @@ Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
+package-lock.json
 mcn.iml

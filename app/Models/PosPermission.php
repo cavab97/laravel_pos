@@ -41,7 +41,7 @@ class PosPermission extends Model
 
     static function allPOSPermissions()
     {
-        $permissions = self::$allPOSPermissionList;
+        $permissions = self::$actionPOSPermissionList;
         $actions = self::$actionListPOS;
 
         $permissionList = [];

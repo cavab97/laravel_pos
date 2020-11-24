@@ -143,16 +143,16 @@
                                                                     @foreach($userData->posactionList as $a => $action)
                                                                         <td class="text-center">
                                                                             <?php
-                                                                            $permissionName = $action . "_" . $module;
-                                                                            if (in_array($permissionName, $userData->posPermissionList)) {
-                                                                                $checked = '';
-                                                                                if (in_array($permissionName, $userData->allowPosPermission)) {
-                                                                                    $checked = 'checked';
-                                                                                }
-                                                                                $permissionId = "permission_" . $m . "_" . $a;
-                                                                                echo "<div class='icheck-primary d-inline'><input type='checkbox' class='pos_check' id='pos_$permissionId' name='pos_permissions[]' $checked value='$permissionName'/><label for='pos_$permissionId'></label></div>";
-                                                                            } else {
-                                                                                echo '-';
+                                                                            $permissionName = $module;//$action . "_" .
+
+                                                                            $checked = '';
+                                                                            if (in_array($module, $userData->allowPosPermission)) {
+                                                                                $checked = 'checked';
+                                                                            }
+                                                                            $permissionId = "permission_" . $m . "_" . $a;
+                                                                            echo "<div class='icheck-primary d-inline'><input type='checkbox' class='pos_check' id='pos_$permissionId' name='pos_permissions[]' $checked value='$permissionName'/><label for='pos_$permissionId'></label></div>";
+                                                                            if (in_array($permissionName, $userData->posPermissionList)) {}
+                                                                            else { //echo '-';
                                                                             }
                                                                             ?>
                                                                         </td>

@@ -81,5 +81,7 @@ return [
 	'dont_serve_this_area' => 'Currently we don\'t serve this area',
     'contact_req_submited' => 'Your request has been submitted!',
     'auth_oops' => 'Ooops...Authentication failed. Please try again',
+    'user_id_required' => 'User Id is required',
+    'permission_get_sucess' => 'Permission List received successfully',
 
 ];
