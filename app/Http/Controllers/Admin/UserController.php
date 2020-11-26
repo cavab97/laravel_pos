@@ -895,10 +895,6 @@ class UserController extends Controller
                     $oldPermissionArray = array_diff($existPosPermissionArray, $pos_permissions);
                     $updatePermissionArray = array_intersect($existPosPermissionArray, $pos_permissions);
                     $removePermissionArray = array_diff($oldPermissionArray, $pos_permissions);
-                    Log::debug('newPermission', $newPermission);
-                    Log::debug('oldPermissionArray', $oldPermissionArray);
-                    Log::debug('updatePermissionArray', $updatePermissionArray);
-                    Log::debug('removePermissionArray', $removePermissionArray);
                     if (empty($oldPermissionArray) && empty($updatePermissionArray) && empty($newPermission)) {
                         $is_exist = true;
                     } else {
@@ -950,7 +946,7 @@ class UserController extends Controller
                                     $permissionData = PosPermission::where('pos_permission_name', $value)->first();
                                 }
                                 $updateObj = [
-                                    'status' => 2,
+                                    'status' => 0,
                                     'updated_at' => date('Y-m-d H:i:s'),
                                     'updated_by' => Auth::user()->id
                                 ];
@@ -971,7 +967,7 @@ class UserController extends Controller
                                 $permissionData = PosPermission::where('pos_permission_name', $value)->first();
                             }
                             $updateObj = [
-                                'status' => 2,
+                                'status' => 0,
                                 'updated_at' => date('Y-m-d H:i:s'),
                                 'updated_by' => Auth::user()->id
                             ];

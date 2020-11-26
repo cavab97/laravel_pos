@@ -132,6 +132,7 @@ class SynchronizeController extends Controller
 
                 // Products Data collection
                 $productIds = ProductBranch::where('branch_id', $branchId)->select('product_id')->get();
+                $productIdss = ProductBranch::where('branch_id', $branchId)->pluck('product_id');
                 $loadProducts = Product::whereIn('product_id', $productIds)->get()->toArray();
                 $response['product'] = $loadProducts;
 
@@ -175,10 +176,8 @@ class SynchronizeController extends Controller
                 $response['product_attribute'] = $loadProductsAttribute;
 
                 // Products Modifiers Data collection
-                $loadProductsModifiers = ProductModifier::where('product_id', $productIds)->get()->toArray();
+                $loadProductsModifiers = ProductModifier::whereIn('product_id', $productIds)->get()->toArray();
                 $response['product_modifier'] = $loadProductsModifiers;
-
-                // Products Modifiers Data collection
                 $loadPriceType = PriceType::withTrashed()->get()->toArray();
                 $response['price_type'] = $loadPriceType;
 
@@ -563,7 +562,7 @@ class SynchronizeController extends Controller
             return response()->json(['status' => 500, 'show' => true, 'message' => trans('api.ooops')]);
         }
     }
-	
+
 	public function appCountryStateCityDataTable(Request $request, $locale)
     {
         Helper::log('AppDataTable Synch : Start');
@@ -838,7 +837,7 @@ class SynchronizeController extends Controller
 
                 // Products ProductsImage collection
                 $productIds = ProductBranch::where('branch_id', $branchId)->select('product_id')->get()->toArray();
-                $setmealIds = SetMealBranch::where('branch_id', $branchId)->select('setmeal_id')->get()->toArray();                
+                $setmealIds = SetMealBranch::where('branch_id', $branchId)->select('setmeal_id')->get()->toArray();
 
                 $loadProductsImage = Assets::whereIn('asset_type_id', array_merge($productIds,$setmealIds))->whereIn('asset_type', [1,2,3])->where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->limit($limit)->offset($offset)->get()->toArray();
 
