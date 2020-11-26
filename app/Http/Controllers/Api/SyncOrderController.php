@@ -942,6 +942,51 @@ class SyncOrderController extends Controller
         }
 
     }
+    public function openShift(Request $request, $locale)
+    {
+        Helper::log('App Shift Data Open : Start');
+        App::setLocale($locale);
+        DB::beginTransaction();
+        try{
+            $shift = $request->shift;
+            $getShiftArray = \GuzzleHttp\json_decode($shift, true);
+            return response()->json(['status' => 200, 'show' => true, 'message' => '12', 'shift' => $getShiftArray]);
+            if(empty($shift)){
+                Helper::log('App Shift Data Open : parameters required');
+                return response()->json(['status' => 422, 'show' => true, "message" => trans('api.enter_required_parameter')]);
+            } else {
+                $pushShift = [];
+                return response()->json(['status' => 200, 'show' => true, 'message' => $message, 'data' => $response]);
+                $serverId = $setShiftArray['server_id'];
+                if (empty($shift)) {
+                    $shift = new Shift();
+
+                    $shift->uuid = Helper::getUuid();
+                    $shift->terminal_id = ($setShiftArray['terminal_id']) ?? "";
+                    $shift->app_id = $setShiftArray['app_id'];
+                    $shift->user_id = $setShiftArray['user_id'];
+                    $shift->branch_id = $setShiftArray['branch_id'];
+                    $shift->status = $setShiftArray['status'] ?? 1;
+                    $shift->start_amount = $setShiftArray['start_amount'];
+                    $shift->end_amount = $setShiftArray['end_amount'] ?? 0 ;
+                    $shift->updated_by = ($setShiftArray['updated_by'] != 0) ?? NULL;
+                    $shift->updated_at = ($setShiftArray['updated_at'] != '') ?? NULL;
+
+                    $shift = Shift::create($shift->toArray());
+                    $pushShift[] = $shift;
+                }
+                DB::commit();
+                $response['shift'] = $pushShift;
+                $message = 'Bulk shift successfully created.';
+                return response()->json(['status' => 200, 'show' => true, 'message' => $message, 'data' => $response]);
+                    
+            }
+        } catch (\Exception $exception) {
+            Helper::log('App Shift Data Open Query Exception : exception');
+            Helper::log($exception);
+            return response()->json(['status' => 500, 'show' => true, 'message' => trans('api.ooops')]);
+        }
+    }
 
     /*
      * @method  : store shift info

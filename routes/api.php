@@ -40,6 +40,7 @@ Route::group(['prefix' => 'v1/{locale}', 'namespace' => 'Api'], function () {
 
     /* For Sync Order Data */
     Route::post('create-order-data','SyncOrderController@createBulkOrders');
+    Route::post('open-shift','SyncOrderController@openShift');
     Route::post('create-shift-data','SyncOrderController@createShift');
     Route::post('create-shift-detail-data','SyncOrderController@createShiftDetails');
     Route::post('create-terminal-log-data','SyncOrderController@createTerminalLog');
