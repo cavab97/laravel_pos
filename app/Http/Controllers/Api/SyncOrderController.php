@@ -19,6 +19,7 @@ use App\Models\ProductStoreInventory;
 use App\Models\ProductStoreInventoryLog;
 use App\Models\Shift;
 use App\Models\ShiftDetails;
+use App\Models\Terminal;
 use App\Models\TerminalLog;
 use App\Models\VoucherHistory;
 use App\User;
@@ -190,7 +191,7 @@ class SyncOrderController extends Controller
                                                     $ordersitemssubAt = OrderAttributes::create($ordersitemssubAt->toArray());
                                                 }
                                             }
-											
+
 											/* Update Inventory */
                                             $productInventory = ProductStoreInventory::where(['product_id'=>$productId,'branch_id'=>$branchId])->first();
 											if(!empty($productInventory)){
@@ -449,7 +450,7 @@ class SyncOrderController extends Controller
                                                     OrderAttributes::where('oa_id',$setProvariantsAtt['oa_id'])->update($ordersitemssubAt->toArray());
                                                 }
                                             }
-											
+
 											/* Update Inventory */
                                             $productInventory = ProductStoreInventory::where(['product_id'=>$productId,'branch_id'=>$branchId])->first();
 											if(!empty($productInventory)){
@@ -714,7 +715,7 @@ class SyncOrderController extends Controller
                                                 $ordersitemssubAt = OrderAttributes::create($ordersitemssubAt->toArray());
                                             }
                                         }
-										
+
 										/* Update Inventory */
                                         $productInventory = ProductStoreInventory::where(['product_id'=>$productId,'branch_id'=>$branchId])->first();
 										if(!empty($productInventory)){
@@ -948,38 +949,38 @@ class SyncOrderController extends Controller
         App::setLocale($locale);
         DB::beginTransaction();
         try{
+
+            //return response()->json(['status' => 422, 'show' => true, "message" => trans('api.enter_required_parameter'), 'data' => $request]);
             $shift = $request->shift;
-            $getShiftArray = \GuzzleHttp\json_decode($shift, true);
-            return response()->json(['status' => 200, 'show' => true, 'message' => '12', 'shift' => $getShiftArray]);
             if(empty($shift)){
                 Helper::log('App Shift Data Open : parameters required');
                 return response()->json(['status' => 422, 'show' => true, "message" => trans('api.enter_required_parameter')]);
             } else {
+                $shiftArray = \GuzzleHttp\json_decode($shift, true);
                 $pushShift = [];
-                return response()->json(['status' => 200, 'show' => true, 'message' => $message, 'data' => $response]);
-                $serverId = $setShiftArray['server_id'];
-                if (empty($shift)) {
-                    $shift = new Shift();
+                $shift = new Shift();
 
-                    $shift->uuid = Helper::getUuid();
-                    $shift->terminal_id = ($setShiftArray['terminal_id']) ?? "";
-                    $shift->app_id = $setShiftArray['app_id'];
-                    $shift->user_id = $setShiftArray['user_id'];
-                    $shift->branch_id = $setShiftArray['branch_id'];
-                    $shift->status = $setShiftArray['status'] ?? 1;
-                    $shift->start_amount = $setShiftArray['start_amount'];
-                    $shift->end_amount = $setShiftArray['end_amount'] ?? 0 ;
-                    $shift->updated_by = ($setShiftArray['updated_by'] != 0) ?? NULL;
-                    $shift->updated_at = ($setShiftArray['updated_at'] != '') ?? NULL;
+                Helper::log($shiftArray);
+                $branch_id = Terminal::find($shiftArray['terminal_id'])->branch_id ?? 0;
+                $user_id = User::where('uuid', $shiftArray['user_uuid'])->first()->id ?? 0;
+                $shift->uuid            = Helper::getUuid();
+                $shift->terminal_id     = ($shiftArray['terminal_id']) ?? "";
+                $shift->app_id          = $shiftArray['app_id'] ?? NULL;
+                $shift->user_id         = $user_id;
+                $shift->branch_id       = $branch_id;
+                $shift->status          = $shiftArray['status'] ?? 1;
+                $shift->start_amount    = $shiftArray['start_amount'];
+                $shift->end_amount      = $shiftArray['end_amount'] ?? 0 ;
+                $shift->updated_by      = $shiftArray['updated_by'] ?? NULL;
+                $shift->updated_at      = $shiftArray['updated_at'] ?? NULL;
 
-                    $shift = Shift::create($shift->toArray());
-                    $pushShift[] = $shift;
-                }
+                $shift = Shift::create($shift->toArray());
+                $pushShift[] = $shift;
                 DB::commit();
                 $response['shift'] = $pushShift;
                 $message = 'Bulk shift successfully created.';
                 return response()->json(['status' => 200, 'show' => true, 'message' => $message, 'data' => $response]);
-                    
+
             }
         } catch (\Exception $exception) {
             Helper::log('App Shift Data Open Query Exception : exception');
@@ -1126,8 +1127,8 @@ class SyncOrderController extends Controller
                 return response()->json(['status' => 422, 'show' => true, "message" => trans('api.branch_id_required')]);
             } else {
 
-                
-                
+
+
                     $timeStart = microtime(true);
                     $getShiftArray = \GuzzleHttp\json_decode($shiftInvoice, true);
                     $pushShiftInvoice = [];
@@ -1193,7 +1194,7 @@ class SyncOrderController extends Controller
                         Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'Create Order data SynchronizeAppdata invalid json string', date('Y-m-d'), date('H:i:s'), 'shift_detail');
                         return response()->json(['status' => 422, 'show' => true, 'message' => $message]);
                     }
-                
+
             }
         } catch (\Exception $exception) {
             Helper::log('AppShiftInvoiceData Query Exception : exception');
@@ -1512,9 +1513,9 @@ class SyncOrderController extends Controller
 													$productStoreInventoryLog = ProductStoreInventoryLog::create($productStoreInventoryLog->toArray());
 													$ilId = $productStoreInventoryLog->il_id;
 													$setinventoryLog['server_id'] = $ilId;
-													
+
                                                 }
-											} else {	
+											} else {
 												$productStoreInventoryLog->uuid = Helper::getUuid();
 												$productStoreInventoryLog->inventory_id = $setinventoryLog['inventory_id'];
 												$productStoreInventoryLog->branch_id = $setinventoryLog['branch_id'];
@@ -1529,10 +1530,10 @@ class SyncOrderController extends Controller
 												$productStoreInventoryLog = ProductStoreInventoryLog::create($productStoreInventoryLog->toArray());
 												$ilId = $productStoreInventoryLog->il_id;
 												$setinventoryLog['server_id'] = $ilId;
-												
+
 											}
                                         }
-                                        
+
                                     }
 									/* Update Main Inventory Stock */
                                     $productInventory = ProductStoreInventory::where('inventory_id',$inventoryId)->first();
@@ -1580,9 +1581,9 @@ class SyncOrderController extends Controller
 													$productStoreInventoryLog = ProductStoreInventoryLog::create($productStoreInventoryLog->toArray());
 													$ilId = $productStoreInventoryLog->il_id;
 													$setinventoryLog['server_id'] = $ilId;
-													
+
 												}
-											} else {	
+											} else {
 												$productStoreInventoryLog->uuid = Helper::getUuid();
 												$productStoreInventoryLog->inventory_id = $setinventoryLog['inventory_id'];
 												$productStoreInventoryLog->branch_id = $setinventoryLog['branch_id'];
@@ -1597,10 +1598,10 @@ class SyncOrderController extends Controller
 												$productStoreInventoryLog = ProductStoreInventoryLog::create($productStoreInventoryLog->toArray());
 												$ilId = $productStoreInventoryLog->il_id;
 												$setinventoryLog['server_id'] = $ilId;
-												
+
 											}
                                     }
-                                    
+
                                 }
 								/* Update Main Inventory Stock */
                                 $productInventory = ProductStoreInventory::where('inventory_id',$inventoryId)->first();
@@ -1674,7 +1675,7 @@ class SyncOrderController extends Controller
                     } else {
 						$loadInventory['product_store_inventory_log'] = [];
 					}
-						
+
                 }
                 $pushInventory[] = $loadInventory;
             }
@@ -1687,7 +1688,7 @@ class SyncOrderController extends Controller
             return response()->json(['status' => 500, 'show' => true, 'message' => trans('api.ooops')]);
         }
     }
-	
+
 	/*
      * @method : update inventory
      * @parmas : terminalId, InvoiceUniqId
@@ -1880,7 +1881,7 @@ class SyncOrderController extends Controller
             return response()->json(['status' => 500, 'show' => true, 'message' => trans('api.ooops')]);
         }
     }
-	
+
 	/**
      * Customer Sync
      * @param Request $request

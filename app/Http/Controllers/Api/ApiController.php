@@ -293,8 +293,8 @@ class ApiController extends Controller
                 return response()->json(['status' => 422, 'show' => true, 'message' => trans('api.branch_id_required')]);
             } else {
                 $PermissionData = UserPosPermission::where('user_pos_permission.status',1)
-                ->select(['up_pos_uuid as pos_uuid', 'users.uuid as user_uuid', 'permission.permission_name'])
-                ->join('permission', 'permission.permission_id', 'user_pos_permission.pos_permission_id')
+                ->select(['up_pos_uuid as pos_uuid', 'users.uuid as user_uuid', 'pos_permission.pos_permission_name'])
+                ->join('pos_permission', 'pos_permission.pos_permission_id', 'user_pos_permission.pos_permission_id')
                 ->join('users', 'users.id', 'user_pos_permission.user_id')
                 ->join('user_branch', 'user_branch.user_id', 'users.id')
                 ->where('user_branch.branch_id', $branch_id)
