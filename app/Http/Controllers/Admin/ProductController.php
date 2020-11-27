@@ -71,7 +71,7 @@ class ProductController extends Controller
 
         $defaultCondition = 'product.uuid != ""';
         if (!empty($search)) {
-            $search = Helper::string_sanitize($search);            
+            $search = Helper::string_sanitize($search);
 			$defaultCondition .= " AND ( `product`.price LIKE '%$search%' OR `product`.sku LIKE '%$search%' OR `product`.name LIKE '%$search%' ) ";
         }
 
@@ -176,14 +176,14 @@ class ProductController extends Controller
                     $cat_name = '';
                     foreach ($category as $catKey => $catValue){
                         $catData = Category::withTrashed()->where('category_id',$catValue->category_id)->select('name')->first();
-						
+
                         $name = $catData->name;
                         $cat_name .= $name;
                         if (count($category) != ($i + 1)) {
                             $cat_name .= ',';
                         }
                         $i++;
-						
+
                     }
                     $productList[$key]['category_name'] = $cat_name;
                 }
@@ -427,7 +427,7 @@ class ProductController extends Controller
                                 'uuid' => Helper::getUuid(),
                                 'product_id' => $productId,
                                 'branch_id' => $value,
-                                'warningStockLevel' => $request->warning_stock_level[$value],
+                                'warningStockLevel' => $request->warning_stock_level[$value] ?? 0,
                                 'display_order' => $request->display_order[$value],
                                 'printer_id' => $request->printer_id[$value],
                                 'status' => $request->is_enabled_status[$value],
@@ -481,10 +481,10 @@ class ProductController extends Controller
             $priceType = PriceType::where('pt_id', $productData->price_type_id)->select('name')->first();
             $productData->price_type_name = $priceType->name;
 
-            $productCategoryData = ProductCategory::leftjoin('category', 'category.category_id', 'product_category.category_id')                
+            $productCategoryData = ProductCategory::leftjoin('category', 'category.category_id', 'product_category.category_id')
 				->where('product_category.product_id', $productId)
 				->where('product_category.status', 1)
-                ->select('product_category.*', 'category.name AS category_name')				
+                ->select('product_category.*', 'category.name AS category_name')
                 ->get();
 
             foreach ($productCategoryData as $key => $value) {
@@ -1091,7 +1091,7 @@ class ProductController extends Controller
                                                 'uuid' => Helper::getUuid(),
                                                 'product_id' => $productId,
                                                 'branch_id' => $value,
-                                                'warningStockLevel' => $request->warning_stock_level[$value],
+                                                'warningStockLevel' => $request->warning_stock_level[$value] ?? 0,
                                                 'display_order' => $request->display_order[$value],
                                                 'printer_id' => $request->printer_id[$value],
                                                 'status' => $request->is_enabled_status[$value],
@@ -1106,7 +1106,7 @@ class ProductController extends Controller
                                 if (isset($updateBranchArray) && !empty($updateBranchArray)) {
                                     foreach ($updateBranchArray as $key => $value) {
                                         $updateObj = [
-                                            'warningStockLevel' => $request->warning_stock_level[$value],
+                                            'warningStockLevel' => $request->warning_stock_level[$value] ?? 0,
                                             'display_order' => $request->display_order[$value],
                                             'printer_id' => $request->printer_id[$value],
                                             'status' => $request->is_enabled_status[$value],
@@ -1129,7 +1129,7 @@ class ProductController extends Controller
                                     }
                                 }
                             }
-                        
+
 							if ($is_exist == true) {
 								if (isset($existBranchArray) && !empty($existBranchArray)) {
 									foreach ($existBranchArray as $key => $value) {
@@ -1150,7 +1150,7 @@ class ProductController extends Controller
                                     'uuid' => Helper::getUuid(),
                                     'product_id' => $productId,
                                     'branch_id' => $value,
-                                    'warningStockLevel' => $request->warning_stock_level[$value],
+                                    'warningStockLevel' => $request->warning_stock_level[$value] ?? 0,
                                     'display_order' => $request->display_order[$value],
                                     'printer_id' => $request->printer_id[$value],
                                     'status' => $request->is_enabled_status[$value],
