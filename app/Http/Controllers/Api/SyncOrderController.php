@@ -972,7 +972,6 @@ class SyncOrderController extends Controller
                 $shift->start_amount    = $shiftArray['start_amount'];
                 $shift->end_amount      = $shiftArray['end_amount'] ?? 0 ;
                 $shift->updated_by      = $shiftArray['updated_by'] ?? NULL;
-                $shift->updated_at      = $shiftArray['updated_at'] ?? NULL;
 
                 $shift = Shift::create($shift->toArray());
                 $pushShift[] = $shift;

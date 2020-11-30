@@ -131,8 +131,8 @@ class SynchronizeController extends Controller
                 $response['category_branch'] = $loadCategoriesBranch;
 
                 // Products Data collection
-                $productIds = ProductBranch::where('branch_id', $branchId)->select('product_id')->get();
-                $productIdss = ProductBranch::where('branch_id', $branchId)->pluck('product_id');
+                $productIds = ProductBranch::where('branch_id', $branchId)->pluck('product_id');//->select('product_id')->get();
+                //$productIdss = ProductBranch::where('branch_id', $branchId)->pluck('product_id');
                 $loadProducts = Product::whereIn('product_id', $productIds)->get()->toArray();
                 $response['product'] = $loadProducts;
 

@@ -125,6 +125,39 @@ class ApiController extends Controller
             return response()->json(['status' => 500, 'show' => true, 'message' => trans('api.ooops')]);
         }
     }
+    public function verifyOtherUserPIN(Request $request, $locale) {
+
+        DB::beginTransaction();
+        Helper::log('Verify Other User PIN : start');
+        try {
+            App::setLocale($locale);
+            $branchId = $request->branch_id;
+            $userPin = $request->user_pin;
+            if (empty($userPin)) {
+                return response()->json(['status' => 422, 'show' => true, 'message' => trans('api.pin_required')]);
+            } else {
+                $userList = UserBranch::where('branch_id',$branchId)->pluck('user_id');
+                $userData = User::whereIn('id', $userList)->where('user_pin', $userPin);
+                if ($userData->exists()) {
+                    $response = Helper::replaceNullWithEmptyString($userData->first())->attributes;
+                    unset($response['user_pin']);
+                    unset($response['password']);
+                    unset($response['remember_token']);
+                    return response()->json(['status' => 200, 'show' => false, 'message' => trans('api.login_success'), 'data' => $response]);
+                } else {
+                    return response()->json(['status' => 404, 'show' => false, 'message' => trans('api.username_pin_not_exists')]);
+                }
+            }
+            Helper::log('Verify Other User PIN : finish');
+            DB::commit();
+        } catch (\Exception $exception) {
+
+            DB::rollBack();
+            Helper::log('Verify Other User PIN : exception');
+            Helper::log($exception);
+            return response()->json(['status' => 500, 'show' => true, 'message' => trans('api.ooops')]);
+        }
+    }
     public function verifyPIN(Request $request, $locale) {
 
         DB::beginTransaction();
@@ -243,10 +276,11 @@ class ApiController extends Controller
                                 'terminal_device_token' => $ter_device_token,
                                 'terminal_verified_at' => config('constants.date_time'),
                             ];
-                            Terminal::where('terminal_key', $key)->update($updateData);
+                            $terminalData = Terminal::where('terminal_key',$key)->first();
+                            $terminalData->update($updateData);
                             DB::commit();
                             Helper::log('Terminal key verify: finish');
-                            return response()->json(['status' => 200, 'show' => true, 'message' => trans('api.success'), 'terminal_id' => $terminalId, 'branch_id' => $branchId]);
+                            return response()->json(['status' => 200, 'show' => true, 'message' => trans('api.success'), 'terminal_name' => $terminalData->terminal_name, 'terminal_id' => $terminalId, 'branch_id' => $branchId]);
                         } else {
                             Helper::log('Terminal key verify: Device invalid');
                             return response()->json(['status' => 422, 'show' => true, 'message' => trans('api.device_invalid'), 'terminal_id' => 0, 'branch_id' => 0]);
@@ -257,10 +291,12 @@ class ApiController extends Controller
 							'terminal_device_token' => $ter_device_token,
 							'terminal_verified_at' => config('constants.date_time'),
 						];
-						Terminal::where('terminal_key',$key)->update($updateData);
-						DB::commit();
+                        $terminalData = Terminal::where('terminal_key',$key)->first();
+                        $terminalData->update($updateData);
+                        DB::commit();
+                        //$terminalData = $terminalData->refresh();
 						Helper::log('Terminal key verify: finish');
-						return response()->json(['status' => 200, 'show' => true, 'message' => trans('api.success'), 'terminal_id' => $terminalId, 'branch_id' => $branchId]);
+						return response()->json(['status' => 200, 'show' => true, 'message' => trans('api.success'), 'terminal_name' => $terminalData->terminal_name, 'terminal_id' => $terminalId, 'branch_id' => $branchId]);
 					}
                 } else {
                     Helper::log('Terminal key verify: key invalid');

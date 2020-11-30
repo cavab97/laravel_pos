@@ -22,6 +22,7 @@ Route::group(['prefix' => 'v1/{locale}', 'namespace' => 'Api'], function () {
     Route::post('configs', 'ApiController@configs');
     Route::get('test', 'ApiController@test');
     Route::post('login', 'ApiController@login');
+    Route::post('verifyOtherUserPIN', 'ApiController@verifyOtherUserPIN');
     Route::post('verifyPIN', 'ApiController@verifyPIN');
     Route::post('verifyTerminalkey','ApiController@verifyTerminalKey');
     Route::get('getPermissionList','ApiController@getPermissionList');
