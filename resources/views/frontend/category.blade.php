@@ -1,4 +1,4 @@
-@extends('frontend.layouts.home')
+@extends('frontend.layouts.front')
 @section('content')
     <section>
         <div class="category-section bg-gray">
@@ -20,7 +20,7 @@
                             @foreach($categoryList as $key=>$value)
                                 <?php $category = $value['slug'];?>
                                 <div class="item col-xl-2 col-md-3 col-6 col-sm-4">
-                                    <a href="{{route('product',[$branch_slug,$category])}}">
+                                    <a href="{{route('product',[$branchSlug,$category])}}">
                                         <div class="m-item bz">
                                             <img src="{{asset($value['category_icon'])}}" alt="">
                                             <span>{{$value['name']}}</span>

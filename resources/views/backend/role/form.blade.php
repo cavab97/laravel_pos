@@ -141,16 +141,16 @@
                                             @foreach($posRolePermission['actionList'] as $a => $action)
                                                 <td class="text-center">
                                                     <?php
-                                                    $permissionName = $action . "_" . $module;
-                                                    if (in_array($permissionName, $posRolePermission['allPOSPermissionList'])) {
+                                                    $permissionName = $module;//$action . "_" . $module;
                                                         $checked = '';
                                                         if (in_array($permissionName, $posRolePermission['allowPOSPermission'])) {
                                                             $checked = 'checked';
                                                         }
                                                         $permissionId = "permission_" . $m . "_" . $a;
                                                         echo "<div class='icheck-primary d-inline'><input type='checkbox' class='pos_check' id='pos_$permissionId' name='pos_permissions[]' $checked value='$permissionName'/><label for='pos_$permissionId'></label></div>";
+                                                    if (in_array($permissionName, $posRolePermission['allPOSPermissionList'])) {
                                                     } else {
-                                                        echo '-';
+                                                        //echo '-';
                                                     }
                                                     ?>
                                                 </td>

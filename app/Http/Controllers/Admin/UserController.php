@@ -660,6 +660,101 @@ class UserController extends Controller
                         }
                     }
 
+                    /*POS Permission*/
+                    $rolePosPermissionData = array();
+                    $getrolePosPermissionData = PosRolePermission::where(['pos_rp_role_id'=>$role_id,'pos_rp_permission_status'=>1])->select('pos_rp_permission_id')->get()->toArray();
+                    foreach ($getrolePosPermissionData as $value){
+                        array_push($rolePosPermissionData, $value['pos_rp_permission_id']);
+                    }
+                    $userPosPermissionData = UserPosPermission::where('user_id',$userId)->select('pos_permission_id')->get()->toArray();
+                    if (isset($userPosPermissionData) && !empty($userPosPermissionData)) {
+                        $existPosPermissionArray = array();
+                        foreach ($userPosPermissionData as $key => $val) {
+                            array_push($existPosPermissionArray, $val['pos_permission_id']);
+                        }
+                        $is_exist = true;
+                        if (isset($rolePosPermissionData) && !empty($rolePosPermissionData)) {
+                            $newPosPermission = array_diff($rolePosPermissionData, $existPosPermissionArray);
+                            $oldPosPermissionArray = array_diff($existPosPermissionArray, $rolePosPermissionData);
+                            $updatePosPermissionArray = array_intersect($existPosPermissionArray, $rolePosPermissionData);
+                            $removePosPermissionArray = array_diff($oldPosPermissionArray, $rolePosPermissionData);
+                            if (empty($oldPosPermissionArray) && empty($updatePosPermissionArray) && empty($newPosPermission)) {
+                                $is_exist = true;
+                            } else {
+                                $is_exist = false;
+                                /*New insert*/
+                                if (isset($newPosPermission) && !empty($newPosPermission)) {
+                                    foreach ($newPosPermission as $key => $value) {
+                                        $insertRoleUserPosPermission = [
+                                            'up_pos_uuid' => Helper::getUuid(),
+                                            'user_id' => $userId,
+                                            'status' => 1,
+                                            'pos_permission_id' => $value,
+                                            'updated_at' => date('Y-m-d H:i:s'),
+                                            'updated_by' => Auth::user()->id
+                                        ];
+                                        UserPosPermission::create($insertRoleUserPosPermission);
+                                    }
+                                }
+
+                                /*status update*/
+                                if (isset($updatePosPermissionArray) && !empty($updatePosPermissionArray)) {
+                                    foreach ($updatePosPermissionArray as $key => $value) {
+                                        $updateObj = [
+                                            'status' => 1,
+                                            'updated_at' => date('Y-m-d H:i:s'),
+                                            'updated_by' => Auth::user()->id
+                                        ];
+
+                                        UserPosPermission::where(['pos_permission_id' => $value, 'user_id' => $userId])->update($updateObj);
+                                    }
+                                }
+
+                                if (isset($removePosPermissionArray) && !empty($removePosPermissionArray)) {
+                                    foreach ($removePosPermissionArray as $key => $value) {
+                                        $updateObj = [
+                                            'status' => 2,
+                                            'updated_at' => date('Y-m-d H:i:s'),
+                                            'updated_by' => Auth::user()->id
+                                        ];
+
+                                        UserPosPermission::where(['pos_permission_id' => $value, 'user_id' => $userId])->update($updateObj);
+                                    }
+                                }
+                            }
+                        }
+
+                        if ($is_exist == true) {
+                            if (isset($existPosPermissionArray) && !empty($existPosPermissionArray)) {
+                                foreach ($existPosPermissionArray as $key => $value) {
+                                    $updateObj = [
+                                        'status' => 2,
+                                        'updated_at' => date('Y-m-d H:i:s'),
+                                        'updated_by' => Auth::user()->id
+                                    ];
+                                    UserPosPermission::where(['pos_permission_id' => $value, 'user_id' => $userId])->update($updateObj);
+                                }
+                            }
+                        }
+                    } else {
+                        $getRolePermission = PosRolePermission::leftjoin('permission', 'permission.permission_id', 'pos_role_permission.pos_rp_permission_id')
+                            ->where('pos_role_permission.pos_rp_role_id', $role_id)
+                            ->select('permission.permission_id')
+                            ->get();
+                        if (!empty($getRolePermission)) {
+                            foreach ($getRolePermission as $value) {
+                                $insertPermission = [
+                                    'up_pos_uuid' => Helper::getUuid(),
+                                    'user_id' => $userId,
+                                    'pos_permission_id' => $value->permission_id,
+                                    'updated_at' => date('Y-m-d H:i:s'),
+                                    'updated_by' => Auth::user()->id,
+                                ];
+                                UserPosPermission::create($insertPermission);
+                            }
+                        }
+                    }
+
                 }
 
                 DB::commit();

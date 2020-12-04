@@ -26,6 +26,7 @@
     <script>
         var baseUrl = "{{url('/')}}";
     </script>
+    <script src="{{asset('frontend/js/jquery.min.js')}}"></script>
     <title>MCN</title>
 </head>
 <body>
@@ -39,7 +40,7 @@
 </main>
 <div class="custom-modal modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="pop"
      aria-hidden="true"></div>
-<script src="{{asset('frontend/js/jquery.min.js')}}"></script>
+
 <script src="{{asset('frontend/js/bootstrap.min.js')}}"></script>
 <script src="{{asset('frontend/js/plugin.js')}}"></script>
 <script src="{{asset('frontend/js/custom.js')}}"></script>

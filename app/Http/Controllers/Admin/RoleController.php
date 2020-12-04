@@ -51,7 +51,7 @@ class RoleController extends Controller
         $posRolePermission['allowPOSPermission'] = $allowPermissionList;
 
         $posRolePermission['actionList'] = PosPermission::$actionListPOS;
-        $posRolePermission['moduleList'] = PosPermission::$allPOSPermissionList;
+        $posRolePermission['moduleList'] = PosPermission::pluck('pos_permission_name')->toArray();//PosPermission::$allPOSPermissionList;
         $posRolePermission['allPOSPermissionList'] = PosPermission::allPOSPermissions();
 
         return view('backend.role.create', compact('rolePermission','posRolePermission'));
@@ -183,14 +183,14 @@ class RoleController extends Controller
         $allowPOSPermissionList = [];
         $PosrolePermissionList = DB::table('pos_role_permission')->join('pos_permission AS P', 'P.pos_permission_id', '=', 'pos_role_permission.pos_rp_permission_id')
             ->where('pos_role_permission.pos_rp_role_id', $roleId)->where('pos_role_permission.pos_rp_permission_status',1)
-            ->select(['pos_permission_name'])
+            //->select(['pos_permission_name'])
             ->get();
-        foreach ($PosrolePermissionList as $value) {
+        /*foreach ($PosrolePermissionList as $value) {
             array_push($allowPOSPermissionList, $value->pos_permission_name);
-        }
-        $posRolePermission['allowPOSPermission'] = $allowPOSPermissionList;
+        }*/
+        $posRolePermission['allowPOSPermission'] = $PosrolePermissionList->pluck('pos_permission_name')->toArray();//$allowPOSPermissionList;
         $posRolePermission['actionList'] = PosPermission::$actionListPOS;
-        $posRolePermission['moduleList'] = PosPermission::$allPOSPermissionList;
+        $posRolePermission['moduleList'] = PosPermission::pluck('pos_permission_name')->toArray();//PosPermission::$allPOSPermissionList;
         $posRolePermission['allPOSPermissionList'] = PosPermission::allPOSPermissions();
 
         return view('backend.role.edit', compact('roleData', 'rolePermission','posRolePermission'));
@@ -230,17 +230,6 @@ class RoleController extends Controller
                 
 				foreach ($existPermission as $key => $value) {
 					array_push($existRolePermissionArray, $value->rp_permission_id);
-					
-                    /*$checkpermissionData = Permissions::where('permission_id', $value->rp_permission_id)->first();
-                    if (in_array(str_replace('view_', '', $checkpermissionData->permission_name), $moduleList)) {
-                        if (!empty($permissions)) {
-                            if (!in_array($checkpermissionData->permission_name, $permissions)) {
-                                DB::table('role_permission')->where('rp_role_id', $roleId)->where('rp_permission_id', $value->rp_permission_id)->delete();
-                            }
-                        } else {
-                            DB::table('role_permission')->where('rp_role_id', $roleId)->where('rp_permission_id', $value->rp_permission_id)->delete();
-                        }
-                    }*/
                 }
 				
 				if (isset($permissions) && !empty($permissions)) {
@@ -308,25 +297,6 @@ class RoleController extends Controller
                         }
                     }
                 }
-
-                /*if (isset($permissions) && count($permissions) > 0) {
-                    foreach ($permissions as $value) {
-                        $permissionData = Permissions::where('permission_name', $value)->first();
-                        if (!empty($permissionData)) {
-                            $getPermission = DB::table('role_permission')->where('rp_role_id', $roleId)->where('rp_permission_id', $permissionData->permission_id)->count();
-                            if ($getPermission == 0) {
-                                $data = [
-                                    'rp_uuid' => Helper::getUuid(),
-                                    'rp_role_id' => $roleId,
-                                    'rp_permission_id' => $permissionData->permission_id,
-                                    'rp_updated_at' => date('Y-m-d H:i:s'),
-                                    'rp_updated_by' => Auth::user()->id,
-                                ];
-                                DB::table('role_permission')->insert($data);
-                            }
-                        }
-                    }
-                }*/
 
                 $rolePermissionData = array();
                 $getrolePermissionData = RolePermission::where('rp_role_id',$roleId)->select('rp_permission_id')->get()->toArray();
@@ -434,22 +404,34 @@ class RoleController extends Controller
                             /*New insert*/
                             if (isset($newPermission) && !empty($newPermission)) {
                                 foreach ($newPermission as $key => $value) {
-                                    $permissionData = PosPermission::where('pos_permission_name', $value)->first();
-                                    $insertRolePermission = [
-                                        'pos_rp_uuid' => Helper::getUuid(),
-                                        'pos_rp_role_id' => $roleId,
-                                        'pos_rp_permission_id' => $permissionData->pos_permission_id,
-                                        'pos_rp_permission_status' => 1,
-                                        'pos_rp_updated_at' => date('Y-m-d H:i:s'),
-                                        'pos_rp_updated_by' => Auth::user()->id
-                                    ];
-                                    PosRolePermission::create($insertRolePermission);
+                                    $permissionData = '';
+                                    if (strpos($value, 'action') === 0) {
+                                        $permissionData = PosPermission::where('pos_permission_name', substr($value, strpos($value, "_")+1))->first();
+                                    } else {
+                                        $permissionData = PosPermission::where('pos_permission_name', $value)->first();
+                                    }
+                                    if (!empty($permissionData)) {
+                                        $insertRolePermission = [
+                                            'pos_rp_uuid' => Helper::getUuid(),
+                                            'pos_rp_role_id' => $roleId,
+                                            'pos_rp_permission_id' => $permissionData->pos_permission_id,
+                                            'pos_rp_permission_status' => 1,
+                                            'pos_rp_updated_at' => date('Y-m-d H:i:s'),
+                                            'pos_rp_updated_by' => Auth::user()->id
+                                        ];
+                                        PosRolePermission::create($insertRolePermission);
+                                    }
                                 }
                             }
                             /*status update*/
                             if (isset($updatePermissionArray) && !empty($updatePermissionArray)) {
                                 foreach ($updatePermissionArray as $key => $value) {
-                                    $permissionData = PosPermission::where('pos_permission_name', $value)->first();
+                                    $permissionData = '';
+                                    if (strpos($value, 'action') === 0) {
+                                        $permissionData = PosPermission::where('pos_permission_name', substr($value, strpos($value, "_")+1))->first();
+                                    } else {
+                                        $permissionData = PosPermission::where('pos_permission_name', $value)->first();
+                                    }
                                     $updateObj = [
                                         'pos_rp_permission_status' => 1,
                                         'pos_rp_updated_at' => date('Y-m-d H:i:s'),
@@ -490,15 +472,22 @@ class RoleController extends Controller
                 } else {
                     if (isset($pos_permissions) && !empty($pos_permissions)) {
                         foreach ($pos_permissions as $key => $value) {
-                            $permissionData = PosPermission::where('pos_permission_name', $value)->first();
-                            $insertRolePermission = [
-                                'pos_rp_uuid' => Helper::getUuid(),
-                                'pos_rp_role_id' => $roleId,
-                                'pos_rp_permission_id' => $permissionData->pos_permission_id,
-                                'pos_rp_updated_at' => date('Y-m-d H:i:s'),
-                                'pos_rp_updated_by' => Auth::user()->id
-                            ];
-                            PosRolePermission::create($insertRolePermission);
+                            $permissionData = '';
+                            if (strpos($value, 'action') === 0) {
+                                $permissionData = PosPermission::where('pos_permission_name', substr($value, strpos($value, "_")+1))->first();
+                            } else {
+                                $permissionData = PosPermission::where('pos_permission_name', $value)->first();
+                            }
+                            if (!empty($permissionData)) {
+                                $insertRolePermission = [
+                                    'pos_rp_uuid' => Helper::getUuid(),
+                                    'pos_rp_role_id' => $roleId,
+                                    'pos_rp_permission_id' => $permissionData->pos_permission_id,
+                                    'pos_rp_updated_at' => date('Y-m-d H:i:s'),
+                                    'pos_rp_updated_by' => Auth::user()->id
+                                ];
+                                PosRolePermission::create($insertRolePermission);
+                            }
                         }
                     }
                 }

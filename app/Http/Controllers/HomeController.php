@@ -93,7 +93,7 @@ class HomeController extends Controller
         try {
             $branchData = Branch::getBranchDataBySlug($slug);
             if (!empty($branchData)) {
-                $branch_slug = $slug;
+                $branchSlug = $slug;
                 $branchId = $branchData['branch_id'];
                 $branchName = $branchData['name'];
 
@@ -132,7 +132,7 @@ class HomeController extends Controller
                 }*/
 
                 $categoryList = Category::getCategoryByBranch($branchId);
-                return view('frontend.category', compact('categoryList', 'branch_slug','branchName'));
+                return view('frontend.category', compact('categoryList', 'branchSlug','branchName'));
             } else {
                 Helper::log('Branch and table not found for scan');
                 return redirect()->route('home');
