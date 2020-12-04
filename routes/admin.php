@@ -65,6 +65,9 @@ Route::group(['namespace' => 'Admin'], function () {
         Route::resource('table', 'TableController');
         Route::get('table/{uuid}/delete', 'TableController@delete')->name('table.delete');
         Route::get('table/generateQr/{uuid}', 'TableController@generateQr')->name('table.generate-Qr');
+		
+		Route::resource('table-color', 'TableColorController');
+        Route::get('table-color/{uuid}/delete', 'TableColorController@delete')->name('table-color.delete');
 
         Route::post('product-paginate', 'ProductController@paginate')->name('product.paginate');
         Route::get('product/{uuid}/delete', 'ProductController@delete')->name('product.delete');

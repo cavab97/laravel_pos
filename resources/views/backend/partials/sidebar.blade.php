@@ -188,10 +188,11 @@ $permission = new \App\Models\Permissions();
                 </a>
             </li>
             @endif
-            @if($permission::checkActionPermission(['view_price_type','view_printer','view_table','view_kitchen','view_voucher','view_terminal','view_banner','view_tax','view_logs','view_payment_type','view_country','view_states','view_cities']))
+            @if($permission::checkActionPermission(['view_price_type','view_printer','view_table','view_table_color','view_kitchen','view_voucher','view_terminal','view_banner','view_tax','view_logs','view_payment_type','view_country','view_states','view_cities']))
             <li class="nav-item has-treeview {{(Request::is("$backend/price_type","$backend/price_type/*",
             "$backend/printer","$backend/printer/*",
             "$backend/table","$backend/table/*",
+			"$backend/table-color","$backend/table-color/*",
             "$backend/kitchen","$backend/kitchen/*",
             "$backend/voucher","$backend/voucher/*",
             "$backend/terminal","$backend/terminal/*",
@@ -206,6 +207,7 @@ $permission = new \App\Models\Permissions();
                 <a class="nav-link {{(Request::is("$backend/price_type","$backend/price_type/*",
                 "$backend/printer","$backend/printer/*",
                 "$backend/table","$backend/table/*",
+				"$backend/table-color","$backend/table-color/*",
                 "$backend/kitchen","$backend/kitchen/*",
                 "$backend/voucher","$backend/voucher/*",
                 "$backend/terminal","$backend/terminal/*",
@@ -245,6 +247,15 @@ $permission = new \App\Models\Permissions();
                         </a>
                     </li>
                     @endif
+					@if($permission::checkActionPermission('view_table_color'))
+						<li class="nav-item">
+							<a class="nav-link {{(Request::is("$backend/table-color","$backend/table-color/*")) ? 'active' : ''}}"
+							   href="{{route('admin.table-color.index')}}">
+								<i class="nav-icon fas fa fa-table"></i>
+								<p>{{trans('backend/table_color.table_color')}}</p>
+							</a>
+						</li>
+					@endif
                     @if($permission::checkActionPermission('view_kitchen'))
                     <li class="nav-item">
                         <a class="nav-link {{(Request::is("$backend/kitchen","$backend/kitchen/*")) ? 'active' : ''}}" href="{{route('admin.kitchen.index')}}">

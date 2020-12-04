@@ -92,17 +92,19 @@ class SyncOrderController extends Controller
                                     $orders->app_id = $setOrdersArray['app_id'];
                                     //$orders->table_no = $setOrdersArray['table_no'];
                                     $orders->table_id = $setOrdersArray['table_id'];
+                                    $orders->pax = $setOrdersArray['pax'];
                                     $orders->invoice_no = $setOrdersArray['invoice_no'];
                                     $orders->tax_percent = $setOrdersArray['tax_percent'];
                                     $orders->tax_amount = $setOrdersArray['tax_amount'];
                                     $orders->tax_json = $setOrdersArray['tax_json'];
-									$orders->service_charge_percent = $setOrdersArray['service_charge_percent'];
+                                    $orders->service_charge_percent = $setOrdersArray['service_charge_percent'];
                                     $orders->service_charge = $setOrdersArray['service_charge'];
                                     $orders->voucher_id = $setOrdersArray['voucher_id'];
                                     $orders->voucher_amount = $setOrdersArray['voucher_amount'];
                                     $orders->sub_total = $setOrdersArray['sub_total'];
                                     $orders->sub_total_after_discount = $setOrdersArray['sub_total_after_discount'];
                                     $orders->grand_total = $setOrdersArray['grand_total'];
+                                    $orders->rounding_amount = $setOrdersArray['rounding_amount'];
                                     $orders->order_source = isset($setOrdersArray['order_source']) ? $setOrdersArray['order_source'] : "2";
                                     $orders->order_status = $setOrdersArray['order_status'];
                                     $orders->order_item_count = $setOrdersArray['order_item_count'];
@@ -123,12 +125,13 @@ class SyncOrderController extends Controller
 
                                             $productId = $setOrdersItem['product_id'];
                                             $categoryId = $setOrdersItem['category_id'];
-											$detail_qty = $setOrdersItem['detail_qty'];
+                                            $detail_qty = $setOrdersItem['detail_qty'];
                                             $ordersitems->uuid = Helper::getUuid();
                                             $ordersitems->order_id = $ordersId;
                                             $ordersitems->branch_id = $branch_id;
                                             $ordersitems->terminal_id = $terminal_id;
                                             $ordersitems->app_id = $setOrdersItem['app_id'];
+                                            $ordersitems->order_app_id = $setOrdersItem['order_app_id'];
                                             $ordersitems->product_id = $productId;
                                             $ordersitems->category_id = $categoryId;
                                             $ordersitems->product_price = $setOrdersItem['product_price'];
@@ -155,6 +158,8 @@ class SyncOrderController extends Controller
                                                     $ordersitemssub->uuid = Helper::getUuid();
                                                     $ordersitemssub->detail_id = $ordersitems->detail_id;
                                                     $ordersitemssub->app_id = $setOrdersItem['app_id']; // application auto inc id
+                                                    $ordersitemssub->order_app_id = $setOrdersItem['order_app_id'];
+                                                    $ordersitemssub->detail_app_id = $setOrdersItem['detail_app_id'];
                                                     $ordersitemssub->order_id = $ordersId;
                                                     $ordersitemssub->terminal_id = $terminal_id;
                                                     $ordersitemssub->product_id = $setOrdersItem['product_id'];
@@ -177,6 +182,8 @@ class SyncOrderController extends Controller
                                                     $ordersitemssubAt->uuid = Helper::getUuid();
                                                     $ordersitemssubAt->detail_id = $ordersitems->detail_id;
                                                     $ordersitemssubAt->app_id = $setProvariantsAtt['app_id']; // application auto inc id
+                                                    $ordersitemssubAt->order_app_id = $setProvariantsAtt['order_app_id'];
+                                                    $ordersitemssubAt->detail_app_id = $setProvariantsAtt['detail_app_id'];
                                                     $ordersitemssubAt->order_id = $ordersId;
                                                     $ordersitemssubAt->terminal_id = $terminal_id;
                                                     $ordersitemssubAt->product_id = $setOrdersItem['product_id'];
@@ -192,17 +199,17 @@ class SyncOrderController extends Controller
                                                 }
                                             }
 
-											/* Update Inventory */
+                                            /* Update Inventory */
                                             $productInventory = ProductStoreInventory::where(['product_id'=>$productId,'branch_id'=>$branchId])->first();
-											if(!empty($productInventory)){
-												$main_qty = $productInventory->qty;
-												$final_total_qty = ($main_qty - $detail_qty);
-												$updateStock = [
-													'qty' => $final_total_qty,
-													'updated_at' => config('constants.date_time')
-												];
-												ProductStoreInventory::where(['branch_id'=>$branchId,'product_id'=>$productId])->update($updateStock);
-											}
+                                            if(!empty($productInventory)) {
+                                                $main_qty = $productInventory->qty;
+                                                $final_total_qty = ($main_qty - $detail_qty);
+                                                $updateStock = [
+                                                    'qty' => $final_total_qty,
+                                                    'updated_at' => config('constants.date_time')
+                                                ];
+                                                ProductStoreInventory::where(['branch_id' => $branchId, 'product_id' => $productId])->update($updateStock);
+                                            }
                                         }
                                     }
 
@@ -219,34 +226,50 @@ class SyncOrderController extends Controller
 
                                                     $orderspayments = new OrderPayment();
 
+                                                    $orderspayments->uuid = Helper::getUuid();
                                                     $orderspayments->order_id = $ordersId;
-                                                    $orderspayments->app_id = $setPaymentdetail['app_id']; // application auto inc id
                                                     $orderspayments->branch_id = $branch_id;
                                                     $orderspayments->terminal_id = $setPaymentdetail['terminal_id'];
+                                                    $orderspayments->app_id = $setPaymentdetail['app_id']; // application auto inc id
+                                                    $orderspayments->order_app_id = $setPaymentdetail['order_app_id'];
+                                                    $orderspayments->is_split = $setPaymentdetail['is_split'];
+                                                    $orderspayments->is_cash = $setPaymentdetail['is_cash'];
+                                                    $orderspayments->remark = $setPaymentdetail['remark'];
+                                                    $orderspayments->last_digits = $setPaymentdetail['last_digits'];
+                                                    $orderspayments->approval_code = $setPaymentdetail['approval_code'];
+                                                    $orderspayments->reference_number = $setPaymentdetail['reference_number'];
                                                     $orderspayments->op_method_id = $setPaymentdetail['op_method_id'];
                                                     $orderspayments->op_amount = $setPaymentdetail['op_amount'];
+                                                    $orderspayments->op_amount_change = $setPaymentdetail['op_amount_change'];
                                                     $orderspayments->op_method_response = $setPaymentdetail['op_method_response'];
                                                     $orderspayments->op_status = $setPaymentdetail['op_status'];
                                                     $orderspayments->op_datetime = $setPaymentdetail['op_datetime'];
                                                     $orderspayments->op_by = $setPaymentdetail['op_by'];
-                                                    $orderspayments->updated_at = $setPaymentdetail['updated_at'];
                                                     $orderspayments->updated_at = $setPaymentdetail['updated_at'];
                                                     $orderspayments->updated_by = ($setPaymentdetail['updated_by'] != 0) ? $setPaymentdetail['updated_by'] : NULL;
                                                     $orderspayments = OrderPayment::create($orderspayments->toArray());
                                                     $orderspaymentsId = $orderspayments->op_id;  //get order payment id
                                                     $setPaymentdetail['server_id'] = $orderspaymentsId;
                                                 } else {
+                                                    $orderspayments = new OrderPayment();
                                                     $orderspayments->order_id = $ordersId;
-                                                    $orderspayments->app_id = $setPaymentdetail['app_id']; // application auto inc id
                                                     $orderspayments->branch_id = $branch_id;
                                                     $orderspayments->terminal_id = $setPaymentdetail['terminal_id'];
+                                                    $orderspayments->app_id = $setPaymentdetail['app_id']; // application auto inc id
+                                                    $orderspayments->order_app_id = $setPaymentdetail['order_app_id']; // application auto inc id
+                                                    $orderspayments->is_split = $setPaymentdetail['is_split'];
+                                                    $orderspayments->is_cash = $setPaymentdetail['is_cash'];
+                                                    $orderspayments->remark = $setPaymentdetail['remark'];
+                                                    $orderspayments->last_digits = $setPaymentdetail['last_digits'];
+                                                    $orderspayments->approval_code = $setPaymentdetail['approval_code'];
+                                                    $orderspayments->reference_number = $setPaymentdetail['reference_number'];
                                                     $orderspayments->op_method_id = $setPaymentdetail['op_method_id'];
                                                     $orderspayments->op_amount = $setPaymentdetail['op_amount'];
+                                                    $orderspayments->op_amount_change = $setPaymentdetail['op_amount_change'];
                                                     $orderspayments->op_method_response = $setPaymentdetail['op_method_response'];
                                                     $orderspayments->op_status = $setPaymentdetail['op_status'];
                                                     $orderspayments->op_datetime = $setPaymentdetail['op_datetime'];
                                                     $orderspayments->op_by = $setPaymentdetail['op_by'];
-                                                    $orderspayments->updated_at = $setPaymentdetail['updated_at'];
                                                     $orderspayments->updated_at = $setPaymentdetail['updated_at'];
                                                     $orderspayments->updated_by = ($setPaymentdetail['updated_by'] != 0) ? $setPaymentdetail['updated_by'] : NULL;
                                                     OrderPayment::where('op_id',$serverId)->update($orderspayments->toArray());
@@ -254,17 +277,26 @@ class SyncOrderController extends Controller
                                                     $setPaymentdetail['server_id'] = $orderspaymentsId;
                                                 }
                                             } else {
+                                                $orderspayments = new OrderPayment();
+                                                $orderspayments->uuid = Helper::getUuid();
                                                 $orderspayments->order_id = $ordersId;
-                                                $orderspayments->app_id = $setPaymentdetail['app_id']; // application auto inc id
                                                 $orderspayments->branch_id = $branch_id;
                                                 $orderspayments->terminal_id = $setPaymentdetail['terminal_id'];
+                                                $orderspayments->app_id = $setPaymentdetail['app_id']; // application auto inc id
+                                                $orderspayments->order_app_id = $setPaymentdetail['order_app_id']; // application auto inc id
+                                                $orderspayments->is_split = $setPaymentdetail['is_split'];
+                                                $orderspayments->is_cash = $setPaymentdetail['is_cash'];
+                                                $orderspayments->remark = $setPaymentdetail['remark'];
+                                                $orderspayments->last_digits = $setPaymentdetail['last_digits'];
+                                                $orderspayments->approval_code = $setPaymentdetail['approval_code'];
+                                                $orderspayments->reference_number = $setPaymentdetail['reference_number'];
                                                 $orderspayments->op_method_id = $setPaymentdetail['op_method_id'];
                                                 $orderspayments->op_amount = $setPaymentdetail['op_amount'];
+                                                $orderspayments->op_amount_change = $setPaymentdetail['op_amount_change'];
                                                 $orderspayments->op_method_response = $setPaymentdetail['op_method_response'];
                                                 $orderspayments->op_status = $setPaymentdetail['op_status'];
                                                 $orderspayments->op_datetime = $setPaymentdetail['op_datetime'];
                                                 $orderspayments->op_by = $setPaymentdetail['op_by'];
-                                                $orderspayments->updated_at = $setPaymentdetail['updated_at'];
                                                 $orderspayments->updated_at = $setPaymentdetail['updated_at'];
                                                 $orderspayments->updated_by = ($setPaymentdetail['updated_by'] != 0) ? $setPaymentdetail['updated_by'] : NULL;
                                                 $orderspayments = OrderPayment::create($orderspayments->toArray());
@@ -330,17 +362,19 @@ class SyncOrderController extends Controller
                                     $orders->app_id = $setOrdersArray['app_id'];
                                     //$orders->table_no = $setOrdersArray['table_no'];
                                     $orders->table_id = $setOrdersArray['table_id'];
+                                    $orders->pax = $setOrdersArray['pax'];
                                     $orders->invoice_no = $setOrdersArray['invoice_no'];
                                     $orders->tax_percent = $setOrdersArray['tax_percent'];
                                     $orders->tax_amount = $setOrdersArray['tax_amount'];
                                     $orders->tax_json = $setOrdersArray['tax_json'];
-									$orders->service_charge_percent = $setOrdersArray['service_charge_percent'];
+                                    $orders->service_charge_percent = $setOrdersArray['service_charge_percent'];
                                     $orders->service_charge = $setOrdersArray['service_charge'];
                                     $orders->voucher_id = $setOrdersArray['voucher_id'];
                                     $orders->voucher_amount = $setOrdersArray['voucher_amount'];
                                     $orders->sub_total = $setOrdersArray['sub_total'];
                                     $orders->sub_total_after_discount = $setOrdersArray['sub_total_after_discount'];
                                     $orders->grand_total = $setOrdersArray['grand_total'];
+                                    $orders->rounding_amount = $setOrdersArray['rounding_amount'];
                                     $orders->order_source = isset($setOrdersArray['order_source']) ? $setOrdersArray['order_source'] : "2";
                                     $orders->order_status = $setOrdersArray['order_status'];
                                     $orders->order_item_count = $setOrdersArray['order_item_count'];
@@ -369,11 +403,12 @@ class SyncOrderController extends Controller
 
                                             $productId = $setOrdersItem['product_id'];
                                             $categoryId = $setOrdersItem['category_id'];
-											$detail_qty = $setOrdersItem['detail_qty'];
+                                            $detail_qty = $setOrdersItem['detail_qty'];
                                             $ordersitems->order_id = $ordersId;
                                             $ordersitems->branch_id = $branch_id;
                                             $ordersitems->terminal_id = $terminal_id;
                                             $ordersitems->app_id = $setOrdersItem['app_id'];
+                                            $ordersitems->order_app_id = $setOrdersItem['order_app_id'];
                                             $ordersitems->product_id = $productId;
                                             $ordersitems->category_id = $categoryId;
                                             $ordersitems->product_price = $setOrdersItem['product_price'];
@@ -405,6 +440,8 @@ class SyncOrderController extends Controller
 
                                                     $ordersitemssub->detail_id = $ordersitems->detail_id;
                                                     $ordersitemssub->app_id = $setOrdersItem['app_id']; // application auto inc id
+                                                    $ordersitemssub->order_app_id = $setOrdersItem['order_app_id'];
+                                                    $ordersitemssub->detail_app_id = $setOrdersItem['detail_app_id'];
                                                     $ordersitemssub->order_id = $ordersId;
                                                     $ordersitemssub->terminal_id = $terminal_id;
                                                     $ordersitemssub->product_id = $setOrdersItem['product_id'];
@@ -435,6 +472,8 @@ class SyncOrderController extends Controller
 
                                                     $ordersitemssubAt->detail_id = $ordersitems->detail_id;
                                                     $ordersitemssubAt->app_id = $setProvariantsAtt['app_id']; // application auto inc id
+                                                    $ordersitemssubAt->order_app_id = $setOrdersItem['order_app_id'];
+                                                    $ordersitemssubAt->detail_app_id = $setOrdersItem['detail_app_id'];
                                                     $ordersitemssubAt->order_id = $ordersId;
                                                     $ordersitemssubAt->terminal_id = $terminal_id;
                                                     $ordersitemssubAt->product_id = $setOrdersItem['product_id'];
@@ -451,17 +490,17 @@ class SyncOrderController extends Controller
                                                 }
                                             }
 
-											/* Update Inventory */
+                                            /* Update Inventory */
                                             $productInventory = ProductStoreInventory::where(['product_id'=>$productId,'branch_id'=>$branchId])->first();
-											if(!empty($productInventory)){
-												$main_qty = $productInventory->qty;
-												$final_total_qty = ($main_qty - $detail_qty);
-												$updateStock = [
-													'qty' => $final_total_qty,
-													'updated_at' => config('constants.date_time')
-												];
-												//ProductStoreInventory::where(['branch_id'=>$branchId,'product_id'=>$productId])->update($updateStock);
-											}
+                                            if(!empty($productInventory)) {
+                                                $main_qty = $productInventory->qty;
+                                                $final_total_qty = ($main_qty - $detail_qty);
+                                                $updateStock = [
+                                                    'qty' => $final_total_qty,
+                                                    'updated_at' => config('constants.date_time')
+                                                ];
+                                                //ProductStoreInventory::where(['branch_id'=>$branchId,'product_id'=>$productId])->update($updateStock);
+                                            }
                                         }
                                     }
 
@@ -478,34 +517,50 @@ class SyncOrderController extends Controller
 
                                                     $orderspayments = new OrderPayment();
 
+                                                    $orderspayments->uuid = Helper::getUuid();
                                                     $orderspayments->order_id = $ordersId;
-                                                    $orderspayments->app_id = $setPaymentdetail['app_id']; // application auto inc id
                                                     $orderspayments->branch_id = $branch_id;
                                                     $orderspayments->terminal_id = $setPaymentdetail['terminal_id'];
+                                                    $orderspayments->app_id = $setPaymentdetail['app_id']; // application auto inc id
+                                                    $orderspayments->order_app_id = $setPaymentdetail['app_id']; // application auto inc id
+                                                    $orderspayments->is_split = $setPaymentdetail['is_split'];
+                                                    $orderspayments->is_cash = $setPaymentdetail['is_cash'];
+                                                    $orderspayments->remark = $setPaymentdetail['remark'];
+                                                    $orderspayments->last_digits = $setPaymentdetail['last_digits'];
+                                                    $orderspayments->approval_code = $setPaymentdetail['approval_code'];
+                                                    $orderspayments->reference_number = $setPaymentdetail['reference_number'];
                                                     $orderspayments->op_method_id = $setPaymentdetail['op_method_id'];
                                                     $orderspayments->op_amount = $setPaymentdetail['op_amount'];
+                                                    $orderspayments->op_amount_change = $setPaymentdetail['op_amount_change'];
                                                     $orderspayments->op_method_response = $setPaymentdetail['op_method_response'];
                                                     $orderspayments->op_status = $setPaymentdetail['op_status'];
                                                     $orderspayments->op_datetime = $setPaymentdetail['op_datetime'];
                                                     $orderspayments->op_by = $setPaymentdetail['op_by'];
-                                                    $orderspayments->updated_at = $setPaymentdetail['updated_at'];
                                                     $orderspayments->updated_at = $setPaymentdetail['updated_at'];
                                                     $orderspayments->updated_by = ($setPaymentdetail['updated_by'] != 0) ? $setPaymentdetail['updated_by'] : NULL;
                                                     $orderspayments = OrderPayment::create($orderspayments->toArray());
                                                     $orderspaymentsId = $orderspayments->op_id;  //get order payment id
                                                     $setPaymentdetail['server_id'] = $orderspaymentsId;
                                                 } else {
+                                                    $orderspayments = new OrderPayment();
                                                     $orderspayments->order_id = $ordersId;
-                                                    $orderspayments->app_id = $setPaymentdetail['app_id']; // application auto inc id
                                                     $orderspayments->branch_id = $branch_id;
                                                     $orderspayments->terminal_id = $setPaymentdetail['terminal_id'];
+                                                    $orderspayments->app_id = $setPaymentdetail['app_id']; // application auto inc id
+                                                    $orderspayments->order_app_id = $setPaymentdetail['app_id']; // application auto inc id
+                                                    $orderspayments->is_split = $setPaymentdetail['is_split'];
+                                                    $orderspayments->is_cash = $setPaymentdetail['is_cash'];
+                                                    $orderspayments->remark = $setPaymentdetail['remark'];
+                                                    $orderspayments->last_digits = $setPaymentdetail['last_digits'];
+                                                    $orderspayments->approval_code = $setPaymentdetail['approval_code'];
+                                                    $orderspayments->reference_number = $setPaymentdetail['reference_number'];
                                                     $orderspayments->op_method_id = $setPaymentdetail['op_method_id'];
                                                     $orderspayments->op_amount = $setPaymentdetail['op_amount'];
+                                                    $orderspayments->op_amount_change = $setPaymentdetail['op_amount_change'];
                                                     $orderspayments->op_method_response = $setPaymentdetail['op_method_response'];
                                                     $orderspayments->op_status = $setPaymentdetail['op_status'];
                                                     $orderspayments->op_datetime = $setPaymentdetail['op_datetime'];
                                                     $orderspayments->op_by = $setPaymentdetail['op_by'];
-                                                    $orderspayments->updated_at = $setPaymentdetail['updated_at'];
                                                     $orderspayments->updated_at = $setPaymentdetail['updated_at'];
                                                     $orderspayments->updated_by = ($setPaymentdetail['updated_by'] != 0) ? $setPaymentdetail['updated_by'] : NULL;
                                                     OrderPayment::where('op_id',$serverId)->update($orderspayments->toArray());
@@ -513,12 +568,22 @@ class SyncOrderController extends Controller
                                                     $setPaymentdetail['server_id'] = $orderspaymentsId;
                                                 }
                                             } else {
+                                                $orderspayments = new OrderPayment();
+                                                $orderspayments->uuid = Helper::getUuid();
                                                 $orderspayments->order_id = $ordersId;
-                                                $orderspayments->app_id = $setPaymentdetail['app_id']; // application auto inc id
                                                 $orderspayments->branch_id = $branch_id;
                                                 $orderspayments->terminal_id = $setPaymentdetail['terminal_id'];
+                                                $orderspayments->app_id = $setPaymentdetail['app_id']; // application auto inc id
+                                                $orderspayments->order_app_id = $setPaymentdetail['app_id']; // application auto inc id
+                                                $orderspayments->is_split = $setPaymentdetail['is_split'];
+                                                $orderspayments->is_cash = $setPaymentdetail['is_cash'];
+                                                $orderspayments->remark = $setPaymentdetail['remark'];
+                                                $orderspayments->last_digits = $setPaymentdetail['last_digits'];
+                                                $orderspayments->approval_code = $setPaymentdetail['approval_code'];
+                                                $orderspayments->reference_number = $setPaymentdetail['reference_number'];
                                                 $orderspayments->op_method_id = $setPaymentdetail['op_method_id'];
                                                 $orderspayments->op_amount = $setPaymentdetail['op_amount'];
+                                                $orderspayments->op_amount_change = $setPaymentdetail['op_amount_change'];
                                                 $orderspayments->op_method_response = $setPaymentdetail['op_method_response'];
                                                 $orderspayments->op_status = $setPaymentdetail['op_status'];
                                                 $orderspayments->op_datetime = $setPaymentdetail['op_datetime'];
@@ -592,11 +657,12 @@ class SyncOrderController extends Controller
                                 $orders->app_id = $setOrdersArray['app_id'];
                                 //$orders->table_no = $setOrdersArray['table_no'];
                                 $orders->table_id = $setOrdersArray['table_id'];
+                                $orders->pax = $setOrdersArray['pax'];
                                 $orders->invoice_no = $setOrdersArray['invoice_no'];
                                 $orders->tax_percent = $setOrdersArray['tax_percent'];
                                 $orders->tax_amount = $setOrdersArray['tax_amount'];
                                 $orders->tax_json = \GuzzleHttp\json_encode($setOrdersArray['tax_json']);
-								$orders->service_charge_percent = $setOrdersArray['service_charge_percent'];
+                                $orders->service_charge_percent = $setOrdersArray['service_charge_percent'];
                                 $orders->service_charge = $setOrdersArray['service_charge'];
                                 $orders->voucher_id = $setOrdersArray['voucher_id'];
                                 $orders->voucher_amount = $setOrdersArray['voucher_amount'];
@@ -604,6 +670,7 @@ class SyncOrderController extends Controller
                                 $orders->sub_total = $setOrdersArray['sub_total'];
                                 $orders->sub_total_after_discount = $setOrdersArray['sub_total_after_discount'];
                                 $orders->grand_total = $setOrdersArray['grand_total'];
+                                $orders->rounding_amount = $setOrdersArray['rounding_amount'];
                                 $orders->order_source = isset($setOrdersArray['order_source']) ? $setOrdersArray['order_source'] : "2";
                                 $orders->order_status = $setOrdersArray['order_status'];
                                 $orders->order_item_count = $setOrdersArray['order_item_count'];
@@ -632,12 +699,13 @@ class SyncOrderController extends Controller
 
                                         $productId = $setOrdersItem['product_id'];
                                         $categoryId = $setOrdersItem['category_id'];
-										$detail_qty = $setOrdersItem['detail_qty'];
+                                        $detail_qty = $setOrdersItem['detail_qty'];
                                         $ordersitems->uuid = Helper::getUuid();
                                         $ordersitems->order_id = $ordersId;
                                         $ordersitems->branch_id = $branch_id;
                                         $ordersitems->terminal_id = $terminal_id;
                                         $ordersitems->app_id = $setOrdersItem['app_id'];
+                                        $ordersitems->order_app_id = $setOrdersItem['order_app_id'];
                                         $ordersitems->product_id = $productId;
                                         $ordersitems->category_id = $categoryId;
                                         $ordersitems->product_price = $setOrdersItem['product_price'];
@@ -670,6 +738,8 @@ class SyncOrderController extends Controller
                                                 $ordersitemssub->uuid = Helper::getUuid();
                                                 $ordersitemssub->detail_id = $ordersitems->detail_id;
                                                 $ordersitemssub->app_id = $setOrdersItem['app_id']; // application auto inc id
+                                                $ordersitemssub->order_app_id = $setOrdersItem['order_app_id'];
+                                                $ordersitemssub->detail_app_id = $setOrdersItem['detail_app_id'];
                                                 $ordersitemssub->order_id = $ordersId;
                                                 $ordersitemssub->terminal_id = $terminal_id;
                                                 $ordersitemssub->product_id = $setOrdersItem['product_id'];
@@ -700,6 +770,8 @@ class SyncOrderController extends Controller
                                                 $ordersitemssubAt->uuid = Helper::getUuid();
                                                 $ordersitemssubAt->detail_id = $ordersitems->detail_id;
                                                 $ordersitemssubAt->app_id = $setProvariantsAtt['app_id']; // application auto inc id
+                                                $ordersitemssubAt->order_app_id = $setProvariantsAtt['order_app_id'];
+                                                $ordersitemssubAt->detail_app_id = $setProvariantsAtt['detail_app_id'];
                                                 $ordersitemssubAt->order_id = $ordersId;
                                                 $ordersitemssubAt->terminal_id = $terminal_id;
                                                 $ordersitemssubAt->product_id = $setOrdersItem['product_id'];
@@ -716,17 +788,17 @@ class SyncOrderController extends Controller
                                             }
                                         }
 
-										/* Update Inventory */
+                                        /* Update Inventory */
                                         $productInventory = ProductStoreInventory::where(['product_id'=>$productId,'branch_id'=>$branchId])->first();
-										if(!empty($productInventory)){
-											$main_qty = $productInventory->qty;
-											$final_total_qty = ($main_qty - $detail_qty);
-											$updateStock = [
-												'qty' => $final_total_qty,
-												'updated_at' => config('constants.date_time')
-											];
-											ProductStoreInventory::where(['branch_id'=>$branchId,'product_id'=>$productId])->update($updateStock);
-										}
+                                        if(!empty($productInventory)) {
+                                            $main_qty = $productInventory->qty;
+                                            $final_total_qty = ($main_qty - $detail_qty);
+                                            $updateStock = [
+                                                'qty' => $final_total_qty,
+                                                'updated_at' => config('constants.date_time')
+                                            ];
+                                            ProductStoreInventory::where(['branch_id' => $branchId, 'product_id' => $productId])->update($updateStock);
+                                        }
                                     }
                                 }
 
@@ -743,12 +815,21 @@ class SyncOrderController extends Controller
 
                                                 $orderspayments = new OrderPayment();
 
+                                                $orderspayments->uuid = Helper::getUuid();
                                                 $orderspayments->order_id = $ordersId;
-                                                $orderspayments->app_id = $setPaymentdetail['app_id']; // application auto inc id
                                                 $orderspayments->branch_id = $branch_id;
                                                 $orderspayments->terminal_id = $setPaymentdetail['terminal_id'];
+                                                $orderspayments->app_id = $setPaymentdetail['app_id']; // application auto inc id
+                                                $orderspayments->order_app_id = $setPaymentdetail['order_app_id']; // application auto inc id
+                                                $orderspayments->is_split = $setPaymentdetail['is_split'];
+                                                $orderspayments->is_cash = $setPaymentdetail['is_cash'];
+                                                $orderspayments->remark = $setPaymentdetail['remark'];
+                                                $orderspayments->last_digits = $setPaymentdetail['last_digits'];
+                                                $orderspayments->approval_code = $setPaymentdetail['approval_code'];
+                                                $orderspayments->reference_number = $setPaymentdetail['reference_number'];
                                                 $orderspayments->op_method_id = $setPaymentdetail['op_method_id'];
                                                 $orderspayments->op_amount = $setPaymentdetail['op_amount'];
+                                                $orderspayments->op_amount_change = $setPaymentdetail['op_amount_change'];
                                                 $orderspayments->op_method_response = $setPaymentdetail['op_method_response'];
                                                 $orderspayments->op_status = $setPaymentdetail['op_status'];
                                                 $orderspayments->op_datetime = $setPaymentdetail['op_datetime'];
@@ -760,12 +841,21 @@ class SyncOrderController extends Controller
                                                 $orderspaymentsId = $orderspayments->op_id;  //get order payment id
                                                 $setPaymentdetail['server_id'] = $orderspaymentsId;
                                             } else {
+                                                $orderspayments = new OrderPayment();
                                                 $orderspayments->order_id = $ordersId;
-                                                $orderspayments->app_id = $setPaymentdetail['app_id']; // application auto inc id
                                                 $orderspayments->branch_id = $branch_id;
                                                 $orderspayments->terminal_id = $setPaymentdetail['terminal_id'];
+                                                $orderspayments->app_id = $setPaymentdetail['app_id']; // application auto inc id
+                                                $orderspayments->order_app_id = $setPaymentdetail['order_app_id']; // application auto inc id
+                                                $orderspayments->is_split = $setPaymentdetail['is_split'];
+                                                $orderspayments->is_cash = $setPaymentdetail['is_cash'];
+                                                $orderspayments->remark = $setPaymentdetail['remark'];
+                                                $orderspayments->last_digits = $setPaymentdetail['last_digits'];
+                                                $orderspayments->approval_code = $setPaymentdetail['approval_code'];
+                                                $orderspayments->reference_number = $setPaymentdetail['reference_number'];
                                                 $orderspayments->op_method_id = $setPaymentdetail['op_method_id'];
                                                 $orderspayments->op_amount = $setPaymentdetail['op_amount'];
+                                                $orderspayments->op_amount_change = $setPaymentdetail['op_amount_change'];
                                                 $orderspayments->op_method_response = $setPaymentdetail['op_method_response'];
                                                 $orderspayments->op_status = $setPaymentdetail['op_status'];
                                                 $orderspayments->op_datetime = $setPaymentdetail['op_datetime'];
@@ -778,12 +868,22 @@ class SyncOrderController extends Controller
                                                 $setPaymentdetail['server_id'] = $orderspaymentsId;
                                             }
                                         } else {
+                                            $orderspayments = new OrderPayment();
+                                            $orderspayments->uuid = Helper::getUuid();
                                             $orderspayments->order_id = $ordersId;
-                                            $orderspayments->app_id = $setPaymentdetail['app_id']; // application auto inc id
                                             $orderspayments->branch_id = $branch_id;
                                             $orderspayments->terminal_id = $setPaymentdetail['terminal_id'];
+                                            $orderspayments->app_id = $setPaymentdetail['app_id']; // application auto inc id
+                                            $orderspayments->order_app_id = $setPaymentdetail['order_app_id']; // application auto inc id
+                                            $orderspayments->is_split = $setPaymentdetail['is_split'];
+                                            $orderspayments->is_cash = $setPaymentdetail['is_cash'];
+                                            $orderspayments->remark = $setPaymentdetail['remark'];
+                                            $orderspayments->last_digits = $setPaymentdetail['last_digits'];
+                                            $orderspayments->approval_code = $setPaymentdetail['approval_code'];
+                                            $orderspayments->reference_number = $setPaymentdetail['reference_number'];
                                             $orderspayments->op_method_id = $setPaymentdetail['op_method_id'];
                                             $orderspayments->op_amount = $setPaymentdetail['op_amount'];
+                                            $orderspayments->op_amount_change = $setPaymentdetail['op_amount_change'];
                                             $orderspayments->op_method_response = $setPaymentdetail['op_method_response'];
                                             $orderspayments->op_status = $setPaymentdetail['op_status'];
                                             $orderspayments->op_datetime = $setPaymentdetail['op_datetime'];
@@ -943,6 +1043,7 @@ class SyncOrderController extends Controller
         }
 
     }
+
     public function openShift(Request $request, $locale)
     {
         Helper::log('App Shift Data Open : Start');
@@ -1126,8 +1227,8 @@ class SyncOrderController extends Controller
                 return response()->json(['status' => 422, 'show' => true, "message" => trans('api.branch_id_required')]);
             } else {
 
-
-
+                $isValidJson = isJson($shiftInvoice);
+                if ($isValidJson) {
                     $timeStart = microtime(true);
                     $getShiftArray = \GuzzleHttp\json_decode($shiftInvoice, true);
                     $pushShiftInvoice = [];
@@ -1193,7 +1294,13 @@ class SyncOrderController extends Controller
                         Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'Create Order data SynchronizeAppdata invalid json string', date('Y-m-d'), date('H:i:s'), 'shift_detail');
                         return response()->json(['status' => 422, 'show' => true, 'message' => $message]);
                     }
-
+                } else {
+                    DB::rollBack();
+                    Helper::log('AppShiftInvoiceData Table Synch : Invalid Json String');
+                    $message = trans('api.invalid_json_string');
+                    Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'Create Order data SynchronizeAppdata invalid json string', date('Y-m-d'), date('H:i:s'), 'shift_detail');
+                    return response()->json(['status' => 422, 'show' => true, 'message' => $message]);
+                }
             }
         } catch (\Exception $exception) {
             Helper::log('AppShiftInvoiceData Query Exception : exception');
@@ -1514,7 +1621,7 @@ class SyncOrderController extends Controller
 													$setinventoryLog['server_id'] = $ilId;
 
                                                 }
-											} else {
+											} else {	
 												$productStoreInventoryLog->uuid = Helper::getUuid();
 												$productStoreInventoryLog->inventory_id = $setinventoryLog['inventory_id'];
 												$productStoreInventoryLog->branch_id = $setinventoryLog['branch_id'];
@@ -1532,13 +1639,13 @@ class SyncOrderController extends Controller
 
 											}
                                         }
-
+                                        
                                     }
-									/* Update Main Inventory Stock */
+
+                                    /* Update Main Inventory Stock */
                                     $productInventory = ProductStoreInventory::where('inventory_id',$inventoryId)->first();
                                     $main_qty = $productInventory->qty;
-									$final_total_qty = $total_product_qty + $main_qty;
-									//$final_total_qty = ($total_product_qty - $total_deduct_qty) + $total_add_qty;
+									$final_total_qty = ($total_product_qty + $main_qty);
 									$updateStock = [
 										'qty' => $final_total_qty,
 										'updated_at' => $setProductStoreInventoryArray['updated_at'],
@@ -1602,11 +1709,11 @@ class SyncOrderController extends Controller
                                     }
 
                                 }
-								/* Update Main Inventory Stock */
+
+                                /* Update Main Inventory Stock */
                                 $productInventory = ProductStoreInventory::where('inventory_id',$inventoryId)->first();
                                 $main_qty = $productInventory->qty;
                                 $final_total_qty = ($total_product_qty + $main_qty);
-								//$final_total_qty = ($total_product_qty - $total_deduct_qty) + $total_add_qty;
 								$updateStock = [
 									'qty' => $final_total_qty,
 									'updated_at' => $setProductStoreInventoryArray['updated_at'],
@@ -1672,9 +1779,8 @@ class SyncOrderController extends Controller
 
                         $loadInventory['product_store_inventory_log'] = $inventoryLog;
                     } else {
-						$loadInventory['product_store_inventory_log'] = [];
-					}
-
+                        $loadInventory['product_store_inventory_log'] = [];
+                    }
                 }
                 $pushInventory[] = $loadInventory;
             }
@@ -1687,7 +1793,7 @@ class SyncOrderController extends Controller
             return response()->json(['status' => 500, 'show' => true, 'message' => trans('api.ooops')]);
         }
     }
-
+	
 	/*
      * @method : update inventory
      * @parmas : terminalId, InvoiceUniqId
@@ -1740,6 +1846,7 @@ class SyncOrderController extends Controller
                                         foreach ($getinventoryLog as $setinventoryLog) {
                                             $productStoreInventoryLog->uuid = Helper::getUuid();
                                             $productStoreInventoryLog->cl_id = $setinventoryLog['cl_id'];
+                                            $productStoreInventoryLog->cl_appId = $setinventoryLog['cl_appId'];
                                             $productStoreInventoryLog->branch_id = $setinventoryLog['branch_id'];
                                             $productStoreInventoryLog->product_id = $setinventoryLog['product_id'];
                                             $productStoreInventoryLog->customer_id = $setinventoryLog['employe_id'];
@@ -1783,7 +1890,8 @@ class SyncOrderController extends Controller
                                 if (!empty($getinventoryLog) && is_array($getinventoryLog)) {
                                     foreach ($getinventoryLog as $setinventoryLog) {
                                         $productStoreInventoryLog->uuid = Helper::getUuid();
-                                        $productStoreInventoryLog->inventory_id = $setinventoryLog['cl_id'];
+                                        $productStoreInventoryLog->cl_id = $setinventoryLog['cl_id'];
+                                        $productStoreInventoryLog->cl_appId = $setinventoryLog['cl_appId'];
                                         $productStoreInventoryLog->branch_id = $setinventoryLog['branch_id'];
                                         $productStoreInventoryLog->product_id = $setinventoryLog['product_id'];
                                         $productStoreInventoryLog->customer_id = $setinventoryLog['employe_id'];
@@ -1881,7 +1989,7 @@ class SyncOrderController extends Controller
         }
     }
 
-	/**
+    /**
      * Customer Sync
      * @param Request $request
      * @param $locale
@@ -1909,10 +2017,10 @@ class SyncOrderController extends Controller
                 return response()->json(['status' => 422, 'show' => true, "message" => trans('api.branch_id_required')]);
             } else {
 
-                //$isValidJson = isJson($customer);
-                //if ($isValidJson) {
+                $isValidJson = isJson($customer);
+                if ($isValidJson) {
                     $timeStart = microtime(true);
-                    $getCustomerArray = \GuzzleHttp\json_decode(stripslashes($customer), true);
+                    $getCustomerArray = \GuzzleHttp\json_decode($customer, true);
                     $pushShift = [];
                     if (is_array($getCustomerArray)) {  // valid array
                         foreach ($getCustomerArray as $setCustomerArray) {
@@ -1930,18 +2038,17 @@ class SyncOrderController extends Controller
                                     $customer->last_name = $setCustomerArray['last_name'];
                                     $customer->name = $setCustomerArray['name'];
                                     $customer->username = $setCustomerArray['username'];
-                                    $customer->username = $setCustomerArray['username'];
                                     $customer->email = $setCustomerArray['email'];
-                                    $customer->role = 2;//$setCustomerArray['role'];
+                                    $customer->role = $setCustomerArray['role'];
                                     $customer->phonecode = $setCustomerArray['phonecode'];
                                     $customer->mobile = $setCustomerArray['mobile'];
-									$customer->password = Hash::make($setCustomerArray['password']);
+                                    $customer->password = Hash::make($setCustomerArray['password']);
                                     $customer->address = $setCustomerArray['address'];
                                     $customer->country_id = $setCustomerArray['country_id'];
                                     $customer->state_id = $setCustomerArray['state_id'];
                                     $customer->city_id = $setCustomerArray['city_id'];
                                     $customer->zipcode = $setCustomerArray['zipcode'];
-									$customer->api_token = $setCustomerArray['api_token'];
+                                    $customer->api_token = $setCustomerArray['api_token'];
                                     $customer->last_login = $setCustomerArray['last_login'];
                                     $customer->status = $setCustomerArray['status'];
                                     $customer->created_at = ($setCustomerArray['created_at'] != '') ? $setCustomerArray['created_at'] : NULL;
@@ -1963,19 +2070,18 @@ class SyncOrderController extends Controller
                                     $customer->username = $setCustomerArray['username'];
                                     $customer->username = $setCustomerArray['username'];
                                     $customer->email = $setCustomerArray['email'];
-                                    $customer->role = 2;//$setCustomerArray['role'];
+                                    $customer->role = $setCustomerArray['role'];
                                     $customer->phonecode = $setCustomerArray['phonecode'];
                                     $customer->mobile = $setCustomerArray['mobile'];
-									$customer->password = Hash::make($setCustomerArray['password']);
                                     $customer->address = $setCustomerArray['address'];
                                     $customer->country_id = $setCustomerArray['country_id'];
                                     $customer->state_id = $setCustomerArray['state_id'];
                                     $customer->city_id = $setCustomerArray['city_id'];
                                     $customer->zipcode = $setCustomerArray['zipcode'];
-									$customer->api_token = $setCustomerArray['api_token'];
+                                    $customer->api_token = $setCustomerArray['api_token'];
                                     $customer->last_login = $setCustomerArray['last_login'];
                                     $customer->status = $setCustomerArray['status'];
-									$customer->created_at = ($setCustomerArray['created_at'] != '') ? $setCustomerArray['created_at'] : NULL;
+                                    $customer->created_at = ($setCustomerArray['created_at'] != '') ? $setCustomerArray['created_at'] : NULL;
                                     $customer->created_by = ($setCustomerArray['created_by'] != 0) ? $setCustomerArray['created_by'] : NULL;
                                     $customer->updated_by = ($setCustomerArray['updated_by'] != 0) ? $setCustomerArray['updated_by'] : NULL;
                                     $customer->updated_at = ($setCustomerArray['updated_at'] != '') ? $setCustomerArray['updated_at'] : NULL;
@@ -1995,18 +2101,17 @@ class SyncOrderController extends Controller
                                 $customer->username = $setCustomerArray['username'];
                                 $customer->username = $setCustomerArray['username'];
                                 $customer->email = $setCustomerArray['email'];
-                                $customer->role = 2;//$setCustomerArray['role'];
+                                $customer->role = $setCustomerArray['role'];
                                 $customer->phonecode = $setCustomerArray['phonecode'];
                                 $customer->mobile = $setCustomerArray['mobile'];
-								$customer->password = Hash::make($setCustomerArray['password']);
                                 $customer->address = $setCustomerArray['address'];
                                 $customer->country_id = $setCustomerArray['country_id'];
                                 $customer->state_id = $setCustomerArray['state_id'];
                                 $customer->city_id = $setCustomerArray['city_id'];
                                 $customer->zipcode = $setCustomerArray['zipcode'];
-								$customer->api_token = $setCustomerArray['api_token'];
-								$customer->last_login = $setCustomerArray['last_login'];
-								$customer->status = $setCustomerArray['status'];
+                                $customer->api_token = $setCustomerArray['api_token'];
+                                $customer->last_login = $setCustomerArray['last_login'];
+                                $customer->status = $setCustomerArray['status'];
                                 $customer->created_at = ($setCustomerArray['created_at'] != '') ? $setCustomerArray['created_at'] : NULL;
                                 $customer->created_by = ($setCustomerArray['created_by'] != 0) ? $setCustomerArray['created_by'] : NULL;
                                 $customer->updated_by = ($setCustomerArray['updated_by'] != 0) ? $setCustomerArray['updated_by'] : NULL;
@@ -2029,13 +2134,13 @@ class SyncOrderController extends Controller
                         Helper::saveTerminalLog($terminalId, $branchId, 'Customer Auto Sync', 'Create Customer data SynchronizeAppdata invalid json string', date('Y-m-d'), date('H:i:s'), 'customer');
                         return response()->json(['status' => 422, 'show' => true, 'message' => $message]);
                     }
-                /*} else {
+                } else {
                     DB::rollBack();
                     Helper::log('AppCustomerData Table Synch : Invalid Json String');
                     $message = trans('api.invalid_json_string');
                     Helper::saveTerminalLog($terminalId, $branchId, 'Customer Auto Sync', 'Create Customer data SynchronizeAppdata invalid json string', date('Y-m-d'), date('H:i:s'), 'customer');
                     return response()->json(['status' => 422, 'show' => true, 'message' => $message]);
-                }*/
+                }
             }
         } catch (\Exception $exception) {
             Helper::log('AppCustomerData Query Exception : exception');

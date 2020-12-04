@@ -34,6 +34,7 @@ Route::group(['prefix' => 'v1/{locale}', 'namespace' => 'Api'], function () {
     Route::post('product-variant-datatable','SynchronizeController@appProductVariantDataTable');
     Route::post('printer-price-type-datatable','SynchronizeController@appPrinterPriceTypeDataTable');
 	Route::post('country-state-city-datatable','SynchronizeController@appCountryStateCityDataTable');
+	Route::post('rac-box-liquor-inventory-datatable','SynchronizeController@appCustomerLiquorInventoryDataTable');
     Route::post('customer-terminal-payment-datatable','SynchronizeController@appCustomerTerminalPaymentDataTable');
     Route::post('order-datatable','SynchronizeController@appOrderDataTable');
     Route::post('shift-datatable','SynchronizeController@appShiftDataTable');

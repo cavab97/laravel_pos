@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Assets;
 use App\Models\Attributes;
+use App\Models\Box;
 use App\Models\Branch;
 use App\Models\BranchTax;
 use App\Models\Cart;
@@ -16,11 +17,17 @@ use App\Models\Cities;
 use App\Models\Countries;
 use App\Models\Customer;
 use App\Models\CustomerAddress;
+use App\Models\CustomerLiquorInventory;
+use App\Models\CustomerLiquorInventoryLog;
 use App\Models\Helper;
 use App\Models\Kitchen;
 use App\Models\Modifier;
 use App\Models\Order;
+use App\Models\OrderAttributes;
+use App\Models\OrderCancel;
 use App\Models\OrderDetail;
+use App\Models\OrderModifier;
+use App\Models\OrderPayment;
 use App\Models\Payment;
 use App\Models\PosPermission;
 use App\Models\PosRolePermission;
@@ -33,13 +40,16 @@ use App\Models\ProductCategory;
 use App\Models\ProductModifier;
 use App\Models\ProductStoreInventory;
 use App\Models\ProductStoreInventoryLog;
+use App\Models\Rac;
 use App\Models\Roles;
 use App\Models\SetMeal;
+use App\Models\SetmealAttribute;
 use App\Models\SetMealBranch;
 use App\Models\SetMealProduct;
 use App\Models\Shift;
 use App\Models\States;
 use App\Models\Table;
+use App\Models\TableColor;
 use App\Models\Tax;
 use App\Models\Terminal;
 use App\Models\UserBranch;
@@ -131,8 +141,7 @@ class SynchronizeController extends Controller
                 $response['category_branch'] = $loadCategoriesBranch;
 
                 // Products Data collection
-                $productIds = ProductBranch::where('branch_id', $branchId)->pluck('product_id');//->select('product_id')->get();
-                //$productIdss = ProductBranch::where('branch_id', $branchId)->pluck('product_id');
+                $productIds = ProductBranch::where('branch_id', $branchId)->select('product_id')->get();
                 $loadProducts = Product::whereIn('product_id', $productIds)->get()->toArray();
                 $response['product'] = $loadProducts;
 
@@ -176,8 +185,10 @@ class SynchronizeController extends Controller
                 $response['product_attribute'] = $loadProductsAttribute;
 
                 // Products Modifiers Data collection
-                $loadProductsModifiers = ProductModifier::whereIn('product_id', $productIds)->get()->toArray();
+                $loadProductsModifiers = ProductModifier::where('product_id', $productIds)->get()->toArray();
                 $response['product_modifier'] = $loadProductsModifiers;
+
+                // Products Modifiers Data collection
                 $loadPriceType = PriceType::withTrashed()->get()->toArray();
                 $response['price_type'] = $loadPriceType;
 
@@ -415,7 +426,7 @@ class SynchronizeController extends Controller
                 $response['setmeal_branch'] = $loadSetmealBranch;
 
                 // Setmeal Branch Data collection
-                $loadSetmealProduct = SetMealProduct::where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
+                $loadSetmealProduct = SetMealProduct::whereIn('setmeal_id',$setmealIds)->where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
                 $response['setmeal_product'] = $loadSetmealProduct;
 
                 // total time taking api response
@@ -563,65 +574,6 @@ class SynchronizeController extends Controller
         }
     }
 
-	public function appCountryStateCityDataTable(Request $request, $locale)
-    {
-        Helper::log('AppDataTable Synch : Start');
-        App::setLocale($locale);
-        try {
-            //GET SET GO...
-            $timeStart = microtime(true);
-
-            $response['timezone'] = Helper::getSettingValue('timezone');//config('app.timezone');
-            $response['serverdatetime'] = date('Y-m-d h:i:s');
-
-            $datetime = $request->datetime;
-            $terminalId = $request->terminal_id;
-
-            /*if (empty($datetime)) {
-                Helper::log('Table Synch : serverDatetime required');
-                return response()->json(['status' => 422, 'show' => true, "message" => trans('api.serverdatetime_required')]);
-            } else*/if (empty($terminalId)) {
-                Helper::log('Table Synch : Terminal required');
-                return response()->json(['status' => 422, 'show' => true, "message" => trans('api.terminal_id_required')]);
-            } else {
-
-                $terminalData = Terminal::withTrashed()->where('terminal_id', $terminalId)->first();
-                $branchId = $terminalData->branch_id;
-                if (empty($datetime)) {
-                    $response['postdatetime'] = 0;
-                } else {
-                    $response['postdatetime'] = $datetime;
-                }
-
-                // Country Data collection
-                $loadCountry = Countries::withTrashed()->where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
-                $response['country'] = $loadCountry;
-
-                //States Data collection
-                $loadStates = States::withTrashed()->where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
-                $response['state'] = $loadStates;
-
-                //City Data collection
-                $loadCity = Cities::withTrashed()->where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
-                $response['city'] = $loadCity;
-
-                // total time taking api response
-                $timeEnd = microtime(true);
-                $response['timetaking'] = $timeEnd - $timeStart;
-
-                Helper::log('AppData synch : Data Synchronize');
-                Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'price_type,printer');
-                $message = trans('api.data_synchronize');
-                return response()->json(['status' => 200, 'show' => true, 'message' => $message, 'data' => $response]);
-            }
-
-        } catch (\Exception $exception) {
-            Helper::log('SynchronizeAppdata Query Exception : exception');
-            Helper::log($exception);
-            return response()->json(['status' => 500, 'show' => true, 'message' => trans('api.ooops')]);
-        }
-    }
-
     public function appCustomerTerminalPaymentDataTable(Request $request, $locale)
     {
         Helper::log('AppDataTable Synch : Start');
@@ -663,6 +615,10 @@ class SynchronizeController extends Controller
                 // Table Data collection
                 $loadTable = Table::withTrashed()->where('branch_id', $branchId)->where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
                 $response['table'] = $loadTable;
+
+                // Table color Data collection
+                $loadTableColor = TableColor::where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
+                $response['table_color'] = $loadTableColor;
 
                 //paymentoptions Data collection
                 $loadPaymentoptions = Payment::where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
@@ -728,12 +684,28 @@ class SynchronizeController extends Controller
                 $response['voucher'] = $loadVouchers;
 
                 //Order Data collection
-                $loadOrders = Order::where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
+                $loadOrders = Order::where('branch_id',$branchId)->where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
                 $response['order'] = $loadOrders;
 
                 //Order Details Data collection
-                $loadOrderDetails = OrderDetail::where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
+                $loadOrderDetails = OrderDetail::where('branch_id',$branchId)->where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
                 $response['order_detail'] = $loadOrderDetails;
+
+                //Order Attributes Data collection
+                $loadOrderAttribute = OrderAttributes::where('terminal_id',$terminalId)->where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
+                $response['order_attributes'] = $loadOrderAttribute;
+
+                //Order Modifiers Data collection
+                $loadOrderModifier = OrderModifier::where('terminal_id',$terminalId)->where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
+                $response['order_modifier'] = $loadOrderModifier;
+
+                //Order Payments Data collection
+                $loadOrderPayment = OrderPayment::where('branch_id',$branchId)->where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
+                $response['order_payment'] = $loadOrderPayment;
+
+                //Order Cancel Data collection
+                $loadOrderCancel = OrderCancel::where('terminal_id',$terminalId)->where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
+                $response['order_cancel'] = $loadOrderCancel;
 
                 // total time taking api response
                 $timeEnd = microtime(true);
@@ -803,7 +775,7 @@ class SynchronizeController extends Controller
         }
     }
 
-    public function productImage(Request $request, $locale)
+    public function appCountryStateCityDataTable(Request $request, $locale)
     {
         Helper::log('AppDataTable Synch : Start');
         App::setLocale($locale);
@@ -821,6 +793,125 @@ class SynchronizeController extends Controller
                 Helper::log('Table Synch : serverDatetime required');
                 return response()->json(['status' => 422, 'show' => true, "message" => trans('api.serverdatetime_required')]);
             } else*/if (empty($terminalId)) {
+                Helper::log('Table Synch : Terminal required');
+                return response()->json(['status' => 422, 'show' => true, "message" => trans('api.terminal_id_required')]);
+            } else {
+
+                $terminalData = Terminal::withTrashed()->where('terminal_id', $terminalId)->first();
+                $branchId = $terminalData->branch_id;
+                if (empty($datetime)) {
+                    $response['postdatetime'] = 0;
+                } else {
+                    $response['postdatetime'] = $datetime;
+                }
+
+                // Country Data collection
+                $loadCountry = Countries::withTrashed()->where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
+                $response['country'] = $loadCountry;
+
+                //States Data collection
+                $loadStates = States::withTrashed()->where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
+                $response['state'] = $loadStates;
+
+                //City Data collection
+                $loadCity = Cities::withTrashed()->where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
+                $response['city'] = $loadCity;
+
+                // total time taking api response
+                $timeEnd = microtime(true);
+                $response['timetaking'] = $timeEnd - $timeStart;
+
+                Helper::log('AppData synch : Data Synchronize');
+                Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'price_type,printer');
+                $message = trans('api.data_synchronize');
+                return response()->json(['status' => 200, 'show' => true, 'message' => $message, 'data' => $response]);
+            }
+
+        } catch (\Exception $exception) {
+            Helper::log('SynchronizeAppdata Query Exception : exception');
+            Helper::log($exception);
+            return response()->json(['status' => 500, 'show' => true, 'message' => trans('api.ooops')]);
+        }
+    }
+
+    public function appCustomerLiquorInventoryDataTable(Request $request, $locale)
+    {
+        Helper::log('AppDataTable Synch : Start');
+        App::setLocale($locale);
+        try {
+            //GET SET GO...
+            $timeStart = microtime(true);
+
+            $response['timezone'] = Helper::getSettingValue('timezone');//config('app.timezone');
+            $response['serverdatetime'] = date('Y-m-d h:i:s');
+
+            $datetime = $request->datetime;
+            $terminalId = $request->terminal_id;
+
+            /*if (empty($datetime)) {
+                Helper::log('Table Synch : serverDatetime required');
+                return response()->json(['status' => 422, 'show' => true, "message" => trans('api.serverdatetime_required')]);
+            } else*/if (empty($terminalId)) {
+                Helper::log('Table Synch : Terminal required');
+                return response()->json(['status' => 422, 'show' => true, "message" => trans('api.terminal_id_required')]);
+            } else {
+
+                $terminalData = Terminal::withTrashed()->where('terminal_id', $terminalId)->first();
+                $branchId = $terminalData->branch_id;
+                if (empty($datetime)) {
+                    $response['postdatetime'] = 0;
+                } else {
+                    $response['postdatetime'] = $datetime;
+                }
+
+                // Rac Data collection
+                $loadRac = Rac::where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
+                $response['rac'] = $loadRac;
+
+                // Box Data collection
+                $loadBox = Box::where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
+                $response['box'] = $loadBox;
+
+                // Customer liquor inventory Data collection
+                $loadCustLiquorInv = CustomerLiquorInventory::where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
+                $response['customer_liquor_inventory'] = $loadCustLiquorInv;
+
+                // Customer liquor inventory Log Data collection
+                $loadCustLiquorInvLog = CustomerLiquorInventoryLog::where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
+                $response['customer_liquor_inventory_log'] = $loadCustLiquorInvLog;
+
+                // total time taking api response
+                $timeEnd = microtime(true);
+                $response['timetaking'] = $timeEnd - $timeStart;
+
+                Helper::log('AppData synch : Data Synchronize');
+                Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'price_type,printer');
+                $message = trans('api.data_synchronize');
+                return response()->json(['status' => 200, 'show' => true, 'message' => $message, 'data' => $response]);
+            }
+
+        } catch (\Exception $exception) {
+            Helper::log('SynchronizeAppdata Query Exception : exception');
+            Helper::log($exception);
+            return response()->json(['status' => 500, 'show' => true, 'message' => trans('api.ooops')]);
+        }
+    }
+
+    public function productImage(Request $request, $locale)
+    {
+        Helper::log('AppDataTable Synch : Start');
+        App::setLocale($locale);
+        try {
+            //GET SET GO...
+            $timeStart = microtime(true);
+
+            $response['timezone'] = Helper::getSettingValue('timezone');//config('app.timezone');
+            $response['serverdatetime'] = date('Y-m-d h:i:s');
+
+            $datetime = $request->datetime;
+            $terminalId = $request->terminal_id;
+
+            if (empty($terminalId)) {
                 Helper::log('Table Synch : Terminal required');
                 return response()->json(['status' => 422, 'show' => true, "message" => trans('api.terminal_id_required')]);
             } else {
