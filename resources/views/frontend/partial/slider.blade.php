@@ -49,14 +49,14 @@
                         @foreach($sideBarData as $key=>$value)
                             <div class="carousel-item list-banneroflist {{($key == 0) ? "active" : ""}}">
                                 <img src="{{asset($value['banner_for_web'])}}" alt="...">
-                                <div class="carousel-caption d-none d-md-block ">
+                                <div class="carousel-caption  d-md-block ">
                                     <h5 class="banner-title">{{$value['title']}}</h5>
                                     <p class="banner-title-desc">{!!$value['description']  !!}</p>
                                 </div>
                             </div>
                             <div class="carousel-item list-banneroflist_mobile {{($key == 0) ? "active" : ""}}">
                                 <img src="{{asset($value['banner_for_web'])}}" alt="...">
-                                <div class="carousel-caption d-none d-md-block ">
+                                <div class="carousel-caption  d-md-block ">
                                     <h5 class="banner-title">{{$value['title']}}</h5>
                                     <p class="banner-title-desc">{!!$value['description']  !!}</p>
                                 </div>
