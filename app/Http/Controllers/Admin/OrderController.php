@@ -9,6 +9,7 @@ use App\Models\Languages;
 use App\Models\Order;
 use App\Models\OrderAttributes;
 use App\Models\OrderDetail;
+use App\Models\OrderPayment;
 use App\Models\Permissions;
 use App\Models\Terminal;
 use Illuminate\Http\Request;
@@ -120,8 +121,8 @@ class OrderController extends Controller
         $orderData = Order::where('order.uuid', $uuid)
             ->leftjoin('customer', 'customer.customer_id', '=', 'order.customer_id')
 			->leftjoin('order_payment','order_payment.order_id','order.order_id')
-            ->leftjoin('payment','payment.payment_id','order_payment.op_method_id')
-            ->select('order.*', 'customer.name as customer_name','order_payment.is_split','order_payment.remark','order_payment.last_digits','order_payment.approval_code','order_payment.reference_number','order_payment.op_method_id','order_payment.op_status as payment_status','payment.name as payment_name')
+            //->leftjoin('payment','payment.payment_id','order_payment.op_method_id')
+            ->select('order.*', 'customer.name as customer_name','order_payment.is_split','order_payment.remark','order_payment.last_digits','order_payment.approval_code','order_payment.reference_number','order_payment.op_method_id','order_payment.op_status as payment_status')
             ->first();
         if ($orderData->branch_id) {
             $branchId = $orderData->branch_id;
@@ -135,7 +136,24 @@ class OrderController extends Controller
             $terminalData = Terminal::select('terminal_name')->where('terminal_id',$terminal_id)->first();
             $orderData->terminal_name = $terminalData->terminal_name;
         }
-		
+
+		$orderPayment = OrderPayment::leftjoin('payment','payment.payment_id','order_payment.op_method_id')
+            ->where('order_payment.order_id',$orderData->order_id)->get();
+        $payment_name = '';
+		if(!empty($orderPayment)){
+            $i = 0;
+            foreach ($orderPayment as $bk => $bv){
+                $name = $bv->name;
+                $payment_name .= $name;
+                if (count($orderPayment) != ($i + 1)) {
+                    $payment_name .= ',';
+                }
+                $i++;
+            }
+        }
+        $orderData->payment_name = $payment_name;
+        $orderData->payment = $orderPayment;
+
         $orderDetails = OrderDetail::where('order_id', $orderData->order_id)->get()->toArray();
         $orderDetail_discount1 = 0;
         $orderDetail_discount2 = 0;

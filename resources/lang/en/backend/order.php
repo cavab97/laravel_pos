@@ -29,6 +29,7 @@ return [
     'complete' => 'Complete',
     'failed' => 'Failed',
     'pending' => 'Pending',
+    'refunded' => 'Refunded',
     'service_charge' => 'Service Charge',
 	'terminal_name' => 'Terminal Name',
 ];

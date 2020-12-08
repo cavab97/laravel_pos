@@ -90,6 +90,8 @@
                                                             <span class="badge badge-success">{{trans('backend/order.complete')}}</span>
                                                         @elseif($orderData->payment_status == 2)
                                                             <span class="badge badge-danger">{{trans('backend/order.failed')}}</span>
+                                                        @elseif($orderData->payment_status == 5)
+                                                            <span class="badge badge-danger">{{trans('backend/order.refunded')}}</span>
                                                         @else
                                                             <span class="badge badge-warning">{{trans('backend/order.pending')}}</span>
                                                         @endif
@@ -219,7 +221,7 @@
                                                             </tr>
 
                                                         @endforeach
-                                                        <tr>
+                                                        <tr class="table-sm">
                                                             <td colspan="4"></td>
                                                             <td><strong>{{trans('backend/order.sub_total')}}</strong>
                                                             </td>
@@ -228,7 +230,7 @@
                                                             </td>
                                                         </tr>
 
-                                                        <tr>
+                                                        <tr class="table-sm">
                                                             <td class="border-0" colspan="4"></td>
                                                             <td>
                                                                 <strong>{{trans('backend/order.voucher_discount')}}</strong>
@@ -237,7 +239,7 @@
                                                                 <strong>{{number_format($orderData->voucher_amount,2)}}</strong>
                                                             </td>
                                                         </tr>
-                                                        <tr>
+                                                        <tr class="table-sm">
                                                             <td class="border-0" colspan="4"></td>
                                                             <td>
                                                                 <strong>{{trans('backend/order.sub_total_after_discount')}}</strong>
@@ -246,8 +248,8 @@
                                                                 <strong>{{number_format($orderData->sub_total_after_discount,2)}}</strong>
                                                             </td>
                                                         </tr>
-														@if($orderData->service_charge_percent > 0)
-                                                            <tr>
+                                                        @if($orderData->service_charge_percent > 0)
+                                                            <tr class="table-sm">
                                                                 <td class="border-0" colspan="4"></td>
                                                                 <td>
                                                                     <strong>{{trans('backend/order.service_charge')}}({{$orderData->service_charge_percent}}%)</strong>
@@ -260,7 +262,7 @@
                                                         @if(isset($orderData->taxDetail) && !empty($orderData->taxDetail))
 
                                                             @foreach($orderData->taxDetail as $key=>$value)
-                                                                <tr>
+                                                                <tr class="table-sm">
                                                                     <td class="border-0" colspan="4"></td>
 
                                                                     <td>
@@ -273,13 +275,52 @@
                                                                 </tr>
                                                             @endforeach
                                                         @endif
-                                                        <tr>
+
+                                                        <tr class="table-sm">
                                                             <td class="border-0" colspan="4"></td>
 
                                                             <td><strong>{{trans('backend/order.total')}}</strong>
                                                             </td>
                                                             <td>
                                                                 <strong>{{number_format($orderData->grand_total,2)}}</strong>
+                                                            </td>
+                                                        </tr>
+
+                                                        <tr class="table-sm">
+                                                            <td class="border-0" colspan="4"></td>
+
+                                                            <td><strong>Rounding</strong>
+                                                            </td>
+                                                            <td>
+                                                                <strong>{{number_format($orderData->rounding_amount,2)}}</strong>
+                                                            </td>
+                                                        </tr>
+
+                                                        @if(isset($orderData->payment) && !empty($orderData->payment))
+                                                            <tr class="border-0 table-sm text-bold">
+                                                                <td class="border-0" colspan="4"></td>
+                                                                <td class="table-secondary">Payment</td>
+                                                                <td class="table-secondary"></td>
+                                                            </tr>
+                                                            @foreach($orderData->payment as $key=>$value)
+                                                                <tr class="table-sm">
+                                                                    <td class="border-0" colspan="4"></td>
+
+                                                                    <td><strong>{{$value->name}}</strong>
+                                                                    </td>
+                                                                    <td>
+                                                                        <strong>{{number_format($value->op_amount,2)}}</strong>
+                                                                    </td>
+                                                                </tr>
+                                                            @endforeach
+                                                        @endif
+                                                        <tr class="table-sm">
+                                                            <td class="border-0" colspan="4"></td>
+
+                                                            <td><strong>Change</strong>
+                                                            </td>
+                                                            <td>
+                                                                <strong>{{number_format($orderData->change,2)}}</strong>
                                                             </td>
                                                         </tr>
                                                         </tbody>

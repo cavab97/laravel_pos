@@ -55,6 +55,7 @@ use App\Models\Terminal;
 use App\Models\UserBranch;
 use App\Models\UserPosPermission;
 use App\Models\Voucher;
+use App\Models\VoucherHistory;
 use App\User;
 use App\Http\Controllers\Controller;
 use http\Url;
@@ -682,6 +683,10 @@ class SynchronizeController extends Controller
                 //Voucher Data collection
                 $loadVouchers = Voucher::where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
                 $response['voucher'] = $loadVouchers;
+
+                //Voucher History Data collection
+                $loadVouchersHistory = VoucherHistory::where(DB::raw('COALESCE(created_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
+                $response['voucher_history'] = $loadVouchersHistory;
 
                 //Order Data collection
                 $loadOrders = Order::where('branch_id',$branchId)->where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();

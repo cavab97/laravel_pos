@@ -307,7 +307,7 @@ class SyncOrderController extends Controller
                                     }
 
                                     // Voucher History
-                                    /*$getVoucherdetail = $setOrdersArray['voucher_history'];
+                                    $getVoucherdetail = $setOrdersArray['voucher_history'];
                                     if(!empty($getVoucherdetail) && is_array($getVoucherdetail)){
                                         foreach ($getVoucherdetail as $setVoucherdetail) {
                                             $ordersvoucher = new VoucherHistory();
@@ -319,7 +319,11 @@ class SyncOrderController extends Controller
 
                                                     $ordersvoucher = new VoucherHistory();
 
+                                                    $ordersvoucher->uuid = Helper::getUuid();
+                                                    $ordersvoucher->terminal_id = $setVoucherdetail['terminal_id'];
                                                     $ordersvoucher->order_id = $ordersId;
+                                                    $ordersvoucher->app_id = $setVoucherdetail['app_id'];
+                                                    $ordersvoucher->app_order_id = $setVoucherdetail['app_order_id'];
                                                     $ordersvoucher->voucher_id = $setVoucherdetail['voucher_id']; // application auto inc id
                                                     $ordersvoucher->user_id = $setVoucherdetail['user_id'];
                                                     $ordersvoucher->amount = $setVoucherdetail['amount'];
@@ -329,6 +333,9 @@ class SyncOrderController extends Controller
                                                     $setVoucherdetail['server_id'] = $ordersvoucherHisId;
                                                 } else {
                                                     $ordersvoucher->order_id = $ordersId;
+                                                    $ordersvoucher->terminal_id = $setVoucherdetail['terminal_id'];
+                                                    $ordersvoucher->app_id = $setVoucherdetail['app_id'];
+                                                    $ordersvoucher->app_order_id = $setVoucherdetail['app_order_id'];
                                                     $ordersvoucher->voucher_id = $setVoucherdetail['voucher_id']; // application auto inc id
                                                     $ordersvoucher->user_id = $setVoucherdetail['user_id'];
                                                     $ordersvoucher->amount = $setVoucherdetail['amount'];
@@ -338,7 +345,11 @@ class SyncOrderController extends Controller
                                                     $setVoucherdetail['server_id'] = $ordersvoucherHisId;
                                                 }
                                             } else {
+                                                $ordersvoucher->uuid = Helper::getUuid();
+                                                $ordersvoucher->terminal_id = $setVoucherdetail['terminal_id'];
                                                 $ordersvoucher->order_id = $ordersId;
+                                                $ordersvoucher->app_id = $setVoucherdetail['app_id'];
+                                                $ordersvoucher->app_order_id = $setVoucherdetail['app_order_id'];
                                                 $ordersvoucher->voucher_id = $setVoucherdetail['voucher_id']; // application auto inc id
                                                 $ordersvoucher->user_id = $setVoucherdetail['user_id'];
                                                 $ordersvoucher->amount = $setVoucherdetail['amount'];
@@ -348,7 +359,7 @@ class SyncOrderController extends Controller
                                                 $setVoucherdetail['server_id'] = $ordersvoucherHisId;
                                             }
                                         }
-                                    }*/
+                                    }
 
                                 } else {
 
@@ -599,7 +610,7 @@ class SyncOrderController extends Controller
                                     }
 
                                     // Voucher History
-                                    /*$getVoucherdetail = $setOrdersArray['voucher_history'];
+                                    $getVoucherdetail = $setOrdersArray['voucher_history'];
                                     if(!empty($getVoucherdetail) && is_array($getVoucherdetail)){
                                         foreach ($getVoucherdetail as $setVoucherdetail) {
                                             $ordersvoucher = new VoucherHistory();
@@ -611,7 +622,11 @@ class SyncOrderController extends Controller
 
                                                     $ordersvoucher = new VoucherHistory();
 
+                                                    $ordersvoucher->uuid = Helper::getUuid();
+                                                    $ordersvoucher->terminal_id = $setVoucherdetail['terminal_id'];
                                                     $ordersvoucher->order_id = $ordersId;
+                                                    $ordersvoucher->app_id = $setVoucherdetail['app_id'];
+                                                    $ordersvoucher->app_order_id = $setVoucherdetail['app_order_id'];
                                                     $ordersvoucher->voucher_id = $setVoucherdetail['voucher_id']; // application auto inc id
                                                     $ordersvoucher->user_id = $setVoucherdetail['user_id'];
                                                     $ordersvoucher->amount = $setVoucherdetail['amount'];
@@ -621,6 +636,9 @@ class SyncOrderController extends Controller
                                                     $setVoucherdetail['server_id'] = $ordersvoucherHisId;
                                                 } else {
                                                     $ordersvoucher->order_id = $ordersId;
+                                                    $ordersvoucher->terminal_id = $setVoucherdetail['terminal_id'];
+                                                    $ordersvoucher->app_id = $setVoucherdetail['app_id'];
+                                                    $ordersvoucher->app_order_id = $setVoucherdetail['app_order_id'];
                                                     $ordersvoucher->voucher_id = $setVoucherdetail['voucher_id']; // application auto inc id
                                                     $ordersvoucher->user_id = $setVoucherdetail['user_id'];
                                                     $ordersvoucher->amount = $setVoucherdetail['amount'];
@@ -630,7 +648,11 @@ class SyncOrderController extends Controller
                                                     $setVoucherdetail['server_id'] = $ordersvoucherHisId;
                                                 }
                                             } else {
+                                                $ordersvoucher->uuid = Helper::getUuid();
+                                                $ordersvoucher->terminal_id = $setVoucherdetail['terminal_id'];
                                                 $ordersvoucher->order_id = $ordersId;
+                                                $ordersvoucher->app_id = $setVoucherdetail['app_id'];
+                                                $ordersvoucher->app_order_id = $setVoucherdetail['app_order_id'];
                                                 $ordersvoucher->voucher_id = $setVoucherdetail['voucher_id']; // application auto inc id
                                                 $ordersvoucher->user_id = $setVoucherdetail['user_id'];
                                                 $ordersvoucher->amount = $setVoucherdetail['amount'];
@@ -640,7 +662,7 @@ class SyncOrderController extends Controller
                                                 $setVoucherdetail['server_id'] = $ordersvoucherHisId;
                                             }
                                         }
-                                    }*/
+                                    }
                                 }
 
                             } else {
@@ -899,7 +921,7 @@ class SyncOrderController extends Controller
                                 }
 
                                 // Voucher History
-                                /*$getVoucherdetail = $setOrdersArray['voucher_history'];
+                                $getVoucherdetail = $setOrdersArray['voucher_history'];
                                 if(!empty($getVoucherdetail) && is_array($getVoucherdetail)){
                                     foreach ($getVoucherdetail as $setVoucherdetail) {
                                         $ordersvoucher = new VoucherHistory();
@@ -911,7 +933,11 @@ class SyncOrderController extends Controller
 
                                                 $ordersvoucher = new VoucherHistory();
 
+                                                $ordersvoucher->uuid = Helper::getUuid();
+                                                $ordersvoucher->terminal_id = $setVoucherdetail['terminal_id'];
                                                 $ordersvoucher->order_id = $ordersId;
+                                                $ordersvoucher->app_id = $setVoucherdetail['app_id'];
+                                                $ordersvoucher->app_order_id = $setVoucherdetail['app_order_id'];
                                                 $ordersvoucher->voucher_id = $setVoucherdetail['voucher_id']; // application auto inc id
                                                 $ordersvoucher->user_id = $setVoucherdetail['user_id'];
                                                 $ordersvoucher->amount = $setVoucherdetail['amount'];
@@ -921,6 +947,9 @@ class SyncOrderController extends Controller
                                                 $setVoucherdetail['server_id'] = $ordersvoucherHisId;
                                             } else {
                                                 $ordersvoucher->order_id = $ordersId;
+                                                $ordersvoucher->terminal_id = $setVoucherdetail['terminal_id'];
+                                                $ordersvoucher->app_id = $setVoucherdetail['app_id'];
+                                                $ordersvoucher->app_order_id = $setVoucherdetail['app_order_id'];
                                                 $ordersvoucher->voucher_id = $setVoucherdetail['voucher_id']; // application auto inc id
                                                 $ordersvoucher->user_id = $setVoucherdetail['user_id'];
                                                 $ordersvoucher->amount = $setVoucherdetail['amount'];
@@ -930,7 +959,11 @@ class SyncOrderController extends Controller
                                                 $setVoucherdetail['server_id'] = $ordersvoucherHisId;
                                             }
                                         } else {
+                                            $ordersvoucher->uuid = Helper::getUuid();
+                                            $ordersvoucher->terminal_id = $setVoucherdetail['terminal_id'];
                                             $ordersvoucher->order_id = $ordersId;
+                                            $ordersvoucher->app_id = $setVoucherdetail['app_id'];
+                                            $ordersvoucher->app_order_id = $setVoucherdetail['app_order_id'];
                                             $ordersvoucher->voucher_id = $setVoucherdetail['voucher_id']; // application auto inc id
                                             $ordersvoucher->user_id = $setVoucherdetail['user_id'];
                                             $ordersvoucher->amount = $setVoucherdetail['amount'];
@@ -940,7 +973,7 @@ class SyncOrderController extends Controller
                                             $setVoucherdetail['server_id'] = $ordersvoucherHisId;
                                         }
                                     }
-                                }*/
+                                }
                             }
 
                             //Remove Web Order
@@ -1030,6 +1063,10 @@ class SyncOrderController extends Controller
                 $loadPayment = OrderPayment::where(['order_id' => $orderId])->select(['*', 'op_id as server_id'])->get()->toArray();
                 if (!empty($loadPayment)) {
                     $loadOrder['order_payment'] = $loadPayment;
+                }
+                $loadVoucher = VoucherHistory::where(['order_id' => $orderId])->select(['*', 'voucher_history_id as server_id'])->get()->toArray();
+                if (!empty($loadVoucher)) {
+                    $loadOrder['voucher_history'] = $loadVoucher;
                 }
                 $pushOrder[] = $loadOrder;
             }
@@ -1455,8 +1492,8 @@ class SyncOrderController extends Controller
                 return response()->json(['status' => 422, 'show' => true, "message" => trans('api.branch_id_required')]);
             } else {
                 $timeStart = microtime(true);
-                if (\GuzzleHttp\json_decode($getOrderCancel, true)) {
-                    $getOrderCancelArray = \GuzzleHttp\json_decode($getOrderCancel, true);  // convert to array
+                if (\GuzzleHttp\json_decode(stripslashes($getOrderCancel), true)) {
+                    $getOrderCancelArray = \GuzzleHttp\json_decode(stripcslashes($getOrderCancel), true);  // convert to array
                     if (is_array($getOrderCancelArray)) {  // valid array
 
                         $orders = new OrderCancel();
@@ -1471,10 +1508,19 @@ class SyncOrderController extends Controller
 
                                     $TerminalId = $setOrdersArray['terminal_id'];
                                     $createdBy = $setOrdersArray['created_by'];
-                                    $orders->order_id = $setOrdersArray['order_id'];
+                                    $app_order_id = $setOrdersArray['order_app_id'];
+                                    if(empty($setOrdersArray['order_id'])){
+                                        $orderData = Order::where(['terminal_id'=>$TerminalId, 'app_id'=>$app_order_id])->first();
+                                        $orderId = $orderData->order_id;
+                                    } else {
+                                        $orderId = $setOrdersArray['order_id'];
+                                        $orderData = Order::where(['order_id'=>$orderId])->first();
+                                    }
+                                    $orders->order_id = $orderId;
+                                    $orders->localID = $setOrdersArray['localID'];
+                                    $orders->order_app_id = $setOrdersArray['order_app_id'];
                                     $orders->reason = $setOrdersArray['reason'];
                                     $orders->status = $setOrdersArray['status'];
-                                    $orders->localID = $setOrdersArray['localID'];
                                     $orders->terminal_id = $TerminalId;
                                     $orders->created_at = $setOrdersArray['created_at'];
                                     $orders->created_by = $createdBy;
@@ -1483,6 +1529,12 @@ class SyncOrderController extends Controller
                                     $orders = OrderCancel::create($orders->toArray());
                                     $setOrdersArray['server_id'] = $orders->id;
                                     $pushShift[] = $orders;
+
+                                    /*Update Order Status*/
+                                    $orderData->order_status = 3;
+                                    Order::where('order_id',$orderId)->update($orderData->toArray());
+
+
                                 } else {
                                     $TerminalId = $setOrdersArray['terminal_id'];
                                     $createdBy = $setOrdersArray['created_by'];
@@ -1504,10 +1556,19 @@ class SyncOrderController extends Controller
                                 $orders = new OrderCancel();
                                 $TerminalId = $setOrdersArray['terminal_id'];
                                 $createdBy = $setOrdersArray['created_by'];
-                                $orders->order_id = $setOrdersArray['order_id'];
+                                $app_order_id = $setOrdersArray['order_app_id'];
+                                if(empty($setOrdersArray['order_id'])){
+                                    $orderData = Order::where(['terminal_id'=>$TerminalId, 'app_id'=>$app_order_id])->first();
+                                    $orderId = $orderData->order_id;
+                                } else {
+                                    $orderId = $setOrdersArray['order_id'];
+                                    $orderData = Order::where(['order_id'=>$orderId])->first();
+                                }
+                                $orders->order_id = $orderId;
+                                $orders->localID = $setOrdersArray['localID'];
+                                $orders->order_app_id = $setOrdersArray['order_app_id'];
                                 $orders->reason = $setOrdersArray['reason'];
                                 $orders->status = $setOrdersArray['status'];
-                                $orders->localID = $setOrdersArray['localID'];
                                 $orders->terminal_id = $TerminalId;
                                 $orders->created_at = $setOrdersArray['created_at'];
                                 $orders->created_by = $createdBy;
@@ -1516,6 +1577,10 @@ class SyncOrderController extends Controller
                                 $orders = OrderCancel::create($orders->toArray());
                                 $setOrdersArray['server_id'] = $orders->id;
                                 $pushShift[] = $orders;
+
+                                /*Update Order Status*/
+                                $orderData->order_status = 3;
+                                Order::where('order_id',$orderId)->update($orderData->toArray());
                             }
                         }
                         DB::commit();
