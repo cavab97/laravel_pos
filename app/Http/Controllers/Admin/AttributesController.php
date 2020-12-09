@@ -70,6 +70,15 @@ class AttributesController extends Controller
                 return response()->json(['status' => 409, 'message' => trans('backend/attributes.name_exists')]);
             } else {
 
+                if($is_default == 1){
+                    $checkAtt = Attributes::where('ca_id', $ca_id)->where('is_default',1)->count();
+                    if($checkAtt > 0){
+                        $updateDefaultAtt = [
+                            'is_default' => 0,
+                        ];
+                        Attributes::where('ca_id', $ca_id)->update($updateDefaultAtt);
+                    }
+                }
                 $attributesData = [
                     'uuid' => Helper::getUuid(),
                     'ca_id' => $ca_id,
@@ -148,6 +157,16 @@ class AttributesController extends Controller
             if ($checkName > 0) {
                 return response()->json(['status' => 409, 'message' => trans('backend/attributes.name_exists')]);
             } else {
+
+                if($is_default == 1){
+                    $checkAtt = Attributes::where('ca_id', $ca_id)->where('is_default',1)->count();
+                    if($checkAtt > 0){
+                        $updateDefaultAtt = [
+                            'is_default' => 0,
+                        ];
+                        Attributes::where('ca_id', $ca_id)->update($updateDefaultAtt);
+                    }
+                }
 
                 $attributesData = [
                     'ca_id' => $ca_id,

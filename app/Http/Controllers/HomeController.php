@@ -530,6 +530,7 @@ class HomeController extends Controller
                         $cartData = Cart::leftjoin('cart_detail', 'cart_detail.cart_id', 'cart.cart_id')->where(['source' => 1, 'cart_payment_status' => 0])
                             ->whereRaw($where)->first();
                         $cart_id = $cartData->cart_id;
+                        $product_total = $price * $quantity;
 
                         /* Cart Details */
                         $insertCartDetail = [
@@ -538,6 +539,7 @@ class HomeController extends Controller
                             'product_name' => $productName,
                             'product_price' => $price,
                             'product_qty' => $quantity,
+                            'product_detail_amount' => number_format($product_total,2),
                             'product_detail' => \GuzzleHttp\json_encode($productData),
                             'discount' => $discountPrice,
                             'created_at' => config('constants.date_time')
@@ -673,7 +675,7 @@ class HomeController extends Controller
                             'uuid' => Helper::getUuid(),
                             //'product_id' => $productId,
                             'branch_id' => $branchId,
-                            'sub_total' => $total,
+                            'sub_total' => number_format($total,2),
                             'grand_total' => $grand_total,
                             'tax' => $totalTax,
                             'total_qty' => $quantity,
@@ -705,6 +707,7 @@ class HomeController extends Controller
                             'product_name' => $productName,
                             'product_price' => $price,
                             'product_qty' => $quantity,
+                            'product_detail_amount' => number_format($total,2),
                             'product_detail' => \GuzzleHttp\json_encode($productData),
                             'setmeal_product_detail' => \GuzzleHttp\json_encode($setmealProduct),
                             'issetMeal' => $is_setmeal,
@@ -814,7 +817,7 @@ class HomeController extends Controller
                             CartDetail::where(['cart_id' => $cart_id,'product_id'=>$productId])->update($insertCartDetail);
 
                         } else {
-
+                            $product_total = 0;$total_att_product_price = 0;$total_mod_product_price = 0;
                             /* Cart Details */
                             $insertCartDetail = [
                                 'cart_id' => $cart_id,
@@ -830,12 +833,13 @@ class HomeController extends Controller
 
                             $cart_details = CartDetail::create($insertCartDetail);
                             $cart_detail_id = $cart_details->cart_detail_id;
-
+                            $prod_sub_total = $price * $quantity;
                             /* Cart Attributes Details */
                             if (!empty($attribute)) {
                                 foreach ($attribute as $key => $value) {
                                     $attributeData = Attributes::where(['attribute_id' => $value, 'status' => 1])->first();
                                     $prodAttData = ProductAttribute::where(['product_id' => $productId, 'attribute_id' => $value, 'ca_id' => $attributeData->ca_id, 'status' => 1])->first();
+                                    $total_att_product_price += $prodAttData->price * $quantity;
                                     $insertAtt = [
                                         'cart_detail_id' => $cart_detail_id,
                                         'cart_id' => $cart_id,
@@ -852,6 +856,7 @@ class HomeController extends Controller
                             if (!empty($modifier)) {
                                 foreach ($modifier as $value) {
                                     $modifierData = ProductModifier::where(['product_id' => $productId, 'modifier_id' => $value, 'status' => 1])->first();
+                                    $total_mod_product_price += $modifierData->price * $quantity;
                                     $insertAtt = [
                                         'cart_detail_id' => $cart_detail_id,
                                         'cart_id' => $cart_id,
@@ -862,6 +867,12 @@ class HomeController extends Controller
                                     CartSubDetail::create($insertAtt);
                                 }
                             }
+
+                            $product_total = $prod_sub_total + $total_att_product_price + $total_mod_product_price;
+                            $updateCartDetail = [
+                                'product_detail_amount' => number_format($product_total,2)
+                            ];
+                            CartDetail::where(['cart_id'=>$cart_id,'product_id'=>$productId,'cart_detail_id'=>$cart_detail_id])->update($updateCartDetail);
                         }
 
                         $cartData = Cart::leftjoin('cart_detail', 'cart_detail.cart_id', 'cart.cart_id')
@@ -984,7 +995,7 @@ class HomeController extends Controller
                             'uuid' => Helper::getUuid(),
                             //'product_id' => $productId,
                             'branch_id' => $branchId,
-                            'sub_total' => $total,
+                            'sub_total' => number_format($total,2),
                             'grand_total' => $grand_total,
                             'tax' => $totalTax,
                             'total_qty' => $quantity,
@@ -1013,6 +1024,7 @@ class HomeController extends Controller
                             'product_price' => $price,
                             'product_old_price' => $oldPrice,
                             'product_qty' => $quantity,
+                            'product_detail_amount' => number_format($total,2),
                             'product_detail' => \GuzzleHttp\json_encode($productData),
                             'discount' => $discountPrice,
                             'created_at' => config('constants.date_time')
@@ -1287,6 +1299,8 @@ class HomeController extends Controller
                     $cartDetail = CartDetail::where('cart_detail_id', $cart_detail_id)->first();
                     if ($quantity > 0) {
 
+                        $product_total = 0; $total_att_product_price = 0; $total_mod_product_price = 0;
+
                         /* Cart Details */
                         $updateCartDetails = [
                             'product_qty' => $quantity,
@@ -1301,7 +1315,10 @@ class HomeController extends Controller
                             ->get();
 
                         foreach ($cartData as $key => $value) {
+                            $total_att_prod_price = 0; $prod_total = 0; $total_mod_prod_price = 0;
+
                             $sub_total += $value->product_price * $value->product_qty;
+                            $prod_total = $value->product_price * $value->product_qty;
                             $total_qty += $value->product_qty;
 
                             /* Cart Attribute */
@@ -1309,6 +1326,7 @@ class HomeController extends Controller
                             if (!empty($cartAttribute)) {
                                 foreach ($cartAttribute as $akey => $avalue) {
                                     $total_att_price += $avalue->attribute_price * $value->product_qty;
+                                    $total_att_prod_price += $avalue->attribute_price * $value->product_qty;
                                 }
                             }
                             /* Cart Modifier */
@@ -1316,8 +1334,16 @@ class HomeController extends Controller
                             if (!empty($cartModifier)) {
                                 foreach ($cartModifier as $akey => $avalue) {
                                     $total_mod_price += $avalue->modifire_price * $value->product_qty;
+                                    $total_mod_prod_price += $avalue->modifire_price * $value->product_qty;
                                 }
                             }
+
+                            $prod_total += $total_att_prod_price + $total_mod_prod_price;
+                            $updateCartDetails = [
+                                'product_detail_amount' => number_format($prod_total,2),
+                                'created_at' => config('constants.date_time')
+                            ];
+                            CartDetail::where(['cart_id' => $cart_id, 'cart_detail_id' => $value->cart_detail_id, 'product_id' => $value->product_id])->update($updateCartDetails);
                         }
 
                         $total_item = count($cartData);
@@ -1469,7 +1495,7 @@ class HomeController extends Controller
 
                             //$cartData[$key]['product_name'] = $productData->name;
 
-                            $cartAttribute = CartSubDetail::where(['cart_id' => $cart_id, 'product_id' => $productId])->where('attribute_id', '!=', null)->get()->toArray();
+                            $cartAttribute = CartSubDetail::where(['cart_id' => $cart_id, 'product_id' => $productId,'cart_detail_id'=>$value->cart_detail_id])->where('attribute_id', '!=', null)->get()->toArray();
 
                             $addonPrice = 0;
                             $attributeText = '';
@@ -1490,7 +1516,7 @@ class HomeController extends Controller
 
 
                             $cartModifierIds = [];
-                            $cartModifier = CartSubDetail::where(['cart_id' => $cart_id, 'product_id' => $productId])->where('modifier_id', '!=', null)->get()->toArray();
+                            $cartModifier = CartSubDetail::where(['cart_id' => $cart_id, 'product_id' => $productId,'cart_detail_id'=>$value->cart_detail_id])->where('modifier_id', '!=', null)->get()->toArray();
                             if (!empty($cartModifier)) {
                                 $i = 0;
                                 if (!empty($attributeText)) {
@@ -2386,7 +2412,7 @@ class HomeController extends Controller
                         //$grand_total = $total_after_discount + $totalTax;
 
                         $updateCart['grand_total'] = $grand_total;
-                        $updateCart['created_at'] = config('constants.date_time');
+                        $updateCart['created_at'] = date('Y-m-d H:i:s');
 
                     } else {
                         if (!empty($voucherData->voucher_products) && empty($voucherData->voucher_categories)) {
@@ -2471,7 +2497,7 @@ class HomeController extends Controller
 
                             //$grand_total = $total_after_discount + $totalTax;
                             $updateCart['grand_total'] = $grand_total;
-                            $updateCart['created_at'] = config('constants.date_time');
+                            $updateCart['created_at'] = date('Y-m-d H:i:s');
                         }
                     }
                 }
