@@ -12,5 +12,5 @@ class Roles extends Model
 
     protected $guarded = ['role_id'];
     static $notIn = [1,2];
-    static $In = [3,4];
+    static $In = [3];
 }
