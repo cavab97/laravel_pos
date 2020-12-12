@@ -131,7 +131,8 @@ class SynchronizeController extends Controller
                 // Table Data collection
                 $loadTable = Table::withTrashed()->where(['branch_id' => $branchId])->get()->toArray();
                 $response['table'] = $loadTable;
-
+                Helper::log('get table data');
+                Helper::log($loadTable);
                 // Categories Data collection
                 $categoryIds = CategoryBranch::where('branch_id', $branchId)->select('category_id')->get();
                 $loadCategories = Category::withTrashed()->whereIn('category_id', $categoryIds)->get()->toArray();

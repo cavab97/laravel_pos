@@ -60,10 +60,12 @@
                             {{ Form::number('price', old('price'), ["required","class"=>"form-control form-control-sm","placeholder"=>trans('backend/product.price'),"id"=>"price","name"=>"price",'min'=>0]) }}
                         </div>
                     </div>
+                    <p>{{old('price')}}</p>
                     <div class="col-md-6">
                         <div class="form-group">
                             {{ Form::label('old_price',trans('backend/product.old_price')) }}
-                            {{ Form::number('old_price', old('old_price'), ["class"=>"form-control form-control-sm","placeholder"=>trans('backend/product.old_price'),"id"=>"old_price","name"=>"old_price",'min'=>0]) }}
+                            {{ Form::number('hello', old('price')) }}
+                            {{ Form::number('old_price', old('old_price'), ["class"=>"form-control form-control-sm","placeholder"=>trans('backend/product.old_price'),"id"=>"old_price","name"=>"old_price",'min'=>0, "disabled"=>"old('old_price').is_nan"]) }}
                         </div>
                     </div>
                 </div>

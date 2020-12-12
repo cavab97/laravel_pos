@@ -164,6 +164,14 @@ $permission = new \App\Models\Permissions();
                         </a>
                     </li>
                     @endif
+                    @if($permission::checkActionPermission('view_price_type'))
+                    <li class="nav-item">
+                        <a class="nav-link {{(Request::is('$backend/price_type','$backend/price_type/*')) ? 'active' : ''}}" href="{{route('admin.price_type.index')}}">
+                            <i class="nav-icon fas fa fa-product-hunt"></i>
+                            <p>{{trans('backend/unit_type.unit_type')}}</p>
+                        </a>
+                    </li>
+                    @endif
                 </ul>
             </li>
             @endif
@@ -227,14 +235,6 @@ $permission = new \App\Models\Permissions();
                     <i class="right fas fa-angle-left"></i>
                 </a>
                 <ul class="nav nav-treeview">
-                    @if($permission::checkActionPermission('view_price_type'))
-                    <li class="nav-item">
-                        <a class="nav-link {{(Request::is('$backend/price_type','$backend/price_type/*')) ? 'active' : ''}}" href="{{route('admin.price_type.index')}}">
-                            <i class="nav-icon fas fa fa-product-hunt"></i>
-                            <p>{{trans('backend/price_type.price_type')}}</p>
-                        </a>
-                    </li>
-                    @endif
                     @if($permission::checkActionPermission('view_printer'))
                     <li class="nav-item">
                         <a class="nav-link {{(Request::is('$backend/printer','$backend/printer/*')) ? 'active' : ''}}" href="{{route('admin.printer.index')}}">

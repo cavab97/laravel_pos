@@ -126,7 +126,7 @@
                     <a class="nav-link {{(Request::is('$backend/price_type','$backend/price_type/*')) ? 'active' : ''}}"
                        href="{{route('admin.price_type.index')}}">
                         <i class="nav-icon fas fa fa-product-hunt"></i>
-                        <p>{{trans('backend/price_type.price_type')}}</p>
+                        <p>{{trans('backend/unit_type.price_type')}}</p>
                     </a>
                 </li>
                 <li class="nav-item">

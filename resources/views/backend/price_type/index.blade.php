@@ -20,13 +20,13 @@
             <div class="container-fluid">
                 <div class="content-header-row row mb-2">
                     <div class="col-sm-6">
-                        <h1>{{trans('backend/price_type.price')}}</h1>
+                        <h1>{{trans('backend/unit_type.price')}}</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a
                                         href="{{route('admin.home')}}">{{trans('backend/common.home')}}</a></li>
-                            <li class="breadcrumb-item active">{{trans('backend/price_type.price')}}</li>
+                            <li class="breadcrumb-item active">{{trans('backend/unit_type.price')}}</li>
                         </ol>
                     </div>
                 </div>
@@ -40,7 +40,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">{{trans('backend/price_type.list_price_type')}}</h3>
+                            <h3 class="card-title">{{trans('backend/unit_type.list_price_type')}}</h3>
                             @if($permission::checkActionPermission('add_price_type'))
                                 <div class="float-right">
                                     <button type="button" onclick="addPriceType(this)"
@@ -55,8 +55,8 @@
                                 <thead>
                                 <tr>
                                     <th>{{trans('backend/common.no')}}</th>
-                                    <th>{{trans('backend/price_type.name')}}</th>
-                                    <th>{{trans('backend/price_type.status')}}</th>
+                                    <th>{{trans('backend/unit_type.name')}}</th>
+                                    <th>{{trans('backend/unit_type.status')}}</th>
                                     <th>{{trans('backend/common.action')}}</th>
                                 </tr>
                                 </thead>

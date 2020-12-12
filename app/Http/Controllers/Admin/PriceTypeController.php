@@ -52,7 +52,7 @@ class PriceTypeController extends Controller
             $status = $request->status;
             $checkName = PriceType::where('name', $name)->count();
             if ($checkName > 0) {
-                return response()->json(['status' => 409, 'message' => trans('backend/price_type.name_exists')]);
+                return response()->json(['status' => 409, 'message' => trans('backend/unit_type.name_exists')]);
             } else {
                 $priceType = PriceType::create([
                     'uuid' => Helper::getUuid(),
@@ -117,7 +117,7 @@ class PriceTypeController extends Controller
             $status = $request->status;
             $checkName = PriceType::where('name', $name)->where('uuid', '!=', $uuid)->count();
             if ($checkName > 0) {
-                return response()->json(['status' => 409, 'message' => trans('backend/price_type.name_exists')]);
+                return response()->json(['status' => 409, 'message' => trans('backend/unit_type.name_exists')]);
             } else {
                 PriceType::where('uuid', $uuid)->update(
                     ['name' => $name,
