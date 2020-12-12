@@ -308,7 +308,7 @@
                                         <th>{{trans('backend/product.sku')}}</th>
                                         <th>{{trans('backend/product.price')}}</th>
                                         <th>{{trans('backend/product.old_price')}}</th>
-                                        <th>{{trans('backend/product.price_type')}}</th>
+                                        <th>{{trans('backend/product.unit_type')}}</th>
                                         <th>{{trans('backend/category.category')}}</th>
                                         {{--<th id="has_setmeal">{{trans('backend/product.has_setmeal')}}</th>--}}
                                         <th id="status">{{trans('backend/common.status')}}</th>

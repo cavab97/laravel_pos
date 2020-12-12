@@ -68,7 +68,7 @@
                                                         @endif
                                                     </p>
                                                     <p>
-                                                        <strong>{{trans('backend/product.price_type')}}</strong>:
+                                                        <strong>{{trans('backend/product.unit_type')}}</strong>:
                                                         <span>{{$productData->price_type_name}}</span>
                                                     </p>
                                                     <p>
@@ -106,7 +106,7 @@
                                                         @endif
                                                     </p>
                                                     <p>
-                                                        <strong>{{trans('backend/product.price_type_value')}}</strong>:
+                                                        <strong>{{trans('backend/product.unit_type_value')}}</strong>:
                                                         <span>{{$productData->price_type_value}}</span>
                                                     </p>
                                                     <p>
@@ -311,7 +311,7 @@
                                         </div>
                                     </div>
                                 @endif
-                            </div>                                                       
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -171,6 +171,8 @@ class ApiController extends Controller
             $deviceId = $request->device_id;
             $terminalId = $request->terminal_id;
             if (empty($branchId)) {
+                //Helper::log('API user login : parameter required. '.trans('api.branch_id_required'));
+                DB::commit();
                 return response()->json(['status' => 422, 'show' => true, 'message' => trans('api.branch_id_required')]);
             } elseif (empty($userPin)) {
                 return response()->json(['status' => 422, 'show' => true, 'message' => trans('api.pin_required')]);
@@ -191,8 +193,6 @@ class ApiController extends Controller
                     return response()->json(['status' => 404, 'show' => false, 'message' => trans('api.username_pin_not_exists')]);
                 }
             }
-            Helper::log('API user login : finish');
-            DB::commit();
         } catch (\Exception $exception) {
 
             DB::rollBack();

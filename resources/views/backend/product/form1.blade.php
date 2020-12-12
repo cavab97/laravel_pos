@@ -61,7 +61,7 @@
                 <div class="row">
                     <div class="col-md-6 required">
                         <div class="form-group">
-                            {{ Form::label('price_type_id',trans('backend/product.price_type')) }}
+                            {{ Form::label('price_type_id',trans('backend/product.unit_type')) }}
                             <select name="price_type_id" id="price_type_id"
                                     class="form-control form-control-sm" required>
                                 <option value="">{{trans('backend/product.select_price_type')}}</option>
@@ -81,8 +81,8 @@
                     </div>
                     <div class="col-md-6 required">
                         <div class="form-group">
-                            {{ Form::label('price_type_value',trans('backend/product.price_type_value')) }}
-                            {{ Form::text('price_type_value', old('price_type_value'), ["required","class"=>"form-control form-control-sm","placeholder"=>trans('backend/product.price_type_value'),"id"=>"price_type_value","name"=>"price_type_value"]) }}
+                            {{ Form::label('price_type_value',trans('backend/product.unit_type_value')) }}
+                            {{ Form::text('price_type_value', old('price_type_value'), ["required","class"=>"form-control form-control-sm","placeholder"=>trans('backend/product.unit_type_value'),"id"=>"price_type_value","name"=>"price_type_value"]) }}
                         </div>
                     </div>
                 </div>

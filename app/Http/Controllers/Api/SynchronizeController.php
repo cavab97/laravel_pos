@@ -1577,6 +1577,7 @@ class SynchronizeController extends Controller
             $userIds = UserBranch::where('branch_id', $response['branch_id'])->select('user_id')->get();
             $loadUser = User::withTrashed()->whereIn('id', $userIds)->where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
             $response['users'] = Helper::replaceNullWithEmptyString($loadUser);
+            Helper::log($response['users']);
             $message = trans('api.retrive_user_updated_data');
             Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'users');
             return response()->json(['status' => 200, 'show' => false, 'message' => $message, 'data' => $response]);
