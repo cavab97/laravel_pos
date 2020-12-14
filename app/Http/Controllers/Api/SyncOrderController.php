@@ -1152,9 +1152,8 @@ class SyncOrderController extends Controller
                 return response()->json(['status' => 422, 'show' => true, "message" => trans('api.branch_id_required')]);
             } else {
 
-                $isValidJson = isJson($shift);
-                if ($isValidJson) {
-                    $timeStart = microtime(true);
+                $timeStart = microtime(true);
+                if (\GuzzleHttp\json_decode($shift, true)) {
                     $getShiftArray = \GuzzleHttp\json_decode($shift, true);
                     $pushShift = [];
                     if (is_array($getShiftArray)) {  // valid array
@@ -1168,7 +1167,7 @@ class SyncOrderController extends Controller
 
                                     $shift->uuid = Helper::getUuid();
                                     $shift->terminal_id = ($setShiftArray['terminal_id']) ? $setShiftArray['terminal_id'] : "";
-                                    $shift->app_id = $setShiftArray['id'];
+                                    $shift->app_id = $setShiftArray['app_id'];
                                     $shift->user_id = $setShiftArray['user_id'];
                                     $shift->branch_id = $setShiftArray['branch_id'];
                                     $shift->status = $setShiftArray['status'];
@@ -1182,7 +1181,7 @@ class SyncOrderController extends Controller
                                 } else {
 
                                     $shift->terminal_id = ($setShiftArray['terminal_id']) ? $setShiftArray['terminal_id'] : "";
-                                    $shift->app_id = $setShiftArray['id'];
+                                    $shift->app_id = $setShiftArray['app_id'];
                                     $shift->user_id = $setShiftArray['user_id'];
                                     $shift->branch_id = $setShiftArray['branch_id'];
                                     $shift->status = $setShiftArray['status'];
@@ -1199,7 +1198,7 @@ class SyncOrderController extends Controller
 
                                 $shift->uuid = Helper::getUuid();
                                 $shift->terminal_id = ($setShiftArray['terminal_id']) ? $setShiftArray['terminal_id'] : "";
-                                $shift->app_id = $setShiftArray['id'];
+                                $shift->app_id = $setShiftArray['app_id'];
                                 $shift->user_id = $setShiftArray['user_id'];
                                 $shift->branch_id = $setShiftArray['branch_id'];
                                 $shift->status = $setShiftArray['status'];
@@ -1264,10 +1263,9 @@ class SyncOrderController extends Controller
                 return response()->json(['status' => 422, 'show' => true, "message" => trans('api.branch_id_required')]);
             } else {
 
-                $isValidJson = isJson($shiftInvoice);
-                if ($isValidJson) {
-                    $timeStart = microtime(true);
-                    $getShiftArray = \GuzzleHttp\json_decode($shiftInvoice, true);
+                $timeStart = microtime(true);
+                if (\GuzzleHttp\json_decode(stripslashes($shiftInvoice), true)) {
+                    $getShiftArray = \GuzzleHttp\json_decode(stripslashes($shiftInvoice), true);
                     $pushShiftInvoice = [];
                     if (is_array($getShiftArray)) {  // valid array
                         foreach ($getShiftArray as $setShiftArray) {
@@ -1279,8 +1277,8 @@ class SyncOrderController extends Controller
                                     $shiftInvoice = new ShiftDetails();
 
                                     $shiftInvoice->uuid = Helper::getUuid();
-                                    $shiftInvoice->app_id = $setShiftArray['id'];
-                                    $shiftInvoice->shift_id = $setShiftArray['shift_id'];
+                                    $shiftInvoice->app_id = $setShiftArray['app_id'];
+                                    $shiftInvoice->shift_id = $setShiftArray['shift_app_id'];
                                     $shiftInvoice->status = $setShiftArray['status'];
                                     $shiftInvoice->invoice_id = $setShiftArray['invoice_id'];
                                     $shiftInvoice->updated_by = ($setShiftArray['updated_by'] != 0) ? $setShiftArray['updated_by'] : NULL;
@@ -1291,8 +1289,8 @@ class SyncOrderController extends Controller
                                     $pushShiftInvoice[] = $shiftInvoice;
                                 } else {
 
-                                    $shiftInvoice->app_id = $setShiftArray['id'];
-                                    $shiftInvoice->shift_id = $setShiftArray['shift_id'];
+                                    $shiftInvoice->app_id = $setShiftArray['app_id'];
+                                    $shiftInvoice->shift_id = $setShiftArray['shift_app_id'];
                                     $shiftInvoice->status = $setShiftArray['status'];
                                     $shiftInvoice->invoice_id = $setShiftArray['invoice_id'];
                                     $shiftInvoice->updated_by = ($setShiftArray['updated_by'] != 0) ? $setShiftArray['updated_by'] : NULL;
@@ -1306,8 +1304,8 @@ class SyncOrderController extends Controller
                                 $shiftInvoice = new ShiftDetails();
 
                                 $shiftInvoice->uuid = Helper::getUuid();
-                                $shiftInvoice->app_id = $setShiftArray['id'];
-                                $shiftInvoice->shift_id = $setShiftArray['shift_id'];
+                                $shiftInvoice->app_id = $setShiftArray['app_id'];
+                                $shiftInvoice->shift_id = $setShiftArray['shift_app_id'];
                                 $shiftInvoice->status = $setShiftArray['status'];
                                 $shiftInvoice->invoice_id = $setShiftArray['invoice_id'];
                                 $shiftInvoice->updated_by = ($setShiftArray['updated_by'] != 0) ? $setShiftArray['updated_by'] : NULL;
@@ -1372,12 +1370,12 @@ class SyncOrderController extends Controller
                 return response()->json(['status' => 422, 'show' => true, "message" => trans('api.branch_id_required')]);
             } else {
 
-                $isValidJson = isJson($terminal_log);
-                if ($isValidJson) {
-                    $timeStart = microtime(true);
+                $timeStart = microtime(true);
+                if (\GuzzleHttp\json_decode($terminal_log, true)) {
                     $getTerminalLogArray = \GuzzleHttp\json_decode($terminal_log, true);
                     $pushTerminal = [];
                     if (is_array($getTerminalLogArray)) {  // valid array
+                        $terminalLog = new TerminalLog();
                         foreach ($getTerminalLogArray as $setTerminalLogArray) {
                             $isExistingShift = array_key_exists("server_id", $setTerminalLogArray);
                             if ($isExistingShift) {
@@ -1398,7 +1396,6 @@ class SyncOrderController extends Controller
                                     $terminalLog->status = $setTerminalLogArray['status'];
                                     $terminalLog->updated_at = ($setTerminalLogArray['updated_at'] != '') ? $setTerminalLogArray['updated_at'] : NULL;
                                     $terminalLog->updated_by = ($setTerminalLogArray['updated_by'] != 0) ? $setTerminalLogArray['updated_by'] : NULL;
-
 
                                     $terminalLog = TerminalLog::create($terminalLog->toArray());
                                     $pushTerminal[] = $terminalLog;
@@ -2082,9 +2079,8 @@ class SyncOrderController extends Controller
                 return response()->json(['status' => 422, 'show' => true, "message" => trans('api.branch_id_required')]);
             } else {
 
-                $isValidJson = isJson($customer);
-                if ($isValidJson) {
-                    $timeStart = microtime(true);
+                $timeStart = microtime(true);
+                if (\GuzzleHttp\json_decode($customer, true)) {
                     $getCustomerArray = \GuzzleHttp\json_decode($customer, true);
                     $pushShift = [];
                     if (is_array($getCustomerArray)) {  // valid array

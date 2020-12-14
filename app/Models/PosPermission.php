@@ -34,7 +34,11 @@ class PosPermission extends Model
         'split_table',
         'print_qr',
         'opening',
-        'closing'
+        'closing',
+        'print_receipt',
+        'sync',
+        'refund',
+        'cancel_transaction',
     ];
 
     static $actionListPOS = ['action'];
