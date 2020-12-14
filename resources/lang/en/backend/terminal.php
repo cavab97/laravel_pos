@@ -17,7 +17,7 @@ return [
     'display_order' => 'Display order',
     'delete_terminal' => 'Delete terminal',
     'select_type' => 'Select type',
-    'terminal_is_mother' => 'Is mother?',
+    'terminal_is_mother' => 'Is master?',
     'status' => 'Status',
     'terminal_exists' => 'The terminal name is already exists.',
     'delete_terminal_msg' => 'Are you sure want to delete this terminal?.',

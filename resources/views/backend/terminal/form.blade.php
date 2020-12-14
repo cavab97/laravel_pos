@@ -23,6 +23,9 @@
                 <div class="col-md-4 required">
                     <div class="form-group">
                         {{ Form::label('terminal_device_id',trans('backend/terminal.terminal_device_id')) }}
+                    <a href="javascript:void(0);"
+                       onclick="reset_device_id(this);" class="text-left"><i
+                                class="fa fa-refresh text-success"></i></a>
                         {{ Form::text('terminal_device_id', old('terminal_device_id'), ["readonly","required","class"=>"form-control form-control-sm","placeholder"=>trans('backend/terminal.terminal_device_id'),"id"=>"terminal_device_id"]) }}
                     </div>
                 </div>
@@ -49,11 +52,14 @@
                                 @php
                                     $selected = '';
                                     if (!empty($terminalData) && $value->branch_id == $terminalData->branch_id) {
-                                    $selected = 'selected';
+                                        $selected = 'selected';
                                     }
                                 @endphp
                                 <option value="{{$value->branch_id}}" {{$selected}}>{{$value->name}}</option>
                             @endforeach
+                        @endif
+                        @if(isset($branchList) && count($branchList) == 0)
+                            <option disabled="true">No branch available</option>
                         @endif
                     </select>
                 </div>
@@ -104,5 +110,11 @@
         </div>
     </div>
 </div>
-
+<script>
+function reset_device_id(currentEle) {
+    let ele = currentEle.nextElementSibling;
+    ele.value = '';
+    ele.required = false;
+}
+</script>
 {{ Form::close() }}
