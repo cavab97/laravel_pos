@@ -7,7 +7,7 @@ return [
     'branch' => 'Branch Name',
     'name' => 'Name',
     'select_branch' => 'Select Branch',
-    'add_rac' => 'Add Rac',
+    'add_rac' => 'Add Wine',
     'edit_rac' => 'Edit Wine',
     'name_exists' => 'Name already exists.',
     'delete_rac_msg' => 'Are you sure want to delete this Wine?',
