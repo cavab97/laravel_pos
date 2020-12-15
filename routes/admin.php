@@ -106,6 +106,8 @@ Route::group(['namespace' => 'Admin'], function () {
 
         Route::resource('logs', 'LogsController');
         Route::post('logs-paginate', 'LogsController@paginate')->name('logs.paginate');
+        Route::get('logs-pos', 'LogsController@posLogsIndex')->name('logs.pos-logs');
+        Route::post('logs-pos-paginate', 'LogsController@logPospaginate')->name('logs.pos-paginate');
 
         Route::resource('attendance', 'AttendanceController');
         Route::post('attendance-paginate', 'AttendanceController@paginate')->name('attendance.paginate');

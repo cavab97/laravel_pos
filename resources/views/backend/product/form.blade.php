@@ -75,7 +75,7 @@
                             {{ Form::label('price_type_id',trans('backend/product.unit_type')) }}
                             <select name="price_type_id" id="price_type_id"
                                     class="form-control form-control-sm" required>
-                                <option value="">{{trans('backend/product.select_price_type')}}</option>
+                                <option value="">{{trans('backend/product.select_unit_type')}}</option>
                                 @foreach($priceTypeList as $value)
                                     @php
                                         $selected = '';

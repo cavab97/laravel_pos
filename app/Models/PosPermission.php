@@ -39,6 +39,23 @@ class PosPermission extends Model
         'sync',
         'refund',
         'cancel_transaction',
+        'send_kitchen',
+        'reprint_kitchen',
+        'print_checklist',
+        'print_bill',
+        'free_item',
+        'reprint_previous_receipt',
+        'open_shift',
+        'close_shift',
+        'redeem_wine',
+        'apply_voucher',
+        'new_order',
+        'change_quantity',
+        'add_customer',
+        'close_table',
+        'sync_order',
+        'return_previous_transaction',
+        'view_shift'
     ];
 
     static $actionListPOS = ['action'];
