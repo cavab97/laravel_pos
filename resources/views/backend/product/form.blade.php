@@ -356,7 +356,7 @@
                 <i class="fa fa-plus"></i> {{trans('backend/common.add_more')}}
             </button>
             <input type="hidden" id="modifier_count"
-                   value="@if(isset($productData)){{count($productData->modifier)+1}}@else{{1}}@endif"/>
+                   value="@if(isset($productData)){{count($productData->modifier)+1}}@else{{count($globalModifierList) + 1}}@endif"/>
         </div>
     </div>
     <div class="card-body p-0 mb-0">
@@ -374,9 +374,12 @@
                             <thead class="thead-light">
                             <tr class="text-center">
                                 <th colspan="2">{{$av1->name}}
-                                    <a href="javascript:void(0);" class="text-dark"> <i onclick="removeMod({{$ak1+1}})"
-                                                                                        class="fa fa-times float-right"
-                                                                                        aria-hidden="true"></i></a>
+                                    @if(!$av1->is_global)
+                                        <a href="javascript:void(0);" class="text-dark"> <i
+                                                    onclick="removeMod({{$ak1+1}})"
+                                                    class="fa fa-times float-right"
+                                                    aria-hidden="true"></i></a>
+                                    @endif
                                     <input type="hidden" class="mod_id" id="mod_id_{{$ak1+1}}"
                                            value="{{$av1->modifier_id}}"
                                            name="modifier_id[{{$ak1+1}}]">
@@ -385,18 +388,6 @@
                             </tr>
                             </thead>
                             <tbody style="border-bottom: 2px solid #dee2e6;">
-                            {{--<tr class="table-secondary">
-                                <td colspan="2" class="text-center">
-                                    <label>{{$av1->name}}</label>
-                                    <a href="javascript:void(0);" class="text-dark"> <i onclick="removeMod({{$ak1+1}})"
-                                                                                        class="fa fa-times float-right mt-1"
-                                                                                        aria-hidden="true"></i></a>
-                                    <input type="hidden" class="mod_id" id="mod_id_{{$ak1+1}}"
-                                           value="{{$av1->modifier_id}}"
-                                           name="modifier_id[{{$ak1+1}}]">
-                                    <input type="hidden" id="selectedText_mod{{$ak1+1}}" value="{{$av1->name}}">
-                                </td>
-                            </tr>--}}
                             <tr>
                                 <td><label for="mod_price_{{$ak1+1}}">{{trans('backend/product.price')}}</label></td>
                                 <td>
@@ -423,6 +414,52 @@
                         </table>
                     </div>
                 @endforeach
+            @else
+
+                @if (isset($globalModifierList))
+                    @foreach($globalModifierList as $ak1 => $av1)
+                        <div class="col-md-6 table-responsive" id="modifier_detail_div_{{$ak1+1}}">
+                            <table class="table table-sm table-bordered mb-2">
+                                <thead class="thead-light">
+                                <tr class="text-center">
+                                    <th colspan="2">{{$av1->name}}
+                                        <input type="hidden" class="mod_id" id="mod_id_{{$ak1+1}}"
+                                               value="{{$av1->modifier_id}}"
+                                               name="modifier_id[{{$ak1+1}}]">
+                                        <input type="hidden" id="selectedText_mod{{$ak1+1}}" value="{{$av1->name}}">
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody style="border-bottom: 2px solid #dee2e6;">
+                                <tr>
+                                    <td><label for="mod_price_{{$ak1+1}}">{{trans('backend/product.price')}}</label>
+                                    </td>
+                                    <td>
+                                        <input type="number" name="mod_price[{{$ak1+1}}]"
+                                               value=""
+                                               id="mod_price_{{$ak1+1}}" class="form-control form-control-sm"
+                                               placeholder="{{trans('backend/product.price')}}" required min="0">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><label for="is_enabled_{{$ak1+1}}">{{trans('backend/common.status')}}</label>
+                                    </td>
+                                    <td>
+                                    <span class="radio-left ml-2">
+                                <input type="radio" name="is_enabled_mod[{{$ak1+1}}]"
+                                       value="1" checked/>{{trans('backend/common.yes')}}
+                                </span>
+                                        <span class="radio-right ml-2">
+                                <input type="radio" name="is_enabled_mod[{{$ak1+1}}]"
+                                       value="0"/>{{trans('backend/common.no')}}
+                                </span>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    @endforeach
+                @endif
             @endif
         </div>
 
@@ -431,113 +468,117 @@
 {{--End modifier Block--}}
 
 @if($user->role == 1)
-{{--Start Branch Block--}}
-<div class="card card-secondary">
-    <div class="card-header">
-        <h3 class="card-title">
-            <i class="fa fa-code-fork"></i>
-            {{trans('backend/category.assign_branch')}}
-        </h3>
+    {{--Start Branch Block--}}
+    <div class="card card-secondary">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fa fa-code-fork"></i>
+                {{trans('backend/category.assign_branch')}}
+            </h3>
 
-    </div>
-    <div class="card-body">
-        <div class="row">
-            @foreach($branchList as $key=>$value)
-                @php
-                    $checked = '';
-                    $checked_requires = '';
-                    $display_order = '';
-                    $stockLevel = '';
-                    $branch_status = 1;
-                    $is_enabled = 0;
-                    $printer = '';
-                    if (isset($productData->branchData)) {
-                    foreach ($productData->branchData as $k=>$v){
-                         if($value['branch_id'] == $v->branch_id){
-                                $stockLevel = $v->warningStockLevel;
-                                $display_order = $v->display_order;
-                                $branch_status = $v->status;
-                                $checked = 'checked';
-                                $checked_requires = 'required';
-                                $is_enabled = 1;
-                                $printer = $v->printer_id;
-                            } else {
-                                $checked = '';
-                                 $is_enabled = 0;
+        </div>
+        <div class="card-body">
+            <div class="row">
+                @foreach($branchList as $key=>$value)
+                    @php
+                        $checked = '';
+                        $checked_requires = '';
+                        $display_order = '';
+                        $stockLevel = '';
+                        $branch_status = 1;
+                        $is_enabled = 0;
+                        $printer = '';
+                        if (isset($productData->branchData)) {
+                        foreach ($productData->branchData as $k=>$v){
+                             if($value['branch_id'] == $v->branch_id){
+                                    $stockLevel = $v->warningStockLevel;
+                                    $display_order = $v->display_order;
+                                    $branch_status = $v->status;
+                                    $checked = 'checked';
+                                    $checked_requires = 'required';
+                                    $is_enabled = 1;
+                                    $printer = $v->printer_id;
+                                } else {
+                                    $checked = '';
+                                     $is_enabled = 0;
+                                }
                             }
                         }
-                    }
-                @endphp
-                <div class="col-md-3">
-                    <div class="card card-dark">
-                        <div class="card-header">
-                            <h4 class="card-title">{{$value['name']}}</h4>
-                        </div>
-                        <div class="card-body">
-                            <div class="form-group">
-                                {{--<label for="branch_id{{$key}}">{{$value['name']}}</label>
-                                <br>--}}
-                                <label class="switch">
-                                    <input type="checkbox" onclick="switchDisable(this,'{{$value["branch_id"]}}')"
-                                           id="customSwitch{{$key}}"
-                                           name="branch_id[]"
-                                           value="{{$value['branch_id']}}" @if(isset($productData)) {{ (in_array($value["branch_id"],explode(',',$productData->branch))) ? 'checked':''  }} @endif>
-                                    <span class="slider round"></span>
-                                </label>
-                                <input type="number" placeholder="{{trans('backend/common.display_order')}}"
-                                       name="display_order[{{$value['branch_id']}}]"
-                                       id="display_order_{{$value["branch_id"]}}"
-                                       value="{{$display_order}}" {{$checked_requires}} min="1"
-                                       class="form-control form-control-sm"
-                                       @if(isset($productData)) {{ (!in_array($value["branch_id"],explode(',',$productData->branch))) ? 'disabled':'' }} @else disabled @endif>
-
-                                <input type="number"
-                                       placeholder="{{trans('backend/inventory.warning_stock_level')}}"
-                                       name="warning_stock_level[{{$value['branch_id']}}]"
-                                       id="warning_stock_level_{{$value["branch_id"]}}"
-                                       value="{{$stockLevel}}" {{$checked_requires}} min="0"
-                                       class="form-control form-control-sm mt-2"
-
-                                       @if(isset($productData)) {{ (!in_array($value["branch_id"],explode(',',$productData->branch))) ? 'disabled':$stock_level_requires }} @else disabled @endif
-                                >
-                                <input type="hidden" name="stock_level_required" value="{{$stock_level}}" id="stock_level_requires">
+                    @endphp
+                    <div class="col-md-3">
+                        <div class="card card-dark">
+                            <div class="card-header">
+                                <h4 class="card-title">{{$value['name']}}</h4>
                             </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    {{--<label for="branch_id{{$key}}">{{$value['name']}}</label>
+                                    <br>--}}
+                                    <label class="switch">
+                                        <input type="checkbox" onclick="switchDisable(this,'{{$value["branch_id"]}}')"
+                                               id="customSwitch{{$key}}"
+                                               name="branch_id[]"
+                                               value="{{$value['branch_id']}}" @if(isset($productData)) {{ (in_array($value["branch_id"],explode(',',$productData->branch))) ? 'checked':''  }} @endif>
+                                        <span class="slider round"></span>
+                                    </label>
+                                    <input type="number" placeholder="{{trans('backend/common.display_order')}}"
+                                           name="display_order[{{$value['branch_id']}}]"
+                                           id="display_order_{{$value["branch_id"]}}"
+                                           value="{{$display_order}}" {{$checked_requires}} min="1"
+                                           class="form-control form-control-sm"
+                                           @if(isset($productData)) {{ (!in_array($value["branch_id"],explode(',',$productData->branch))) ? 'disabled':'' }} @else disabled @endif>
 
-                            <div class="form-group">
-                                <select class="form-control form-control-sm" id="printer_id{{$value["branch_id"]}}" name="printer_id[{{$value["branch_id"]}}]"
-                                        @if(isset($productData)) {{ (!in_array($value["branch_id"],explode(',',$productData->branch))) ? 'disabled':'' }} @else disabled @endif required>
-                                    <option value="">{{trans('backend/product.select_printer')}}</option>
-                                    @if(isset($value['printer']))
-                                        @foreach($value['printer'] as $pk1 => $pv1)
-                                            <option value="{{$pv1['printer_id']}}" @if($pv1['printer_id'] == $printer) selected @endif>{{$pv1['printer_name']}}</option>
-                                        @endforeach
-                                    @endif
-                                </select>
-                            </div>
+                                    <input type="number"
+                                           placeholder="{{trans('backend/inventory.warning_stock_level')}}"
+                                           name="warning_stock_level[{{$value['branch_id']}}]"
+                                           id="warning_stock_level_{{$value["branch_id"]}}"
+                                           value="{{$stockLevel}}" {{$checked_requires}} min="0"
+                                           class="form-control form-control-sm mt-2"
 
-                            <div class="form-group">
-                                <label for="is_enabled_{{$key}}">{{trans('backend/common.status')}}</label>
-                                <span class="radio-left">
+                                           @if(isset($productData)) {{ (!in_array($value["branch_id"],explode(',',$productData->branch))) ? 'disabled':$stock_level_requires }} @else disabled @endif
+                                    >
+                                    <input type="hidden" name="stock_level_required" value="{{$stock_level}}"
+                                           id="stock_level_requires">
+                                </div>
+
+                                <div class="form-group">
+                                    <select class="form-control form-control-sm" id="printer_id{{$value["branch_id"]}}"
+                                            name="printer_id[{{$value["branch_id"]}}]"
+                                            @if(isset($productData)) {{ (!in_array($value["branch_id"],explode(',',$productData->branch))) ? 'disabled':'' }} @else disabled
+                                            @endif required>
+                                        <option value="">{{trans('backend/product.select_printer')}}</option>
+                                        @if(isset($value['printer']))
+                                            @foreach($value['printer'] as $pk1 => $pv1)
+                                                <option value="{{$pv1['printer_id']}}"
+                                                        @if($pv1['printer_id'] == $printer) selected @endif>{{$pv1['printer_name']}}</option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="is_enabled_{{$key}}">{{trans('backend/common.status')}}</label>
+                                    <span class="radio-left">
                                     <input type="radio" name="is_enabled_status[{{$value['branch_id']}}]"
                                            value="1"
                                            {{ ($branch_status==1)? "checked" : "" }} @if(isset($productData)) {{ (!in_array($value["branch_id"],explode(',',$productData->branch))) ? 'disabled':'' }} @else disabled @endif/>{{trans('backend/common.yes')}}
                                     </span>
-                                <span class="radio-right">
+                                    <span class="radio-right">
                                     <input type="radio" name="is_enabled_status[{{$value['branch_id']}}]"
                                            value="0"
                                            {{ ($branch_status==0)? "checked" : "" }} @if(isset($productData)) {{ (!in_array($value["branch_id"],explode(',',$productData->branch))) ? 'disabled':'' }} @else disabled @endif/>{{trans('backend/common.no')}}
                                     </span>
+                                </div>
+
+
                             </div>
-
-
                         </div>
                     </div>
-                </div>
-            @endforeach
+                @endforeach
+            </div>
         </div>
     </div>
-</div>
-{{--End Branch Block--}}
+    {{--End Branch Block--}}
 @endif
 
 <div class="card">

@@ -59,6 +59,10 @@ class ModifierController extends Controller
             if ($request->is_default != '') {
                 $is_default = 1;
             }
+            $is_global = 0;
+            if ($request->is_global != '') {
+                $is_global = 1;
+            }
             $checkName = Modifier::where('name', $name)->count();
 
             if ($checkName > 0) {
@@ -69,6 +73,7 @@ class ModifierController extends Controller
                     'uuid' => Helper::getUuid(),
                     'name' => $name,
                     'is_default' => $is_default,
+                    'is_global' => $is_global,
                     'status' => $status,
                     'updated_at' => date('Y-m-d H:i:s'),
                     'updated_by' => Auth::user()->id,
@@ -134,6 +139,10 @@ class ModifierController extends Controller
             if ($request->is_default != '') {
                 $is_default = 1;
             }
+            $is_global = 0;
+            if ($request->is_global != '') {
+                $is_global = 1;
+            }
             $checkName = Modifier::where('name', $name)->where('uuid', '!=', $uuid)->count();
 
             if ($checkName > 0) {
@@ -143,6 +152,7 @@ class ModifierController extends Controller
                 $modifierData = [
                     'name' => $name,
                     'is_default' => $is_default,
+                    'is_global' => $is_global,
                     'status' => $status,
                     'updated_at' => date('Y-m-d H:i:s'),
                     'updated_by' => Auth::user()->id,

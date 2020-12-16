@@ -58,6 +58,7 @@
                                     <th>{{trans('backend/common.no')}}</th>
                                     <th>{{trans('backend/modifier.name')}}</th>
                                     <th>{{trans('backend/modifier.is_default')}}</th>
+                                    <th>{{trans('backend/modifier.is_global')}}</th>
                                     <th>{{trans('backend/common.status')}}</th>
                                     <th>{{trans('backend/common.action')}}</th>
                                 </tr>
@@ -69,6 +70,13 @@
                                         <td>{{$value->name}}</td>
                                         <td>
                                             @if($value->is_default == 1)
+                                                <span class="badge badge-info rounded">{{trans('backend/common.yes_lable')}}</span>
+                                            @else
+                                                <span class="badge badge-secondary rounded">{{trans('backend/common.no_lable')}}</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($value->is_global == 1)
                                                 <span class="badge badge-info rounded">{{trans('backend/common.yes_lable')}}</span>
                                             @else
                                                 <span class="badge badge-secondary rounded">{{trans('backend/common.no_lable')}}</span>
