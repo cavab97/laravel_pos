@@ -1731,24 +1731,29 @@ class SynchronizeController extends Controller
                 return response()->json(['status' => 422, 'show' => true, "message" => trans('api.terminal_id_required')]);
             } else {
                 $terminalData = Terminal::where('terminal_id', $terminalId)->first();
-                $branchId = $terminalData->branch_id;
+                $cartData = [];
+                if (!empty($terminalData)) {
 
-                $cartData = Cart::where(['branch_id'=>$branchId,'source'=>1,'cart_payment_status' => 1])->where(DB::raw('COALESCE(created_at,0)'), '>=', $response['postdatetime'])->select('cart.*')->get();
-                if(!empty($cartData)){
-                    foreach ($cartData as $key => $value)
-                    {
-                        $cart_id = $value->cart_id;
+                    $branchId = $terminalData->branch_id;
 
-                        /* Cart Detail */
-                        $cartDetail = CartDetail::where('cart_id',$cart_id)->get();
-                        foreach ($cartDetail as $ckey => $cvalue) {
+                    $cartData = Cart::where(['branch_id'=>$branchId,'source'=>1,'cart_payment_status' => 1])->where(DB::raw('COALESCE(created_at,0)'), '>=', $response['postdatetime'])->select('cart.*')->get();
+                    if(!empty($cartData)){
+                        foreach ($cartData as $key => $value)
+                        {
+                            $cart_id = $value->cart_id;
 
-                            /* Cart Attribute */
-                            $cartSubDetail = CartSubDetail::where(['cart_id' => $cart_id, 'cart_detail_id' => $cvalue->cart_detail_id])->get();
-                            $cartDetail[$ckey]['cart_sub_detail'] = $cartSubDetail;
+                            /* Cart Detail */
+                            $cartDetail = CartDetail::where('cart_id',$cart_id)->get();
+                            foreach ($cartDetail as $ckey => $cvalue) {
+
+                                /* Cart Attribute */
+                                $cartSubDetail = CartSubDetail::where(['cart_id' => $cart_id, 'cart_detail_id' => $cvalue->cart_detail_id])->get();
+                                $cartDetail[$ckey]['cart_sub_detail'] = $cartSubDetail;
+                            }
+                            $cartData[$key]['cart_detail'] = $cartDetail;
                         }
-                        $cartData[$key]['cart_detail'] = $cartDetail;
                     }
+                    Helper::saveTerminalLog($terminalId, $branchId, 'Web Order Sync', 'Web Order Synchronize Appdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'cart');
                 }
                 $response['cart'] = $cartData;
                 // total time taking api response
@@ -1756,7 +1761,6 @@ class SynchronizeController extends Controller
                 $response['timetaking'] = $timeEnd - $timeStart;
 
                 Helper::log('WebOrderData synch : Data Synchronize');
-                Helper::saveTerminalLog($terminalId, $branchId, 'Web Order Sync', 'Web Order Synchronize Appdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'cart');
                 $message = trans('api.data_synchronize');
                 return response()->json(['status' => 200, 'show' => true, 'message' => $message, 'data' => $response]);
 

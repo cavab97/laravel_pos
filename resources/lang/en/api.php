@@ -108,6 +108,7 @@ return [
     'retrive_customer_address_updated_data' => 'Retrive customer address level updated data.',
     'data_synchronize' => 'Data Synchronize',
     'faid_json_to_array' => 'Fail json to array converting',
+    'empty_json_array' => 'Empty array given in json',
     'invalid_json_string' => 'Invalid Json String',
     'attendance_created' => 'Attendance Created',
     'enter_required_parameter' => 'Enter required parameter',

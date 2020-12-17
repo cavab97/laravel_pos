@@ -1264,7 +1264,12 @@ class SyncOrderController extends Controller
             } else {
 
                 $timeStart = microtime(true);
-                if (\GuzzleHttp\json_decode(stripslashes($shiftInvoice), true)) {
+                if (\GuzzleHttp\json_decode(stripslashes($shiftInvoice), true) == []) {
+                    $message = trans('api.empty_json_array');
+                    Helper::log('AppShiftInvoiceData Table Synch : Empty data');
+                    return response()->json(['status' => 422, 'show' => true, 'message' => $message]);
+                }
+                else if (\GuzzleHttp\json_decode(stripslashes($shiftInvoice), true)) {
                     $getShiftArray = \GuzzleHttp\json_decode(stripslashes($shiftInvoice), true);
                     $pushShiftInvoice = [];
                     if (is_array($getShiftArray)) {  // valid array
@@ -1683,7 +1688,7 @@ class SyncOrderController extends Controller
 													$setinventoryLog['server_id'] = $ilId;
 
                                                 }
-											} else {	
+											} else {
 												$productStoreInventoryLog->uuid = Helper::getUuid();
 												$productStoreInventoryLog->inventory_id = $setinventoryLog['inventory_id'];
 												$productStoreInventoryLog->branch_id = $setinventoryLog['branch_id'];
@@ -1701,7 +1706,7 @@ class SyncOrderController extends Controller
 
 											}
                                         }
-                                        
+
                                     }
 
                                     /* Update Main Inventory Stock */
@@ -1855,7 +1860,7 @@ class SyncOrderController extends Controller
             return response()->json(['status' => 500, 'show' => true, 'message' => trans('api.ooops')]);
         }
     }
-	
+
 	/*
      * @method : update inventory
      * @parmas : terminalId, InvoiceUniqId
