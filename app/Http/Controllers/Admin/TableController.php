@@ -83,6 +83,7 @@ class TableController extends Controller
                     'table_capacity' => $table_capacity,					
                     'status' => $request->status,
                     'table_section' => $table_section,
+                    'updated_at' => date('Y-m-d H:i:s'),
                     'updated_by' => $loginId,
                 ];
 				if($table_type == 1) {
