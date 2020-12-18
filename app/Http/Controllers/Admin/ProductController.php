@@ -222,7 +222,7 @@ class ProductController extends Controller
         $attributeList = Attributes::where('status', 1)->get();
 
         /*Modifier List*/
-        $modifierList = Modifier::where('status', 1)->where('is_global', 0)->get();
+        $modifierList = Modifier::where('status', 1)->get();
         $globalModifierList = Modifier::where('status', 1)->where('is_global', 1)->get();
 
         /* Category Attribute List */
@@ -617,7 +617,7 @@ class ProductController extends Controller
             ->get();*/
 
         /*Modifier List*/
-        $modifierList = Modifier::where('status', 1)->where('is_global', 0)->get();
+        $modifierList = Modifier::where('status', 1)->get();
         $globalModifierList = Modifier::where('status', 1)->where('is_global', 1)->get();
 
         $productData->modifier = ProductModifier::leftjoin('modifier', 'modifier.modifier_id', 'product_modifier.modifier_id')

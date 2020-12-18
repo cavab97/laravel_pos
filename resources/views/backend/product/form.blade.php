@@ -373,12 +373,10 @@
                             <thead class="thead-light">
                             <tr class="text-center">
                                 <th colspan="2">{{$av1->name}}
-                                    @if(!$av1->is_global)
                                         <a href="javascript:void(0);" class="text-dark"> <i
                                                     onclick="removeMod({{$ak1+1}})"
                                                     class="fa fa-times float-right"
                                                     aria-hidden="true"></i></a>
-                                    @endif
                                     <input type="hidden" class="mod_id" id="mod_id_{{$ak1+1}}"
                                            value="{{$av1->modifier_id}}"
                                            name="modifier_id[{{$ak1+1}}]">
@@ -422,6 +420,9 @@
                                 <thead class="thead-light">
                                 <tr class="text-center">
                                     <th colspan="2">{{$av1->name}}
+                                        <a href="javascript:void(0);" class="text-dark">
+                                            <i onclick="removeMod({{$ak1+1}})" class="fa fa-times float-right" aria-hidden="true"></i>
+                                        </a>
                                         <input type="hidden" class="mod_id" id="mod_id_{{$ak1+1}}"
                                                value="{{$av1->modifier_id}}"
                                                name="modifier_id[{{$ak1+1}}]">
