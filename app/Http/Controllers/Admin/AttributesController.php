@@ -163,6 +163,7 @@ class AttributesController extends Controller
                     if($checkAtt > 0){
                         $updateDefaultAtt = [
                             'is_default' => 0,
+                            'updated_at' => date('Y-m-d H:i:s'),
                         ];
                         Attributes::where('ca_id', $ca_id)->update($updateDefaultAtt);
                     }

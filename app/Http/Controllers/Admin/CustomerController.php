@@ -511,7 +511,8 @@ class CustomerController extends Controller
 
                     if ($is_default[$key] == 1) {
                         $defaultUpdate = [
-                            'is_default' => 0
+                            'is_default' => 0,
+                            'updated_at' => date('Y-m-d H:i:s'),
                         ];
                         CustomerAddress::where('user_id', $user_id)->update($defaultUpdate);
                     }

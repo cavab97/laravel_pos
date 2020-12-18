@@ -83,7 +83,7 @@ class CitiesController extends Controller
                     'name' => $name,
                     'slug' => $slug,
                     'state_id' => $state_id,
-                    'updated_at' => config('constants.date_time')
+                    'updated_at' => date('Y-m-d H:i:s'),
                 ];
                 Cities::create($insertData);
                 DB::commit();
@@ -158,6 +158,7 @@ class CitiesController extends Controller
                     'name' => $name,
                     'slug' => $slug,
                     'state_id' => $state_id,
+                    'updated_at' => date('Y-m-d H:i:s'),
                 ];
                 Cities::where('city_id', $id)->update($updateData);
                 DB::commit();

@@ -120,6 +120,7 @@ class CategoryController extends Controller
                     'has_rac_managemant' => $has_rac_managemant,
                     'is_setmeal' => $is_setmeal,
                     'status' => $request->status,
+                    'updated_at' => date('Y-m-d H:i:s'),
                     'updated_by' => $loginId,
                 ];
                 $categoryData = Category::create($insertCategory);
@@ -132,6 +133,7 @@ class CategoryController extends Controller
                             'category_id' => $categoryId,
                             'branch_id' => $value,
                             'display_order' => $request->display_order[$value],
+                            'updated_at' => date('Y-m-d H:i:s'),
                             'updated_by' => $loginId
                         ];
                         CategoryBranch::create($insertCatBranch);

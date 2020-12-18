@@ -221,6 +221,7 @@ class BranchController extends Controller
                             'tax_id' => $value,
                             'branch_id' => $branchId,
                             'rate' => $rateData['rate'],
+                            'updated_at' => date('Y-m-d H:i:s'),
                             'updated_by' => Auth::user()->id
                         ];
                         BranchTax::create($insertTax);
