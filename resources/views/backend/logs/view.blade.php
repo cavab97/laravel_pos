@@ -35,6 +35,9 @@
                             <p><strong>{{trans('backend/logs.ip_address')}}</strong>:
                                 <span>{{$logsData->ip_address}}</span>
                             </p>
+                            <p><strong>{{trans('backend/common.created_by')}}</strong>:
+                                <span>{{$logsData->user_name}}</span>
+                            </p>
                             <p><strong>{{trans('backend/common.created_at')}}</strong>:
                                 <span>{{$logsData->created_at}}</span>
                             </p>

@@ -59,6 +59,7 @@ return [
     'inventory' => 'Inventory',
     'update_profile' => 'Update Profile',
     'created_at' => 'Created At',
+    'created_by' => 'Created By',
     'deleted' => 'Deleted',
     'master' => 'Global Setting',
     'from_date' => 'From Date',

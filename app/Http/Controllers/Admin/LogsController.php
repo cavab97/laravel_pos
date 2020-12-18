@@ -107,7 +107,9 @@ class LogsController extends Controller
             return view('backend.access-denied');
         }
 
-        $logsData = Logs::where('log_id', $id)->first();
+        $logsData = Logs::leftjoin('users','users.id','log.created_by')
+            ->select('log.*','users.name AS user_name')
+            ->where('log_id', $id)->first();
 
         return view('backend.logs.view', compact('logsData'));
     }
