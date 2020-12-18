@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\Helper;
 use App\Models\Languages;
+use App\Models\Order;
+use App\Models\OrderDetail;
 use App\Models\Permissions;
 use App\User;
 use Illuminate\Http\Request;
@@ -125,6 +127,35 @@ class ReportsController extends Controller
         $fileName = 'Customer_' . time() . '.xlsx';
         return Excel::download(new CustomerExport($request->all()), $fileName);
     }
+
+    public function categoryReportIndex(Request $request)
+    {
+        Languages::setBackLang();
+        $checkPermission = Permissions::checkActionPermission('view_category_reports');
+        if ($checkPermission == false) {
+            return view('backend.access-denied');
+        }
+
+        /*$categoryList = OrderDetail::leftjoin('category','category.category_id','order_detail.category_id')
+            ->leftjoin('order','order.order_id','order_detail.order_id')
+            ->where('order.order_status',4)
+            ->select('category.category_id','category.name',DB::raw('SUM(order_detail.detail_qty) AS TotalQuantity'),DB::raw('SUM(order.grand_total) AS Total'))
+            ->groupBy('category.category_id')
+			->orderBy('Total','DESC')
+            ->get();*/
+        $categoryList = OrderDetail::leftjoin('product','product.product_id','order_detail.product_id')
+            ->leftjoin('order','order.order_id','order_detail.order_id')
+            ->leftjoin('product_category','product_category.product_id','product.product_id')
+            ->leftjoin('category','category.category_id','product_category.category_id')
+            ->where('order.order_status',4)
+            ->select('category.category_id','category.name',DB::raw('SUM(order_detail.detail_qty) AS TotalQuantity'),DB::raw('SUM(order.grand_total) AS Total'))
+            ->groupBy('category.category_id')
+            ->orderBy('Total','DESC')
+            ->get();
+
+        return view('backend.reports.category_report', compact('categoryList'));
+    }
+
 }
 
 

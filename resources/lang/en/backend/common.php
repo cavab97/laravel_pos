@@ -78,4 +78,7 @@ return [
     /*Reports*/
     'reports' => 'Reports',
     'customer_reports' => 'Customers Reports',
+    'category_reports' => 'Category Reports',
+    'total_quantity' => 'Total Quantity',
+    'total' => 'Total',
 ];

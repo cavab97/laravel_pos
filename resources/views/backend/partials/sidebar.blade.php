@@ -442,25 +442,35 @@
                         </a>
                     </li>
                 @endif
-                {{--@if($permission::checkActionPermission(['view_customer_reports']))
-                        <li class="nav-item has-treeview {{(Request::is('$backend/customer_reports','$backend/customer_reports/*')) ? 'menu-open' : ''}}">
-                <a class="nav-link {{(Request::is('$backend/customer_reports','$backend/customer_reports/*')) ? 'active' : ''}}">
-                    <i class="nav-icon fas fa-database"></i>
-                    <p> {{trans('backend/common.reports')}}</p>
-                    <i class="right fas fa-angle-left"></i>
-                </a>
-                <ul class="nav nav-treeview">
-                    @if($permission::checkActionPermission('view_customer_reports'))
-                    <li class="nav-item">
-                        <a class="nav-link {{(Request::is('$backend/customer_reports','$backend/customer_reports/*')) ? 'active' : ''}}" href="{{route('admin.reports.customer.index')}}">
-                            <i class="nav-icon fas fa fa-tasks"></i>
-                            <p>{{trans('backend/common.customer_reports')}}</p>
+                @if($permission::checkActionPermission(['view_customer_reports','view_category_reports']))
+                    <li class="nav-item has-treeview {{(Request::is('$backend/customer_reports','$backend/customer_reports/*','$backend/category_reports','$backend/category_reports/*')) ? 'menu-open' : ''}}">
+                        <a class="nav-link {{(Request::is('$backend/customer_reports','$backend/customer_reports/*','$backend/category_reports','$backend/category_reports/*')) ? 'active' : ''}}">
+                            <i class="nav-icon fas fa-database"></i>
+                            <p> {{trans('backend/common.reports')}}</p>
+                            <i class="right fas fa-angle-left"></i>
                         </a>
+                        <ul class="nav nav-treeview">
+                            @if($permission::checkActionPermission('view_category_reports'))
+                                <li class="nav-item">
+                                    <a class="nav-link {{(Request::is('$backend/category_reports','$backend/category_reports/*')) ? 'active' : ''}}"
+                                       href="{{route('admin.reports.categroy_report.index')}}">
+                                        <i class="nav-icon fas fa fa-tasks"></i>
+                                        <p>{{trans('backend/common.category_reports')}}</p>
+                                    </a>
+                                </li>
+                            @endif
+                            {{--@if($permission::checkActionPermission('view_customer_reports'))
+                                <li class="nav-item">
+                                    <a class="nav-link {{(Request::is('$backend/customer_reports','$backend/customer_reports/*')) ? 'active' : ''}}"
+                                       href="{{route('admin.reports.customer.index')}}">
+                                        <i class="nav-icon fas fa fa-tasks"></i>
+                                        <p>{{trans('backend/common.customer_reports')}}</p>
+                                    </a>
+                                </li>
+                            @endif--}}
+                        </ul>
                     </li>
-                    @endif
-                </ul>
-                </li>
-                @endif--}}
+                @endif
                 <li class="nav-item">
                     <a class="nav-link" href="{{route('admin.logout')}}">
                         <i class="fas fa-sign-out-alt nav-icon" aria-hidden="true"></i>

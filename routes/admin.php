@@ -122,9 +122,11 @@ Route::group(['namespace' => 'Admin'], function () {
         Route::get('box/{uuid}/delete', 'BoxController@delete')->name('box.delete');
         Route::get('box/{branch_id}/list', 'BoxController@racByBranch')->name('box.list');
 
+        /* Reports */
         Route::get('reports-customer-index', 'ReportsController@customerIndex')->name('reports.customer.index');
         Route::post('reports-customer-paginate', 'ReportsController@customerPaginate')->name('reports.customer.paginate');
         Route::post('reports-customer-export', 'ReportsController@customerExportData')->name('reports.customer.export');
+        Route::get('reports-category-index', 'ReportsController@categoryReportIndex')->name('reports.categroy_report.index');
 
         Route::resource('setmeal','SetMealController');
 		Route::get('setmeal/{uuid}/delete', 'SetMealController@delete')->name('setmeal.delete');
