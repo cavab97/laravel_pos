@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Cities;
+use App\Models\Countries;
 use App\Models\CustomerAddress;
 use App\Models\Helper;
 use App\Models\Languages;
@@ -10,6 +12,7 @@ use App\Models\RolePermission;
 use App\Models\Roles;
 use App\Models\Branch;
 use App\Models\Customer;
+use App\Models\States;
 use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -131,8 +134,11 @@ class CustomerController extends Controller
         if ($checkPermission == false) {
             return view('backend.access-denied');
         }
+        $countries = Countries::where('country_id', 132)->select('sortname', 'phoneCode', 'name', 'country_id')->first();
+        $phoneCodeData = Countries::select('phoneCode')->where('country_id', 132)->first();
+        $stateList = States::where('country_id', $countries->country_id)->get();
         $roleList = Roles::whereNotIn('role_id', Roles::$notIn)->get();
-        return view('backend.customer.create', compact('roleList'));
+        return view('backend.customer.create', compact('roleList','countries', 'stateList', 'phoneCodeData'));
     }
 
     /**
@@ -260,6 +266,8 @@ class CustomerController extends Controller
             return view('backend.access-denied');
         }
         $customerData = Customer::where('uuid', $uuid)->first();
+        $countries = Countries::where('country_id', 132)->select('sortname', 'name', 'country_id')->first();
+        $stateList = States::where('country_id', $countries->country_id)->get();
 
         $defCustomerAddress = CustomerAddress::where('user_id', $customerData->customer_id)->where('is_default', 1)->first();
         if ($defCustomerAddress) {
@@ -269,11 +277,23 @@ class CustomerController extends Controller
             $customerData->longitude = $defCustomerAddress->longitude;
             $customerData->latitude = $defCustomerAddress->latitude;
             $customerData->status = $defCustomerAddress->status;
+            $customerData->state_id = $defCustomerAddress->state_id;
+            $customerData->city_id = $defCustomerAddress->city_id;
+            $customerData->zipcode = $defCustomerAddress->zipcode;
+            $customerData->cityList = Cities::listByState($defCustomerAddress->state_id);
         }
 
         $customerAddress = CustomerAddress::where('user_id', $customerData->customer_id)->orderBy('is_default', 'DESC')->get();
+        foreach ($customerAddress as $key => $value) {
 
-        return view('backend.customer.edit', compact('customerData', 'customerAddress'));
+            if (!empty($value)) {
+                if ($value->city_id) {
+                    $customerAddress[$key]->cityList = Cities::listByState($value->state_id);
+                }
+            }
+        }
+        $phoneCodeData = Countries::select('phoneCode')->where('country_id', 132)->first();
+        return view('backend.customer.edit', compact('customerData', 'customerAddress','countries', 'stateList', 'phoneCodeData'));
     }
 
     /**
@@ -420,6 +440,11 @@ class CustomerController extends Controller
             $longitude = $request->longitude;
             $latitude = $request->latitude;
             $status = $request->status;
+            $country = $request->country_id;
+            $country_code = $request->country_code;
+            $state_id = $request->state_id;
+            $city_id = $request->city_id;
+            $zipcode = $request->zipcode;
 
             $user_uuid = $request->user_uuid;
             $user = Customer::where('uuid', $user_uuid)->first();
@@ -439,11 +464,26 @@ class CustomerController extends Controller
                         'is_default' => $is_default[$key],
                         'longitude' => $longitude[$key],
                         'latitude' => $latitude[$key],
+                        'city_id' => $city_id[$key],
+                        'state_id' => $state_id[$key],
+                        'country_id' => $country[$key],
+                        'zipcode' => $zipcode[$key],
                         'status' => $status[$key],
                         'updated_at' => config('constants.date_time'),
                         'updated_by' => Auth::user()->id
                     ];
                     $cusAdd = CustomerAddress::create($insertAddressData);
+
+                    if ($is_default[$key] == 1) {
+                        $updateData = [
+                            'city_id' => $city_id[$key],
+                            'state_id' => $state_id[$key],
+                            'country_id' => $country[$key],
+                            'zipcode' => $zipcode[$key],
+                        ];
+
+                        Customer::where('customer_id', $user_id)->update($updateData);
+                    }
                 }
             }
             DB::commit();
@@ -481,6 +521,11 @@ class CustomerController extends Controller
             $longitude = $request->longitude;
             $latitude = $request->latitude;
             $status = $request->status;
+            $country = $request->country_id;
+            $country_code = $request->country_code;
+            $state_id = $request->state_id;
+            $city_id = $request->city_id;
+            $zipcode = $request->zipcode;
 
             $user = Customer::where('uuid', $uuid)->select('customer_id')->first();
             $user_id = $user->customer_id;
@@ -504,6 +549,10 @@ class CustomerController extends Controller
                         'is_default' => $is_default[$key],
                         'longitude' => $longitude[$key],
                         'latitude' => $latitude[$key],
+                        'city_id' => $city_id[$key],
+                        'state_id' => $state_id[$key],
+                        'country_id' => $country[$key],
+                        'zipcode' => $zipcode[$key],
                         'status' => $status[$key],
                         'updated_at' => config('constants.date_time'),
                         'updated_by' => Auth::user()->id
@@ -518,6 +567,16 @@ class CustomerController extends Controller
                     }
 
                     CustomerAddress::create($insertAddressData);
+                    if ($is_default[$key] == 1) {
+                        $updateData = [
+                            'city_id' => $city_id[$key],
+                            'state_id' => $state_id[$key],
+                            'country_id' => $country[$key],
+                            'zipcode' => $zipcode[$key],
+                            'updated_at' => date('Y-m-d H:i:s'),
+                        ];
+                        Customer::where('customer_id', $user_id)->update($updateData);
+                    }
                 }
             }
 

@@ -72,6 +72,7 @@ return [
     'other' => 'Other',
 	'delete_state' => 'You can not delete this state already occupied.',
     'delete_city' => 'You can not delete this city already occupied.',
+    'postal_code' => 'Postal Code',
 
     /*Reports*/
     'reports' => 'Reports',

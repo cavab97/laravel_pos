@@ -17,6 +17,10 @@
        value="@if(isset($customerAddress)){{count($customerAddress)+1}}@else{{2}}@endif"/>
 <input type="hidden" value="{{trans('backend/customer.address_line1')}}" id="address_line1">
 <input type="hidden" value="{{trans('backend/customer.address_line2')}}" id="address_line2">
+<input type="hidden" value="{{trans('backend/common.country')}}" id="country">
+<input type="hidden" value="{{trans('backend/common.state')}}" id="state">
+<input type="hidden" value="{{trans('backend/common.city')}}" id="city">
+<input type="hidden" value="{{trans('backend/common.postal_code')}}" id="zipcode">
 <input type="hidden" value="{{trans('backend/customer.is_default')}}" id="is_default">
 <input type="hidden" value="{{trans('backend/customer.longitude')}}" id="longitude">
 <input type="hidden" value="{{trans('backend/customer.latitude')}}" id="latitude">
@@ -24,11 +28,15 @@
 <input type="hidden" value="{{trans('backend/customer.add_address')}}" id="add_address">
 <input type="hidden" value="float-right" id="div_cls">
 <input type="hidden" value="{{trans('backend/customer.remove')}}" id="remove_msg">
-
+<input type="hidden" value="{{$countries->name}}" id="country_name">
+<input type="hidden" value="{{trans('backend/common.select_state')}}" id="select_state">
+<input type="hidden" value="{{trans('backend/common.select_city')}}" id="select_city">
 <input type="hidden" value="{{trans('backend/common.yes')}}" id="yes">
 <input type="hidden" value="{{trans('backend/common.no')}}" id="no">
 <input type="hidden" value="{{trans('backend/common.active')}}" id="active_status">
 <input type="hidden" value="{{trans('backend/common.inactive')}}" id="deactive_status">
+<input type="hidden" value="{{$countries->country_id}}" id="country_id">
+<input type="hidden" value="{{$countries->sortname}}" id="country_code_sortname">
 
 @if(isset($customerAddress))
     @if(count($customerAddress)>0)
@@ -102,9 +110,97 @@
                         </div>
                     </div>
 
+                    <div class="row">
+                        <div class="col-md-6 required">
+                            <div class="form-group">
+                                <label for="country_{{$k1+1}}">{{trans('backend/common.country')}}</label>
+                                <input type="text" class="form-control form-control-sm" value="{{$countries->name}}" readonly/>
+                                <input type="hidden" name="country_id[{{$k1+1}}]" value="{{$countries->country_id}}"
+                                       id="country_id_{{$k1+1}}">
+                                <input type="hidden" name="country_code[{{$k1+1}}]" value="{{$countries->sortname}}"
+                                       id="country_code_{{$k1+1}}">
+                            </div>
+                        </div>
+                        <div class="col-md-6 required">
+                            <div class="form-group">
+                                <label for="state_{{$k1+1}}">{{trans('backend/common.state')}}</label>
+                                <select name="state_id[{{$k1+1}}]" id="state_id_{{$k1+1}}"
+                                        class="form-control form-control-sm category_select2"
+                                        data-placeholder="{{trans('backend/common.select_state')}}"
+                                        onchange="getCity(this.value,'city_id_{{$k1+1}}')" required>
+                                    <option value="">{{trans('backend/common.select_state')}}</option>
+                                    @if(isset($stateList))
+
+                                        @foreach($stateList as $value)
+                                            @php
+                                                $selected = '';
+                                                  if(isset($customerAddress)){
+                                                     if($value->state_id == $v1->state_id){
+                                                        $selected = 'selected';
+                                                     }
+                                                  }
+                                            @endphp
+                                            <option value="{{$value->state_id}}" {{$selected}}>{{$value->name}}</option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="row">
 
+                        <div class="col-md-6 required">
+                            <div class="form-group">
+                                <label for="city_{{$k1+1}}">{{trans('backend/common.city')}}</label>
+                                <select name="city_id[{{$k1+1}}]"
+                                        id="city_id_{{$k1+1}}"
+                                        class="form-control form-control-sm" required>
+                                    <option value="">{{trans('backend/common.select_city')}}</option>
+                                    @if(isset($v1->cityList))
+                                        @foreach($v1->cityList as $value)
+                                            @php
+                                                $selected = '';
+                                                if($value->city_id == $v1->city_id){
+                                                    $selected = 'selected';
+                                                }
+                                            @endphp
+                                            <option value="{{$value->city_id}}" {{$selected}}>{{$value->name}}</option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="status_{{$k1+1}}">{{trans('backend/common.status')}}</label>
+                                <select name="status[{{$k1+1}}]" class="form-control form-control-sm chosen-select"
+                                        id="status_{{$k1+1}}">
+                                    <option value="{{$k1+1}}" @if(isset($customerAddress)) {{ ($v1->status == 1)
+                                            ?
+                                    'selected':'' }} @endif>
+                                        {{trans('backend/common.active')}}
+                                    </option>
+                                    <option value="0" @if(isset($customerAddress)) {{ ($v1->status == 0) ? 'selected':''  }} @endif>
+                                        {{trans('backend/common.inactive')}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 required">
+                            <div class="form-group">
+                                <label for="zipcode_{{$k1+1}}">{{trans('backend/common.postal_code')}}</label>
+                                <input type="number" name="zipcode[{{$k1+1}}]" value="{{$v1->zipcode}}"
+                                       id="zipcode_{{$k1+1}}"
+                                       class="form-control form-control-sm"
+                                       placeholder="{{trans('backend/common.postal_code')}}" min="0" required>
+                            </div>
+                        </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="is_default_{{$k1+1}}">{{trans('backend/customer.is_default')}}</label>
@@ -127,25 +223,7 @@
 
                             </div>
                         </div>
-                    </div>
 
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="status_{{$k1+1}}">{{trans('backend/common.status')}}</label>
-                                <select name="status[{{$k1+1}}]" class="form-control form-control-sm chosen-select"
-                                        id="status_{{$k1+1}}">
-                                    <option value="{{$k1+1}}" @if(isset($customerAddress)) {{ ($v1->status == 1)
-                                            ?
-                                    'selected':'' }} @endif>
-                                        {{trans('backend/common.active')}}
-                                    </option>
-                                    <option value="0" @if(isset($customerAddress)) {{ ($v1->status == 0) ? 'selected':''  }} @endif>
-                                        {{trans('backend/common.inactive')}}
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
                     </div>
 
                 </div>
@@ -180,16 +258,10 @@
                             <input type="text" name="longitude[1]" value="" id="longitude_1" class="form-control form-control-sm"
                                    placeholder="{{trans('backend/customer.longitude')}}"
                                    onblur="checkLongitude(this.value,1)"
-                                   >
+                            >
                             <span id="long_error_1" style="display: none">Longitude format has error.</span>
                         </div>
                     </div>
-                    {{--<div class="com-md-2 mt-2">
-                        <button type="button" style="margin-top: 25px;padding: 7px;"
-                                onclick="getFullAddress(1)" class="btn btn-info btn-sm">
-                            Lookup
-                        </button>
-                    </div>--}}
                 </div>
                 <div class="row">
                     <div class="col-md-6 required">
@@ -211,6 +283,89 @@
                 </div>
 
                 <div class="row">
+                    <div class="col-md-6 required">
+                        <div class="form-group">
+                            <label for="country_1">{{trans('backend/common.country')}}</label>
+                            <input type="text" class="form-control form-control-sm" value="{{$countries->name}}" readonly/>
+                            <input type="hidden" name="country_id[1]" value="{{$countries->country_id}}"
+                                   id="country_id_1">
+                            <input type="hidden" name="country_code[1]" value="{{$countries->sortname}}"
+                                   id="country_code_1">
+                        </div>
+                    </div>
+                    <div class="col-md-6 required">
+                        <div class="form-group">
+                            <label for="state_1">{{trans('backend/common.state')}}</label>
+                            <select name="state_id[1]" id="state_id_1" class="form-control form-control-sm category_select2"
+                                    data-placeholder="{{trans('backend/common.select_state')}}"
+                                    onchange="getCity(this.value,'city_id_1')" required>
+                                <option value="">{{trans('backend/common.select_state')}}</option>
+                                @if(isset($stateList))
+
+                                    @foreach($stateList as $value)
+                                        @php
+                                            $selected = '';
+                                              if(isset($customerData)){
+                                                 if($value->state_id == $customerData->state_id){
+                                                    $selected = 'selected';
+                                                 }
+                                              }
+                                        @endphp
+                                        <option value="{{$value->state_id}}" {{$selected}}>{{$value->name}}</option>
+                                    @endforeach
+                                @endif
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 required">
+                        <div class="form-group">
+                            <label for="city_1">{{trans('backend/common.city')}}</label>
+                            <select name="city_id[1]"
+                                    id="city_id_1"
+                                    class="form-control form-control-sm" required>
+                                <option value="">{{trans('backend/common.select_city')}}</option>
+                                @if(isset($customerData->cityList))
+                                    @foreach($customerData->cityList as $value)
+                                        @php
+                                            $selected = '';
+                                            if($value->city_id == $customerData->city_id){
+                                                $selected = 'selected';
+                                            }
+                                        @endphp
+                                        <option value="{{$value->city_id}}" {{$selected}}>{{$value->name}}</option>
+                                    @endforeach
+                                @endif
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6 required">
+                        <div class="form-group">
+                            <label for="zipcode_1">{{trans('backend/common.postal_code')}}</label>
+                            <input type="number" name="zipcode[1]" value="" id="zipcode_1" class="form-control form-control-sm"
+                                   placeholder="{{trans('backend/common.postal_code')}}" min="0" required>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="status_1">{{trans('backend/common.status')}}</label>
+                            <select name="status[1]" class="form-control form-control-sm chosen-select" id="status_1">
+                                <option value="1" @if(isset($customerData)) {{ ($customerData->status == 1) ? 'selected':''  }} @endif>
+                                    {{trans('backend/common.active')}}
+                                </option>
+                                <option value="0" @if(isset($customerData)) {{ ($customerData->status == 0) ? 'selected':''  }} @endif>
+                                    {{trans('backend/common.inactive')}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="is_default_1">{{trans('backend/customer.is_default')}}</label>
@@ -228,22 +383,6 @@
                     />{{trans('backend/common.no')}}
                     </span>
 
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="status_1">{{trans('backend/common.status')}}</label>
-                            <select name="status[1]" class="form-control form-control-sm chosen-select" id="status_1">
-                                <option value="1" @if(isset($customerData)) {{ ($customerData->status == 1) ? 'selected':''  }} @endif>
-                                    {{trans('backend/common.active')}}
-                                </option>
-                                <option value="0" @if(isset($customerData)) {{ ($customerData->status == 0) ? 'selected':''  }} @endif>
-                                    {{trans('backend/common.inactive')}}
-                                </option>
-                            </select>
                         </div>
                     </div>
                 </div>
@@ -280,7 +419,7 @@
                         <input type="text" name="longitude[1]" value="" id="longitude_1" class="form-control form-control-sm"
                                placeholder="{{trans('backend/customer.longitude')}}"
                                onblur="checkLongitude(this.value,1)"
-                               >
+                        >
                         <span id="long_error_1" style="display: none">Longitude format has error.</span>
 
                     </div>
@@ -310,6 +449,87 @@
             </div>
 
             <div class="row">
+                <div class="col-md-6 required">
+                    <div class="form-group">
+                        <label for="country_1">{{trans('backend/common.country')}}</label>
+                        <input type="text" class="form-control form-control-sm" value="{{$countries->name}}" readonly/>
+                        <input type="hidden" name="country_id[1]" value="{{$countries->country_id}}" id="country_id_1">
+                        <input type="hidden" name="country_code[1]" value="{{$countries->sortname}}"
+                               id="country_code_1">
+                    </div>
+                </div>
+                <div class="col-md-6 required">
+                    <div class="form-group">
+                        <label for="state_1">{{trans('backend/common.state')}}</label>
+                        <select name="state_id[1]" id="state_id_1" class="form-control form-control-sm category_select2"
+                                data-placeholder="{{trans('backend/common.select_state')}}"
+                                onchange="getCity(this.value,'city_id_1')" required>
+                            <option value="">{{trans('backend/common.select_state')}}</option>
+                            @if(isset($stateList))
+
+                                @foreach($stateList as $value)
+                                    @php
+                                        $selected = '';
+                                          if(isset($customerData)){
+                                             if($value->state_id == $customerData->state_id){
+                                                $selected = 'selected';
+                                             }
+                                          }
+                                    @endphp
+                                    <option value="{{$value->state_id}}" {{$selected}}>{{$value->name}}</option>
+                                @endforeach
+                            @endif
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 required">
+                    <div class="form-group">
+                        <label for="city_1">{{trans('backend/common.city')}}</label>
+                        <select name="city_id[1]"
+                                id="city_id_1"
+                                class="form-control form-control-sm" required>
+                            <option value="">{{trans('backend/common.select_city')}}</option>
+                            @if(isset($customerData->cityList))
+                                @foreach($customerData->cityList as $value)
+                                    @php
+                                        $selected = '';
+                                        if($value->city_id == $customerData->city_id){
+                                            $selected = 'selected';
+                                        }
+                                    @endphp
+                                    <option value="{{$value->city_id}}" {{$selected}}>{{$value->name}}</option>
+                                @endforeach
+                            @endif
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6 required">
+                    <div class="form-group">
+                        <label for="zipcode_1">{{trans('backend/common.postal_code')}}</label>
+                        <input type="number" name="zipcode[1]" value="" id="zipcode_1" class="form-control form-control-sm"
+                               placeholder="{{trans('backend/common.postal_code')}}" min="0" required>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="status_1">{{trans('backend/common.status')}}</label>
+                        <select name="status[1]" class="form-control form-control-sm chosen-select" id="status_1">
+                            <option value="1" @if(isset($customerData)) {{ ($customerData->status == 1) ? 'selected':''  }} @endif>
+                                {{trans('backend/common.active')}}
+                            </option>
+                            <option value="0" @if(isset($customerData)) {{ ($customerData->status == 0) ? 'selected':''  }} @endif>
+                                {{trans('backend/common.inactive')}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="is_default_1">{{trans('backend/customer.is_default')}}</label>
@@ -331,22 +551,6 @@
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="status_1">{{trans('backend/common.status')}}</label>
-                        <select name="status[1]" class="form-control form-control-sm chosen-select" id="status_1">
-                            <option value="1" @if(isset($customerData)) {{ ($customerData->status == 1) ? 'selected':''  }} @endif>
-                                {{trans('backend/common.active')}}
-                            </option>
-                            <option value="0" @if(isset($customerData)) {{ ($customerData->status == 0) ? 'selected':''  }} @endif>
-                                {{trans('backend/common.inactive')}}
-                            </option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </div>
 @endif
@@ -354,17 +558,17 @@
 
 </div>
 
-    <div class="card-header ui-sortable-handle" style="cursor: move;">
-        <div class="card-tools">
-            <div class="form-group">
+<div class="card-header ui-sortable-handle" style="cursor: move;">
+    <div class="card-tools">
+        <div class="form-group">
 
-                {{ Form::button(trans('backend/common.submit'),['type'=>'submit','class'=>'btn btn-info','id'=>'btnSubmitAdd', 'data-text'=>'Submit', 'data-loading-text'=>'<i class="fa fa-spinner fa-spin"></i> loading...','data-original-text'=>trans('backend/common.submit')])}}
-                &nbsp;&nbsp;
-                <a href="{{ route('admin.customer.index') }}"
-                   class="btn btn-danger">{{trans('backend/common.back')}}</a>
+            {{ Form::button(trans('backend/common.submit'),['type'=>'submit','class'=>'btn btn-info','id'=>'btnSubmitAdd', 'data-text'=>'Submit', 'data-loading-text'=>'<i class="fa fa-spinner fa-spin"></i> loading...','data-original-text'=>trans('backend/common.submit')])}}
+            &nbsp;&nbsp;
+            <a href="{{ route('admin.customer.index') }}"
+               class="btn btn-danger">{{trans('backend/common.back')}}</a>
 
-            </div>
         </div>
     </div>
+</div>
 
 {{ Form::close()}}
