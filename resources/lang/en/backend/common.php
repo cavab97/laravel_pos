@@ -81,4 +81,13 @@ return [
     'category_reports' => 'Category Reports',
     'total_quantity' => 'Total Quantity',
     'total' => 'Total',
+    'shift_reports' => 'Shift Reports',
+    'list_shift' => 'List of Shift',
+    'terminal_name' => 'Terminal Name',
+    'branch_name' => 'Branch Name',
+    'user_name' => 'User Name',
+    'start_amount' => 'Start Amount',
+    'end_amount' => 'End Amount',
+    'select_terminal' => 'Select Terminal',
+    'date_and_time' => 'Date & Time',
 ];

@@ -442,9 +442,9 @@
                         </a>
                     </li>
                 @endif
-                @if($permission::checkActionPermission(['view_customer_reports','view_category_reports']))
-                    <li class="nav-item has-treeview {{(Request::is('$backend/customer_reports','$backend/customer_reports/*','$backend/category_reports','$backend/category_reports/*')) ? 'menu-open' : ''}}">
-                        <a class="nav-link {{(Request::is('$backend/customer_reports','$backend/customer_reports/*','$backend/category_reports','$backend/category_reports/*')) ? 'active' : ''}}">
+                @if($permission::checkActionPermission(['view_customer_reports','view_category_reports','view_shift_reports']))
+                    <li class="nav-item has-treeview {{(Request::is('$backend/customer_reports','$backend/customer_reports/*','$backend/category_reports','$backend/category_reports/*','$backend/shift_reports','$backend/shift_reports/*')) ? 'menu-open' : ''}}">
+                        <a class="nav-link {{(Request::is('$backend/customer_reports','$backend/customer_reports/*','$backend/category_reports','$backend/category_reports/*','$backend/shift_reports','$backend/shift_reports/*')) ? 'active' : ''}}">
                             <i class="nav-icon fas fa-database"></i>
                             <p> {{trans('backend/common.reports')}}</p>
                             <i class="right fas fa-angle-left"></i>
@@ -456,6 +456,15 @@
                                        href="{{route('admin.reports.categroy_report.index')}}">
                                         <i class="nav-icon fas fa fa-tasks"></i>
                                         <p>{{trans('backend/common.category_reports')}}</p>
+                                    </a>
+                                </li>
+                            @endif
+                            @if($permission::checkActionPermission('view_shift_reports'))
+                                <li class="nav-item">
+                                    <a class="nav-link {{(Request::is('$backend/shift_reports','$backend/shift_reports/*')) ? 'active' : ''}}"
+                                       href="{{route('admin.reports.shift_report.index')}}">
+                                        <i class="nav-icon fas fa fa-user-circle"></i>
+                                        <p>{{trans('backend/common.shift_reports')}}</p>
                                     </a>
                                 </li>
                             @endif

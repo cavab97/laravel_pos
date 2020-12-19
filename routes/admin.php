@@ -127,6 +127,8 @@ Route::group(['namespace' => 'Admin'], function () {
         Route::post('reports-customer-paginate', 'ReportsController@customerPaginate')->name('reports.customer.paginate');
         Route::post('reports-customer-export', 'ReportsController@customerExportData')->name('reports.customer.export');
         Route::get('reports-category-index', 'ReportsController@categoryReportIndex')->name('reports.categroy_report.index');
+        Route::get('reports-shift-index', 'ReportsController@shiftReportIndex')->name('reports.shift_report.index');
+        Route::post('reports-shift-paginate', 'ReportsController@shiftPaginate')->name('reports.shift.paginate');
 
         Route::resource('setmeal','SetMealController');
 		Route::get('setmeal/{uuid}/delete', 'SetMealController@delete')->name('setmeal.delete');
