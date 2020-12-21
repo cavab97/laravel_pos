@@ -87,7 +87,7 @@ class OrderController extends Controller
                 ->count();
             $userList = Order::leftjoin('customer', 'customer.customer_id', '=', 'order.customer_id')->whereRaw($defaultCondition)
                 ->select(
-                    'order_id', 'order.uuid', 'table_id', 'invoice_no', 'sub_total', 'sub_total_after_discount', 'grand_total', 'order_source', 'order_status', 'customer.name as customer_name',
+                    'order_id', 'order.uuid', 'table_id', DB::raw("CONCAT( order.invoice_no, '-', order.terminal_id ) AS invoice_no"), 'sub_total', 'sub_total_after_discount', 'grand_total', 'order_source', 'order_status', 'customer.name as customer_name',
                     DB::raw('DATE_FORMAT(order.order_date, "%d-%m-%Y %h:%i %p") as order_date'),
                     DB::raw('(SELECT name FROM branch WHERE branch.branch_id = order.branch_id) AS branch_name'),
                     DB::raw('(SELECT terminal_name FROM terminal WHERE terminal.terminal_id = order.terminal_id) AS terminal_name')
@@ -122,7 +122,7 @@ class OrderController extends Controller
             ->leftjoin('customer', 'customer.customer_id', '=', 'order.customer_id')
 			->leftjoin('order_payment','order_payment.order_id','order.order_id')
             //->leftjoin('payment','payment.payment_id','order_payment.op_method_id')
-            ->select('order.*', 'customer.name as customer_name','order_payment.is_split','order_payment.remark','order_payment.last_digits','order_payment.approval_code','order_payment.reference_number','order_payment.op_method_id','order_payment.op_status as payment_status')
+            ->select('order.*', DB::raw("CONCAT( order.invoice_no, '-', order.terminal_id ) AS invoice_no"), 'customer.name as customer_name','order_payment.is_split','order_payment.remark','order_payment.last_digits','order_payment.approval_code','order_payment.reference_number','order_payment.op_method_id','order_payment.op_status as payment_status')
             ->first();
         if ($orderData->branch_id) {
             $branchId = $orderData->branch_id;
