@@ -15,6 +15,7 @@ return [
     'device_invalid' => 'Terminal is registered on another device',
     'key_invalid' => 'Key Invalid',
     'terminal_id_required' => 'Terminal id must be required',
+    'terminal_no_found' => 'Terminal no found',
     'password_required' => 'Password must be required',
     'device_id_required' => 'Device Id must be required',
     'device_type_required' => 'Device type must be required',

@@ -378,8 +378,12 @@ class SynchronizeController extends Controller
                 Helper::log('Table Synch : Terminal required');
                 return response()->json(['status' => 422, 'show' => true, "message" => trans('api.terminal_id_required')]);
             } else {
-
                 $terminalData = Terminal::withTrashed()->where('terminal_id', $terminalId)->first();
+                if (empty($terminalData)) {
+                    return response()->json(['status' => 422, 'show' => true, "message" => trans('api.terminal_no_found')]);
+                }
+                Helper::log('Print terminal data');
+                Helper::log($terminalData);
                 $branchId = $terminalData->branch_id;
 
                 // Categories Data collection
