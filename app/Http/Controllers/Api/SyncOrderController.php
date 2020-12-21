@@ -157,12 +157,12 @@ class SyncOrderController extends Controller
 
                                                     $ordersitemssub->uuid = Helper::getUuid();
                                                     $ordersitemssub->detail_id = $ordersitems->detail_id;
-                                                    $ordersitemssub->app_id = $setOrdersItem['app_id']; // application auto inc id
-                                                    $ordersitemssub->order_app_id = $setOrdersItem['order_app_id'];
-                                                    $ordersitemssub->detail_app_id = $setOrdersItem['detail_app_id'];
+                                                    $ordersitemssub->app_id = $setProvariants['app_id']; // application auto inc id
+                                                    $ordersitemssub->order_app_id = $setProvariants['order_app_id'];
+                                                    $ordersitemssub->detail_app_id = $setProvariants['detail_app_id'];
                                                     $ordersitemssub->order_id = $ordersId;
                                                     $ordersitemssub->terminal_id = $terminal_id;
-                                                    $ordersitemssub->product_id = $setOrdersItem['product_id'];
+                                                    $ordersitemssub->product_id = $setProvariants['product_id'];
                                                     $ordersitemssub->modifier_id = $setProvariants['modifier_id'];
                                                     $ordersitemssub->om_amount = $setProvariants['om_amount'];
                                                     $ordersitemssub->om_status = $setProvariants['om_status'];
@@ -450,12 +450,12 @@ class SyncOrderController extends Controller
                                                     }
 
                                                     $ordersitemssub->detail_id = $ordersitems->detail_id;
-                                                    $ordersitemssub->app_id = $setOrdersItem['app_id']; // application auto inc id
-                                                    $ordersitemssub->order_app_id = $setOrdersItem['order_app_id'];
-                                                    $ordersitemssub->detail_app_id = $setOrdersItem['detail_app_id'];
+                                                    $ordersitemssub->app_id = $setProvariants['app_id']; // application auto inc id
+                                                    $ordersitemssub->order_app_id = $setProvariants['order_app_id'];
+                                                    $ordersitemssub->detail_app_id = $setProvariants['detail_app_id'];
                                                     $ordersitemssub->order_id = $ordersId;
                                                     $ordersitemssub->terminal_id = $terminal_id;
-                                                    $ordersitemssub->product_id = $setOrdersItem['product_id'];
+                                                    $ordersitemssub->product_id = $setProvariants['product_id'];
                                                     $ordersitemssub->modifier_id = $setProvariants['modifier_id'];
                                                     $ordersitemssub->om_amount = $setProvariants['om_amount'];
                                                     $ordersitemssub->om_status = $setProvariants['om_status'];
@@ -483,11 +483,11 @@ class SyncOrderController extends Controller
 
                                                     $ordersitemssubAt->detail_id = $ordersitems->detail_id;
                                                     $ordersitemssubAt->app_id = $setProvariantsAtt['app_id']; // application auto inc id
-                                                    $ordersitemssubAt->order_app_id = $setOrdersItem['order_app_id'];
-                                                    $ordersitemssubAt->detail_app_id = $setOrdersItem['detail_app_id'];
+                                                    $ordersitemssubAt->order_app_id = $setProvariantsAtt['order_app_id'];
+                                                    $ordersitemssubAt->detail_app_id = $setProvariantsAtt['detail_app_id'];
                                                     $ordersitemssubAt->order_id = $ordersId;
                                                     $ordersitemssubAt->terminal_id = $terminal_id;
-                                                    $ordersitemssubAt->product_id = $setOrdersItem['product_id'];
+                                                    $ordersitemssubAt->product_id = $setProvariantsAtt['product_id'];
                                                     $ordersitemssubAt->attribute_id = $setProvariantsAtt['attribute_id'];
                                                     $ordersitemssubAt->attr_price = $setProvariantsAtt['attr_price'];
                                                     $ordersitemssubAt->ca_id = $setProvariantsAtt['ca_id'];
@@ -759,12 +759,12 @@ class SyncOrderController extends Controller
 
                                                 $ordersitemssub->uuid = Helper::getUuid();
                                                 $ordersitemssub->detail_id = $ordersitems->detail_id;
-                                                $ordersitemssub->app_id = $setOrdersItem['app_id']; // application auto inc id
-                                                $ordersitemssub->order_app_id = $setOrdersItem['order_app_id'];
-                                                $ordersitemssub->detail_app_id = $setOrdersItem['detail_app_id'];
+                                                $ordersitemssub->app_id = $setProvariants['app_id']; // application auto inc id
+                                                $ordersitemssub->order_app_id = $setProvariants['order_app_id'];
+                                                $ordersitemssub->detail_app_id = $setProvariants['detail_app_id'];
                                                 $ordersitemssub->order_id = $ordersId;
                                                 $ordersitemssub->terminal_id = $terminal_id;
-                                                $ordersitemssub->product_id = $setOrdersItem['product_id'];
+                                                $ordersitemssub->product_id = $setProvariants['product_id'];
                                                 $ordersitemssub->modifier_id = $setProvariants['modifier_id'];
                                                 $ordersitemssub->om_amount = $setProvariants['om_amount'];
                                                 $ordersitemssub->om_status = $setProvariants['om_status'];
@@ -796,7 +796,7 @@ class SyncOrderController extends Controller
                                                 $ordersitemssubAt->detail_app_id = $setProvariantsAtt['detail_app_id'];
                                                 $ordersitemssubAt->order_id = $ordersId;
                                                 $ordersitemssubAt->terminal_id = $terminal_id;
-                                                $ordersitemssubAt->product_id = $setOrdersItem['product_id'];
+                                                $ordersitemssubAt->product_id = $setProvariantsAtt['product_id'];
                                                 $ordersitemssubAt->attribute_id = $setProvariantsAtt['attribute_id'];
                                                 $ordersitemssubAt->attr_price = $setProvariantsAtt['attr_price'];
                                                 $ordersitemssubAt->ca_id = $setProvariantsAtt['ca_id'];
