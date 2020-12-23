@@ -180,7 +180,7 @@ class ReportsController extends Controller
                 ->leftjoin('product_category','product_category.product_id','product.product_id')
                 ->leftjoin('category','category.category_id','product_category.category_id')
                 ->whereRaw($defaultCondition)
-                //->where('order.order_status',4)
+                ->where('order.order_status',4)
                 ->select('category.category_id','category.name',DB::raw('SUM(order_detail.detail_qty) AS TotalQuantity'),DB::raw('SUM(order.grand_total) AS Total'))
                 ->groupBy('category.category_id')
                 ->get();
@@ -190,7 +190,7 @@ class ReportsController extends Controller
                 ->leftjoin('product_category','product_category.product_id','product.product_id')
                 ->leftjoin('category','category.category_id','product_category.category_id')
                 ->whereRaw($defaultCondition)
-                //->where('order.order_status',4)
+                ->where('order.order_status',4)
                 ->select('category.category_id','category.name',DB::raw('SUM(order_detail.detail_qty) AS TotalQuantity'),DB::raw('SUM(order.grand_total) AS Total'))
                 ->groupBy('category.category_id')
                 ->orderBy('Total','DESC')
