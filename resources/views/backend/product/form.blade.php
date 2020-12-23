@@ -581,16 +581,16 @@
     {{--End Branch Block--}}
 @endif
 
-<div class="card">
+<!-- <div class="card">
     <div class="card-header ui-sortable-handle" style="cursor: move;">
-        <div class="card-tools">
-            <div class="form-group ">
+        <div class="card-tools"> -->
+            <div class="form-group " style="float: right;">
                 {{ Form::button(trans('backend/common.submit'),['type'=>'submit','class'=>'btn btn-info','id'=>'btnSubmit', 'data-loading-text'=>'<i class="fa fa-spinner fa-spin"></i> loading','data-original-text'=>trans('backend/common.submit')])}}
                 &nbsp;&nbsp;
                 <a href="{{ route('admin.product.index')}}"
                    class="btn btn-danger">{{trans('backend/common.back')}}</a>
             </div>
-        </div>
+ <!--        </div>
     </div>
-</div>
+</div> -->
 {{ Form::close() }}
