@@ -1,6 +1,6 @@
 <?php
 return [
-    'orders' => 'Report',
+    'transactions' => 'Transactions',
     'order' => 'Order',
     'list_order' => 'List Report',
     'order_date' => 'Order date',

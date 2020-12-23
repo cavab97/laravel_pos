@@ -203,7 +203,7 @@
                         <a class="nav-link {{(Request::is('$backend/order','$backend/order/*')) ? 'active' : ''}}"
                            href="{{route('admin.order.index')}}">
                             <i class="nav-icon fas fa fa-shopping-cart"></i>
-                            <p>{{trans('backend/order.orders')}}</p>
+                            <p>{{trans('backend/order.transactions')}}</p>
                         </a>
                     </li>
                 @endif
