@@ -150,6 +150,7 @@ class StatesController extends Controller
                     'name' => $name,
                     'slug' => $slug,
                     'country_id' => $country_id,
+                    'updated_at' => date('Y-m-d H:i:s'),
                 ];
                 States::where('state_id', $id)->update($updateData);
                 DB::commit();

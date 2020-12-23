@@ -106,6 +106,8 @@ Route::group(['namespace' => 'Admin'], function () {
 
         Route::resource('logs', 'LogsController');
         Route::post('logs-paginate', 'LogsController@paginate')->name('logs.paginate');
+        Route::get('logs-pos', 'LogsController@posLogsIndex')->name('logs.pos-logs');
+        Route::post('logs-pos-paginate', 'LogsController@logPospaginate')->name('logs.pos-paginate');
 
         Route::resource('attendance', 'AttendanceController');
         Route::post('attendance-paginate', 'AttendanceController@paginate')->name('attendance.paginate');
@@ -120,9 +122,13 @@ Route::group(['namespace' => 'Admin'], function () {
         Route::get('box/{uuid}/delete', 'BoxController@delete')->name('box.delete');
         Route::get('box/{branch_id}/list', 'BoxController@racByBranch')->name('box.list');
 
+        /* Reports */
         Route::get('reports-customer-index', 'ReportsController@customerIndex')->name('reports.customer.index');
         Route::post('reports-customer-paginate', 'ReportsController@customerPaginate')->name('reports.customer.paginate');
         Route::post('reports-customer-export', 'ReportsController@customerExportData')->name('reports.customer.export');
+        Route::get('reports-category-index', 'ReportsController@categoryReportIndex')->name('reports.categroy_report.index');
+        Route::get('reports-shift-index', 'ReportsController@shiftReportIndex')->name('reports.shift_report.index');
+        Route::post('reports-shift-paginate', 'ReportsController@shiftPaginate')->name('reports.shift.paginate');
 
         Route::resource('setmeal','SetMealController');
 		Route::get('setmeal/{uuid}/delete', 'SetMealController@delete')->name('setmeal.delete');

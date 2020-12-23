@@ -223,6 +223,7 @@ class ProductController extends Controller
 
         /*Modifier List*/
         $modifierList = Modifier::where('status', 1)->get();
+        $globalModifierList = Modifier::where('status', 1)->where('is_global', 1)->get();
 
         /* Category Attribute List */
         $categoryAttributeList = CategoryAttribute::join('attributes','attributes.ca_id','category_attribute.ca_id')
@@ -252,7 +253,7 @@ class ProductController extends Controller
             }
         }
 
-        return view('backend.product.create', compact('categoryProductList', 'priceTypeList', 'attributeList', 'modifierList', 'branchList', 'categoryAttributeList','categoryProductListHasRac'));
+        return view('backend.product.create', compact('categoryProductList', 'priceTypeList', 'attributeList', 'modifierList', 'globalModifierList', 'branchList', 'categoryAttributeList','categoryProductListHasRac'));
     }
 
     /**
@@ -617,11 +618,12 @@ class ProductController extends Controller
 
         /*Modifier List*/
         $modifierList = Modifier::where('status', 1)->get();
+        $globalModifierList = Modifier::where('status', 1)->where('is_global', 1)->get();
 
         $productData->modifier = ProductModifier::leftjoin('modifier', 'modifier.modifier_id', 'product_modifier.modifier_id')
             ->where('product_id', $productId)
             ->where('product_modifier.status', '!=', 2)
-            ->select('product_modifier.*', 'modifier.name')
+            ->select('product_modifier.*', 'modifier.name','modifier.is_global')
             ->get();
 
         /* Branch List */
@@ -661,7 +663,7 @@ class ProductController extends Controller
         }
         $productData->branch = $branchIds;
 
-        return view('backend.product.edit', compact('productData', 'categoryProductList', 'priceTypeList', 'attributeList', 'modifierList', 'branchList', 'categoryAttributeList', 'categoryProductListHasRac'));
+        return view('backend.product.edit', compact('productData', 'categoryProductList', 'priceTypeList', 'attributeList', 'modifierList', 'globalModifierList', 'branchList', 'categoryAttributeList', 'categoryProductListHasRac'));
     }
 
     /**

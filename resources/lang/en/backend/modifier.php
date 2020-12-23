@@ -10,4 +10,5 @@ return [
     'edit_modifier' => 'Edit Modifier',
     'delete_modifier_msg' => 'Are you sure want to delete this Modifier?',
     'delete_modifier' => 'Delete Modifier',
+    'is_global' => "Global",
 ];

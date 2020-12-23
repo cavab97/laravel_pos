@@ -169,7 +169,7 @@ class BranchController extends Controller
             $order_prefix = $request->order_prefix;
             $invoice_start = $request->invoice_start;
 			$service_charge = $request->service_charge;
-			
+
 
             $checkName = Branch::where('name', $name)->count();
             //$checkEmail = Branch::where('email', $email)->count();
@@ -221,6 +221,7 @@ class BranchController extends Controller
                             'tax_id' => $value,
                             'branch_id' => $branchId,
                             'rate' => $rateData['rate'],
+                            'updated_at' => date('Y-m-d H:i:s'),
                             'updated_by' => Auth::user()->id
                         ];
                         BranchTax::create($insertTax);
@@ -259,7 +260,7 @@ class BranchController extends Controller
                 DB::raw('(SELECT name FROM users WHERE id = branch.updated_by) AS updated_name'))
             ->first();
 		$branchTax = BranchTax::leftjoin('tax','tax.tax_id','branch_tax.tax_id')->where('branch_tax.branch_id',$branchData->branch_id)->get();
-        $branchData->branch_tax = $branchTax;	
+        $branchData->branch_tax = $branchTax;
         $language_id = Languages::getBackLanguageId();
         if (!empty($branchData)) {
             return view('backend.branch.view', compact('branchData'));

@@ -153,6 +153,7 @@ class CountriesController extends Controller
                     'name' => $name,
                     'slug' => $slug,
                     'phoneCode' => $phoneCode,
+                    'updated_at' => date('Y-m-d H:i:s'),
                 ];
 
                 Countries::where('country_id', $id)->update($updateData);

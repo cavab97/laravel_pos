@@ -107,7 +107,10 @@ class AdminController extends Controller
     public function dashboard()
     {
         Languages::setBackLang();
-
+/*
+        if(!Storage::exists('/uploads')) {
+            Storage::makeDirectory('/uploads', 0775, true);
+        } */
         return view('backend.dashboard', compact('productCount'));
     }
 

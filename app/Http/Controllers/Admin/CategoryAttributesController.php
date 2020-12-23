@@ -180,7 +180,8 @@ class CategoryAttributesController extends Controller
         Helper::log('Category Attributes delete : start');
         try {
             $deleteData = [
-                'status' => 2
+                'status' => 2,
+                'updated_at' => date('Y-m-d H:i:s'),
             ];
             CategoryAttribute::where('uuid', $uuid)->update($deleteData);
 

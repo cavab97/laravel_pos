@@ -29,13 +29,24 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-12 required">
+                <div class="col-md-2">
                     <div class="form-group">
                         <label for="name">{{trans('backend/modifier.is_default')}}</label>
                         <br>
                         <label class="switch">
                             <input type="checkbox" name="is_default" value="1"
                                    @if(isset($modifierData) && $modifierData->is_default == 1) checked @endif>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="name">{{trans('backend/modifier.is_global')}}</label>
+                        <br>
+                        <label class="switch">
+                            <input type="checkbox" name="is_global" value="1"
+                                   @if(isset($modifierData) && $modifierData->is_global == 1) checked @endif>
                             <span class="slider round"></span>
                         </label>
                     </div>

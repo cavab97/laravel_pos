@@ -7,6 +7,7 @@ use App\Models\Helper;
 use App\Models\Languages;
 use App\Models\Logs;
 use App\Models\Permissions;
+use App\Models\TerminalLog;
 use Illuminate\Http\Request;
 
 class LogsController extends Controller
@@ -106,7 +107,9 @@ class LogsController extends Controller
             return view('backend.access-denied');
         }
 
-        $logsData = Logs::where('log_id', $id)->first();
+        $logsData = Logs::leftjoin('users','users.id','log.created_by')
+            ->select('log.*','users.name AS user_name')
+            ->where('log_id', $id)->first();
 
         return view('backend.logs.view', compact('logsData'));
     }
@@ -143,5 +146,57 @@ class LogsController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function posLogsIndex()
+    {
+        Languages::setBackLang();
+        $checkPermission = Permissions::checkActionPermission('view_logs');
+        if ($checkPermission == false) {
+            return view('backend.access-denied');
+        }
+        return view('backend.pos-logs.index');
+    }
+
+    public function logPospaginate(Request $request)
+    {
+        $inputs = $request->all();
+        //dd();
+        $search = $inputs['search']['value'];
+        $start = $inputs['start'];
+        $limit = $inputs['length'];
+        $logsList = [];
+        $totallogs = 0;
+        try {
+            $where = 'terminal_log.uuid != ""';
+            if ($search != '') {
+                $search = Helper::string_sanitize($search);
+                $where .= " AND (module_name LIKE '%$search%' OR description LIKE '%$search%' OR table_name LIKE '%$search%')";
+            }
+            $totallogs = TerminalLog::whereRaw($where)->count();
+            $logsList = TerminalLog::leftjoin('terminal','terminal.terminal_id','terminal_log.terminal_id')
+                ->leftjoin('branch','branch.branch_id','terminal_log.branch_id')
+                ->whereRaw($where)
+                ->select('terminal_log.*','terminal.terminal_name','branch.name AS branch_name')
+                ->orderBy('id', 'DESC')
+                ->limit($limit)->offset($start)
+                ->get()->toArray();
+
+            foreach ($logsList as $key => $value) {
+                $logsList[$key]['index'] = ++$start;
+            }
+        } catch (\Exception $exception) {
+            Helper::log('Logs pagination exception');
+            Helper::log($exception);
+            $logsList = [];
+            $totallogs = 0;
+        }
+        $data = [
+            "aaData" => $logsList,
+            "iTotalDisplayRecords" => $totallogs,
+            "iTotalRecords" => $totallogs,
+            "sEcho" => $inputs['draw'],
+        ];
+        return response()->json($data);
     }
 }

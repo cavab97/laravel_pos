@@ -84,6 +84,7 @@ class ApiController extends Controller
             } elseif (empty($terminalId)) {
                 return response()->json(['status' => 422, 'show' => true, 'message' => trans('api.terminal_id_required')]);
             } else {
+
                 if (filter_var($username, FILTER_VALIDATE_EMAIL)) {
                     $userDetail = User::where('email', $username)->where('user_pin', $userPin)->whereIn('role', Roles::$In)->first();
                 } else {

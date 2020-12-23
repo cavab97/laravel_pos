@@ -157,12 +157,12 @@ class SyncOrderController extends Controller
 
                                                     $ordersitemssub->uuid = Helper::getUuid();
                                                     $ordersitemssub->detail_id = $ordersitems->detail_id;
-                                                    $ordersitemssub->app_id = $setOrdersItem['app_id']; // application auto inc id
-                                                    $ordersitemssub->order_app_id = $setOrdersItem['order_app_id'];
-                                                    $ordersitemssub->detail_app_id = $setOrdersItem['detail_app_id'];
+                                                    $ordersitemssub->app_id = $setProvariants['app_id']; // application auto inc id
+                                                    $ordersitemssub->order_app_id = $setProvariants['order_app_id'];
+                                                    $ordersitemssub->detail_app_id = $setProvariants['detail_app_id'];
                                                     $ordersitemssub->order_id = $ordersId;
                                                     $ordersitemssub->terminal_id = $terminal_id;
-                                                    $ordersitemssub->product_id = $setOrdersItem['product_id'];
+                                                    $ordersitemssub->product_id = $setProvariants['product_id'];
                                                     $ordersitemssub->modifier_id = $setProvariants['modifier_id'];
                                                     $ordersitemssub->om_amount = $setProvariants['om_amount'];
                                                     $ordersitemssub->om_status = $setProvariants['om_status'];
@@ -450,12 +450,12 @@ class SyncOrderController extends Controller
                                                     }
 
                                                     $ordersitemssub->detail_id = $ordersitems->detail_id;
-                                                    $ordersitemssub->app_id = $setOrdersItem['app_id']; // application auto inc id
-                                                    $ordersitemssub->order_app_id = $setOrdersItem['order_app_id'];
-                                                    $ordersitemssub->detail_app_id = $setOrdersItem['detail_app_id'];
+                                                    $ordersitemssub->app_id = $setProvariants['app_id']; // application auto inc id
+                                                    $ordersitemssub->order_app_id = $setProvariants['order_app_id'];
+                                                    $ordersitemssub->detail_app_id = $setProvariants['detail_app_id'];
                                                     $ordersitemssub->order_id = $ordersId;
                                                     $ordersitemssub->terminal_id = $terminal_id;
-                                                    $ordersitemssub->product_id = $setOrdersItem['product_id'];
+                                                    $ordersitemssub->product_id = $setProvariants['product_id'];
                                                     $ordersitemssub->modifier_id = $setProvariants['modifier_id'];
                                                     $ordersitemssub->om_amount = $setProvariants['om_amount'];
                                                     $ordersitemssub->om_status = $setProvariants['om_status'];
@@ -483,11 +483,11 @@ class SyncOrderController extends Controller
 
                                                     $ordersitemssubAt->detail_id = $ordersitems->detail_id;
                                                     $ordersitemssubAt->app_id = $setProvariantsAtt['app_id']; // application auto inc id
-                                                    $ordersitemssubAt->order_app_id = $setOrdersItem['order_app_id'];
-                                                    $ordersitemssubAt->detail_app_id = $setOrdersItem['detail_app_id'];
+                                                    $ordersitemssubAt->order_app_id = $setProvariantsAtt['order_app_id'];
+                                                    $ordersitemssubAt->detail_app_id = $setProvariantsAtt['detail_app_id'];
                                                     $ordersitemssubAt->order_id = $ordersId;
                                                     $ordersitemssubAt->terminal_id = $terminal_id;
-                                                    $ordersitemssubAt->product_id = $setOrdersItem['product_id'];
+                                                    $ordersitemssubAt->product_id = $setProvariantsAtt['product_id'];
                                                     $ordersitemssubAt->attribute_id = $setProvariantsAtt['attribute_id'];
                                                     $ordersitemssubAt->attr_price = $setProvariantsAtt['attr_price'];
                                                     $ordersitemssubAt->ca_id = $setProvariantsAtt['ca_id'];
@@ -759,12 +759,12 @@ class SyncOrderController extends Controller
 
                                                 $ordersitemssub->uuid = Helper::getUuid();
                                                 $ordersitemssub->detail_id = $ordersitems->detail_id;
-                                                $ordersitemssub->app_id = $setOrdersItem['app_id']; // application auto inc id
-                                                $ordersitemssub->order_app_id = $setOrdersItem['order_app_id'];
-                                                $ordersitemssub->detail_app_id = $setOrdersItem['detail_app_id'];
+                                                $ordersitemssub->app_id = $setProvariants['app_id']; // application auto inc id
+                                                $ordersitemssub->order_app_id = $setProvariants['order_app_id'];
+                                                $ordersitemssub->detail_app_id = $setProvariants['detail_app_id'];
                                                 $ordersitemssub->order_id = $ordersId;
                                                 $ordersitemssub->terminal_id = $terminal_id;
-                                                $ordersitemssub->product_id = $setOrdersItem['product_id'];
+                                                $ordersitemssub->product_id = $setProvariants['product_id'];
                                                 $ordersitemssub->modifier_id = $setProvariants['modifier_id'];
                                                 $ordersitemssub->om_amount = $setProvariants['om_amount'];
                                                 $ordersitemssub->om_status = $setProvariants['om_status'];
@@ -796,7 +796,7 @@ class SyncOrderController extends Controller
                                                 $ordersitemssubAt->detail_app_id = $setProvariantsAtt['detail_app_id'];
                                                 $ordersitemssubAt->order_id = $ordersId;
                                                 $ordersitemssubAt->terminal_id = $terminal_id;
-                                                $ordersitemssubAt->product_id = $setOrdersItem['product_id'];
+                                                $ordersitemssubAt->product_id = $setProvariantsAtt['product_id'];
                                                 $ordersitemssubAt->attribute_id = $setProvariantsAtt['attribute_id'];
                                                 $ordersitemssubAt->attr_price = $setProvariantsAtt['attr_price'];
                                                 $ordersitemssubAt->ca_id = $setProvariantsAtt['ca_id'];
@@ -1152,9 +1152,8 @@ class SyncOrderController extends Controller
                 return response()->json(['status' => 422, 'show' => true, "message" => trans('api.branch_id_required')]);
             } else {
 
-                $isValidJson = isJson($shift);
-                if ($isValidJson) {
-                    $timeStart = microtime(true);
+                $timeStart = microtime(true);
+                if (\GuzzleHttp\json_decode($shift, true)) {
                     $getShiftArray = \GuzzleHttp\json_decode($shift, true);
                     $pushShift = [];
                     if (is_array($getShiftArray)) {  // valid array
@@ -1168,7 +1167,7 @@ class SyncOrderController extends Controller
 
                                     $shift->uuid = Helper::getUuid();
                                     $shift->terminal_id = ($setShiftArray['terminal_id']) ? $setShiftArray['terminal_id'] : "";
-                                    $shift->app_id = $setShiftArray['id'];
+                                    $shift->app_id = $setShiftArray['app_id'];
                                     $shift->user_id = $setShiftArray['user_id'];
                                     $shift->branch_id = $setShiftArray['branch_id'];
                                     $shift->status = $setShiftArray['status'];
@@ -1182,7 +1181,7 @@ class SyncOrderController extends Controller
                                 } else {
 
                                     $shift->terminal_id = ($setShiftArray['terminal_id']) ? $setShiftArray['terminal_id'] : "";
-                                    $shift->app_id = $setShiftArray['id'];
+                                    $shift->app_id = $setShiftArray['app_id'];
                                     $shift->user_id = $setShiftArray['user_id'];
                                     $shift->branch_id = $setShiftArray['branch_id'];
                                     $shift->status = $setShiftArray['status'];
@@ -1199,7 +1198,7 @@ class SyncOrderController extends Controller
 
                                 $shift->uuid = Helper::getUuid();
                                 $shift->terminal_id = ($setShiftArray['terminal_id']) ? $setShiftArray['terminal_id'] : "";
-                                $shift->app_id = $setShiftArray['id'];
+                                $shift->app_id = $setShiftArray['app_id'];
                                 $shift->user_id = $setShiftArray['user_id'];
                                 $shift->branch_id = $setShiftArray['branch_id'];
                                 $shift->status = $setShiftArray['status'];
@@ -1264,10 +1263,14 @@ class SyncOrderController extends Controller
                 return response()->json(['status' => 422, 'show' => true, "message" => trans('api.branch_id_required')]);
             } else {
 
-                $isValidJson = isJson($shiftInvoice);
-                if ($isValidJson) {
-                    $timeStart = microtime(true);
-                    $getShiftArray = \GuzzleHttp\json_decode($shiftInvoice, true);
+                $timeStart = microtime(true);
+                if (\GuzzleHttp\json_decode(stripslashes($shiftInvoice), true) == []) {
+                    $message = trans('api.empty_json_array');
+                    Helper::log('AppShiftInvoiceData Table Synch : Empty data');
+                    return response()->json(['status' => 422, 'show' => true, 'message' => $message]);
+                }
+                else if (\GuzzleHttp\json_decode(stripslashes($shiftInvoice), true)) {
+                    $getShiftArray = \GuzzleHttp\json_decode(stripslashes($shiftInvoice), true);
                     $pushShiftInvoice = [];
                     if (is_array($getShiftArray)) {  // valid array
                         foreach ($getShiftArray as $setShiftArray) {
@@ -1279,8 +1282,8 @@ class SyncOrderController extends Controller
                                     $shiftInvoice = new ShiftDetails();
 
                                     $shiftInvoice->uuid = Helper::getUuid();
-                                    $shiftInvoice->app_id = $setShiftArray['id'];
-                                    $shiftInvoice->shift_id = $setShiftArray['shift_id'];
+                                    $shiftInvoice->app_id = $setShiftArray['app_id'];
+                                    $shiftInvoice->shift_id = $setShiftArray['shift_app_id'];
                                     $shiftInvoice->status = $setShiftArray['status'];
                                     $shiftInvoice->invoice_id = $setShiftArray['invoice_id'];
                                     $shiftInvoice->updated_by = ($setShiftArray['updated_by'] != 0) ? $setShiftArray['updated_by'] : NULL;
@@ -1291,8 +1294,8 @@ class SyncOrderController extends Controller
                                     $pushShiftInvoice[] = $shiftInvoice;
                                 } else {
 
-                                    $shiftInvoice->app_id = $setShiftArray['id'];
-                                    $shiftInvoice->shift_id = $setShiftArray['shift_id'];
+                                    $shiftInvoice->app_id = $setShiftArray['app_id'];
+                                    $shiftInvoice->shift_id = $setShiftArray['shift_app_id'];
                                     $shiftInvoice->status = $setShiftArray['status'];
                                     $shiftInvoice->invoice_id = $setShiftArray['invoice_id'];
                                     $shiftInvoice->updated_by = ($setShiftArray['updated_by'] != 0) ? $setShiftArray['updated_by'] : NULL;
@@ -1306,8 +1309,8 @@ class SyncOrderController extends Controller
                                 $shiftInvoice = new ShiftDetails();
 
                                 $shiftInvoice->uuid = Helper::getUuid();
-                                $shiftInvoice->app_id = $setShiftArray['id'];
-                                $shiftInvoice->shift_id = $setShiftArray['shift_id'];
+                                $shiftInvoice->app_id = $setShiftArray['app_id'];
+                                $shiftInvoice->shift_id = $setShiftArray['shift_app_id'];
                                 $shiftInvoice->status = $setShiftArray['status'];
                                 $shiftInvoice->invoice_id = $setShiftArray['invoice_id'];
                                 $shiftInvoice->updated_by = ($setShiftArray['updated_by'] != 0) ? $setShiftArray['updated_by'] : NULL;
@@ -1372,12 +1375,12 @@ class SyncOrderController extends Controller
                 return response()->json(['status' => 422, 'show' => true, "message" => trans('api.branch_id_required')]);
             } else {
 
-                $isValidJson = isJson($terminal_log);
-                if ($isValidJson) {
-                    $timeStart = microtime(true);
+                $timeStart = microtime(true);
+                if (\GuzzleHttp\json_decode($terminal_log, true)) {
                     $getTerminalLogArray = \GuzzleHttp\json_decode($terminal_log, true);
                     $pushTerminal = [];
                     if (is_array($getTerminalLogArray)) {  // valid array
+                        $terminalLog = new TerminalLog();
                         foreach ($getTerminalLogArray as $setTerminalLogArray) {
                             $isExistingShift = array_key_exists("server_id", $setTerminalLogArray);
                             if ($isExistingShift) {
@@ -1398,7 +1401,6 @@ class SyncOrderController extends Controller
                                     $terminalLog->status = $setTerminalLogArray['status'];
                                     $terminalLog->updated_at = ($setTerminalLogArray['updated_at'] != '') ? $setTerminalLogArray['updated_at'] : NULL;
                                     $terminalLog->updated_by = ($setTerminalLogArray['updated_by'] != 0) ? $setTerminalLogArray['updated_by'] : NULL;
-
 
                                     $terminalLog = TerminalLog::create($terminalLog->toArray());
                                     $pushTerminal[] = $terminalLog;
@@ -1686,7 +1688,7 @@ class SyncOrderController extends Controller
 													$setinventoryLog['server_id'] = $ilId;
 
                                                 }
-											} else {	
+											} else {
 												$productStoreInventoryLog->uuid = Helper::getUuid();
 												$productStoreInventoryLog->inventory_id = $setinventoryLog['inventory_id'];
 												$productStoreInventoryLog->branch_id = $setinventoryLog['branch_id'];
@@ -1704,7 +1706,7 @@ class SyncOrderController extends Controller
 
 											}
                                         }
-                                        
+
                                     }
 
                                     /* Update Main Inventory Stock */
@@ -1858,7 +1860,7 @@ class SyncOrderController extends Controller
             return response()->json(['status' => 500, 'show' => true, 'message' => trans('api.ooops')]);
         }
     }
-	
+
 	/*
      * @method : update inventory
      * @parmas : terminalId, InvoiceUniqId
@@ -2082,9 +2084,8 @@ class SyncOrderController extends Controller
                 return response()->json(['status' => 422, 'show' => true, "message" => trans('api.branch_id_required')]);
             } else {
 
-                $isValidJson = isJson($customer);
-                if ($isValidJson) {
-                    $timeStart = microtime(true);
+                $timeStart = microtime(true);
+                if (\GuzzleHttp\json_decode($customer, true)) {
                     $getCustomerArray = \GuzzleHttp\json_decode($customer, true);
                     $pushShift = [];
                     if (is_array($getCustomerArray)) {  // valid array

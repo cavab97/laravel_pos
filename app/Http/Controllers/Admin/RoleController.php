@@ -80,7 +80,8 @@ class RoleController extends Controller
                 $roleData = Roles::create([
                     'uuid' => Helper::getUuid(),
                     'role_name' => $roleName,
-                    'role_status' => $role_status
+                    'role_status' => $role_status,
+                    'role_updated_at' => date('Y-m-d H:i:s'),
                 ]);
 
                 $roleId = $roleData->role_id;
@@ -224,7 +225,7 @@ class RoleController extends Controller
                 $moduleList = Permissions::$allPermissionList;
                 $existPermission = DB::table('role_permission')->select('rp_permission_id')->where('rp_role_id', $roleId)->get()->toArray();
 
-                Roles::where('uuid', $uuid)->update(['role_name' => $roleName, 'role_status' => $role_status]);
+                Roles::where('uuid', $uuid)->update(['role_name' => $roleName, 'role_status' => $role_status,'role_updated_at' => date('Y-m-d H:i:s')]);
 				
 				$existRolePermissionArray = array();
                 

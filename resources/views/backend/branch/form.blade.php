@@ -111,7 +111,8 @@
         <div class="col-md-6 required">
             <div class="form-group">
 
-                {{ Form::label('branch_banner',trans('backend/branch.branch_banner')) }}
+                {{ Form::label('branch_banner',trans('backend/branch.branch_banner')) }}</br>
+                <span style="color: red" class="text-sm"> (PNG format only. Suggested photo width and height 200*90px) </span>
                 {{ Form::file('branch_banner', [$required, "accept"=>"image/*", "onChange"=>"previewImage(this)" ,"class"=>"file-input form-control form-control-sm","id"=>"branch_banner","name"=>"branch_banner"]) }}
                 <div class="col-3 mt-2" id="icon_uploaded">
                     @if(!empty($branchData->branch_banner))

@@ -7,7 +7,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\Helper;
 use App\Models\Languages;
+use App\Models\Order;
+use App\Models\OrderDetail;
 use App\Models\Permissions;
+use App\Models\Shift;
+use App\Models\Terminal;
+use App\Models\TerminalLog;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -125,6 +130,105 @@ class ReportsController extends Controller
         $fileName = 'Customer_' . time() . '.xlsx';
         return Excel::download(new CustomerExport($request->all()), $fileName);
     }
+
+    public function categoryReportIndex(Request $request)
+    {
+        Languages::setBackLang();
+        $checkPermission = Permissions::checkActionPermission('view_category_reports');
+        if ($checkPermission == false) {
+            return view('backend.access-denied');
+        }
+
+        /*$categoryList = OrderDetail::leftjoin('category','category.category_id','order_detail.category_id')
+            ->leftjoin('order','order.order_id','order_detail.order_id')
+            ->where('order.order_status',4)
+            ->select('category.category_id','category.name',DB::raw('SUM(order_detail.detail_qty) AS TotalQuantity'),DB::raw('SUM(order.grand_total) AS Total'))
+            ->groupBy('category.category_id')
+			->orderBy('Total','DESC')
+            ->get();*/
+        $categoryList = OrderDetail::leftjoin('product','product.product_id','order_detail.product_id')
+            ->leftjoin('order','order.order_id','order_detail.order_id')
+            ->leftjoin('product_category','product_category.product_id','product.product_id')
+            ->leftjoin('category','category.category_id','product_category.category_id')
+            ->where('order.order_status',4)
+            ->select('category.category_id','category.name',DB::raw('SUM(order_detail.detail_qty) AS TotalQuantity'),DB::raw('SUM(order.grand_total) AS Total'))
+            ->groupBy('category.category_id')
+            ->orderBy('Total','DESC')
+            ->get();
+
+        return view('backend.reports.category_report', compact('categoryList'));
+    }
+
+    public function shiftReportIndex(Request $request)
+    {
+        Languages::setBackLang();
+        $checkPermission = Permissions::checkActionPermission('view_shift_reports');
+        if ($checkPermission == false) {
+            return view('backend.access-denied');
+        }
+        $terminalList = Terminal::all();
+        return view('backend.reports.shift_report', compact('terminalList'));
+    }
+
+    public function shiftPaginate(Request $request)
+    {
+        try {
+            $search = $request['sSearch'];
+            $start = $request['iDisplayStart'];
+            $page_length = $request['iDisplayLength'];
+            $iSortCol = $request['iSortCol_0'];
+            $col = 'mDataProp_' . $iSortCol;
+            $order_by_field = $request->$col;
+            $order_by = $request['sSortDir_0'];
+            $getTerId = array();
+
+            $defaultCondition = 'shift.uuid != ""';
+            if (!empty($search)) {
+                $search = Helper::string_sanitize($search);
+                $whereterminal = " ( terminal_name LIKE '%$search%' ) ";
+                $getTerminalId = Terminal::whereRaw($whereterminal)->select('terminal_id')->get()->toArray();
+                foreach ($getTerminalId as $value) {
+                    array_push($getTerId, $value['terminal_id']);
+                }
+                $implodeTermId = implode(',', $getTerId);
+                if (!empty($implodeTermId)) {
+                    $defaultCondition .= " AND shift.terminal_id in ($implodeTermId)";
+                } else {
+                    $defaultCondition .= " AND shift.terminal_id in ('$implodeTermId')";
+                }
+            }
+
+            $terminal_id = $request->input('terminal_id', null);
+            if ($terminal_id != null) {
+                $defaultCondition .= " AND `shift`.terminal_id = '$terminal_id' ";
+            }
+
+            $shiftCount = Shift::whereRaw($defaultCondition)->count();
+
+            $shiftList = Shift::select('shift.*',
+                DB::raw("(select terminal_name FROM terminal where terminal_id = shift.terminal_id) AS terminal_name"),
+                DB::raw("(select name FROM branch where branch_id = shift.branch_id) AS branch_name"),
+                DB::raw("(select name FROM users where id = shift.user_id) AS user_name"))
+                ->whereRaw($defaultCondition)
+                ->orderBy($order_by_field, $order_by)
+                ->limit($page_length)
+                ->offset($start)
+                ->get();
+
+            return response()->json([
+                "aaData" => $shiftList,
+                "iTotalDisplayRecords" => $shiftCount,
+                "iTotalRecords" => $shiftCount,
+                "sColumns" => $request->sColumns,
+                "sEcho" => $request->sEcho,
+            ]);
+
+        } catch (\Exception $exception) {
+            Helper::log('Shift report pagination : exception');
+            Helper::log($exception);
+        }
+    }
+
 }
 
 
