@@ -139,24 +139,80 @@ class ReportsController extends Controller
             return view('backend.access-denied');
         }
 
-        /*$categoryList = OrderDetail::leftjoin('category','category.category_id','order_detail.category_id')
-            ->leftjoin('order','order.order_id','order_detail.order_id')
-            ->where('order.order_status',4)
-            ->select('category.category_id','category.name',DB::raw('SUM(order_detail.detail_qty) AS TotalQuantity'),DB::raw('SUM(order.grand_total) AS Total'))
-            ->groupBy('category.category_id')
-			->orderBy('Total','DESC')
-            ->get();*/
-        $categoryList = OrderDetail::leftjoin('product','product.product_id','order_detail.product_id')
-            ->leftjoin('order','order.order_id','order_detail.order_id')
-            ->leftjoin('product_category','product_category.product_id','product.product_id')
-            ->leftjoin('category','category.category_id','product_category.category_id')
-            ->where('order.order_status',4)
-            ->select('category.category_id','category.name',DB::raw('SUM(order_detail.detail_qty) AS TotalQuantity'),DB::raw('SUM(order.grand_total) AS Total'))
-            ->groupBy('category.category_id')
-            ->orderBy('Total','DESC')
-            ->get();
+        return view('backend.reports.category_report');
+    }
 
-        return view('backend.reports.category_report', compact('categoryList'));
+    public function categoryReportPaginate(Request $request)
+    {
+        try {
+            $search = $request['sSearch'];
+            $start = $request['iDisplayStart'];
+            $page_length = $request['iDisplayLength'];
+            $iSortCol = $request['iSortCol_0'];
+            $col = 'mDataProp_' . $iSortCol;
+            $order_by_field = $request->$col;
+            $order_by = $request['sSortDir_0'];
+
+            $defaultCondition = '`order`.uuid != ""';
+            if (!empty($search)) {
+                $search = Helper::string_sanitize($search);
+                $defaultCondition .= " AND ( name LIKE '%$search%' OR email LIKE '%$search%' OR mobile LIKE '%$search%' ) ";
+            }
+
+            $from_date = $request->input('from_date');
+            $to_date = $request->input('to_date');
+
+            $from = isset($from_date) ? (date('Y-m-d', strtotime($from_date))) : null;
+            $to = isset($to_date) ? (date('Y-m-d', strtotime($to_date))) : null;
+
+            if (empty($from) && !empty($to)) {
+                $defaultCondition .= " AND DATE_FORMAT(`order`.order_date, '%Y-%m-%d') <= '" . $to . "'";
+            }
+            if (!empty($from) && empty($to)) {
+                $defaultCondition .= " AND DATE_FORMAT(`order`.order_date, '%Y-%m-%d') >= '" . $from . "'";
+            }
+            if (!empty($from) && !empty($to)) {
+                $defaultCondition .= " AND DATE_FORMAT(`order`.order_date, '%Y-%m-%d') BETWEEN '" . $from . "' AND '" . $to . "'";
+            }
+
+            $categoryCount = OrderDetail::leftjoin('product','product.product_id','order_detail.product_id')
+                ->leftjoin('order','order.order_id','order_detail.order_id')
+                ->leftjoin('product_category','product_category.product_id','product.product_id')
+                ->leftjoin('category','category.category_id','product_category.category_id')
+                ->whereRaw($defaultCondition)
+                //->where('order.order_status',4)
+                ->select('category.category_id','category.name',DB::raw('SUM(order_detail.detail_qty) AS TotalQuantity'),DB::raw('SUM(order.grand_total) AS Total'))
+                ->groupBy('category.category_id')
+                ->get();
+            $categoryCount = count($categoryCount);
+            $categoryList = OrderDetail::leftjoin('product','product.product_id','order_detail.product_id')
+                ->leftjoin('order','order.order_id','order_detail.order_id')
+                ->leftjoin('product_category','product_category.product_id','product.product_id')
+                ->leftjoin('category','category.category_id','product_category.category_id')
+                ->whereRaw($defaultCondition)
+                //->where('order.order_status',4)
+                ->select('category.category_id','category.name',DB::raw('SUM(order_detail.detail_qty) AS TotalQuantity'),DB::raw('SUM(order.grand_total) AS Total'))
+                ->groupBy('category.category_id')
+                ->orderBy('Total','DESC')
+                ->orderBy($order_by_field, $order_by)
+                ->limit($page_length)
+                ->offset($start)
+                ->get();
+            foreach ($categoryList as $key => $value) {
+                $categoryList[$key]['index'] = ++$start;
+            }
+            return response()->json([
+                "aaData" => $categoryList,
+                "iTotalDisplayRecords" => $categoryCount,
+                "iTotalRecords" => $categoryCount,
+                "sColumns" => $request->sColumns,
+                "sEcho" => $request->sEcho,
+            ]);
+        } catch (\Exception $exception) {
+            Helper::log('User pagination exception');
+            Helper::log($exception);
+        }
+
     }
 
     public function shiftReportIndex(Request $request)

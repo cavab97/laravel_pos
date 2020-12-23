@@ -127,6 +127,7 @@ Route::group(['namespace' => 'Admin'], function () {
         Route::post('reports-customer-paginate', 'ReportsController@customerPaginate')->name('reports.customer.paginate');
         Route::post('reports-customer-export', 'ReportsController@customerExportData')->name('reports.customer.export');
         Route::get('reports-category-index', 'ReportsController@categoryReportIndex')->name('reports.categroy_report.index');
+        Route::post('reports-category-paginate', 'ReportsController@categoryReportPaginate')->name('reports.categroy_report.paginate');
         Route::get('reports-shift-index', 'ReportsController@shiftReportIndex')->name('reports.shift_report.index');
         Route::post('reports-shift-paginate', 'ReportsController@shiftPaginate')->name('reports.shift.paginate');
 
