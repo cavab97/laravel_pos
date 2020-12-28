@@ -14,7 +14,7 @@ class UpdateProductBranchAddColumn extends Migration
     public function up()
     {
         Schema::table('product_branch', function (Blueprint $table) {
-            $table->tinyInteger('out_of_stock')->default(0)->comment('1 for Out of Stock,0 For With Stock')->after('printer_id');
+            $table->tinyInteger('out_of_stock')->default(0)->comment('1 Out of Stock,0 With Stock')->after('printer_id');
         });
     }
 
