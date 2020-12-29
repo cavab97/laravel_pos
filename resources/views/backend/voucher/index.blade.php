@@ -214,7 +214,7 @@
                                            onkeyup="pressEnter(event)">
                                 </div>
                                 <div class="col-md-3 mt-2">
-                                    {!! Form::select('voucher_discount_type',['1' => 'Fix','2'=>'Percentage'],null, ["required",'class'=>'form-control form-control-sm','placeholder'=>trans('backend/voucher.voucher_select'),'id'=>"voucher_discount_type"]) !!}
+                                    {!! Form::select('voucher_discount_type',['2' => 'Fix','1'=>'Percentage'],null, ["required",'class'=>'form-control form-control-sm','placeholder'=>trans('backend/voucher.voucher_select'),'id'=>"voucher_discount_type"]) !!}
                                 </div>
                                 <div class="col-md-3 mt-2">
                                     <input type="text" id="voucher_discount" name="voucher_discount"
