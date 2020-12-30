@@ -99,9 +99,9 @@
                             var voucher_discount_type = row.voucher_discount_type;
 
                             if (voucher_discount_type == 1) {
-                                html = '<span class="badge badge-success">{{trans('backend/voucher.fix')}}</span>';
-                            } else {
                                 html = '<span class="badge badge-danger">{{trans('backend/voucher.percentage')}}</span>';
+                            } else {
+                                html = '<span class="badge badge-success">{{trans('backend/voucher.fix')}}</span>';
                             }
 
                             return [html].join('');

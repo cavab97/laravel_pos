@@ -435,6 +435,10 @@ class SynchronizeController extends Controller
                 $loadSetmealProduct = SetMealProduct::whereIn('setmeal_id',$setmealIds)->where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
                 $response['setmeal_product'] = $loadSetmealProduct;
 
+                // Setmeal Attribute collection
+                $loadSetmealProduct = SetmealAttribute::whereIn('setmeal_id',$setmealIds)->where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
+                $response['setmeal_attribute'] = $loadSetmealProduct;
+
                 // total time taking api response
                 $timeEnd = microtime(true);
                 $response['timetaking'] = $timeEnd - $timeStart;

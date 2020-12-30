@@ -30,7 +30,7 @@
         <div class="col-md-3 required">
             <div class="form-group">
                 {{ Form::label('voucher_discount_type',trans('backend/voucher.voucher_discount_type')) }}
-                    {!! Form::select('voucher_discount_type',['2' => 'Fix','1'=>'Percentage'],null, ["required",'class'=>'form-control form-control-sm','placeholder'=>trans('backend/voucher.voucher_select')]) !!}
+                    {!! Form::select('voucher_discount_type',['2' => 'Fix','1'=>'Percentage'],empty($voucherData->voucher_discount_type) ?  1 : old('voucher_discount_type'), ["required",'class'=>'form-control form-control-sm','placeholder'=>trans('backend/voucher.voucher_select')]) !!}
 
             </div>
         </div>
@@ -69,7 +69,7 @@
         <div class="col-md-3 required">
             <div class="form-group">
                 {{ Form::label('minimum_amount',trans('backend/voucher.minimum_amount')) }}
-                {{ Form::number('minimum_amount', old('minimum_amount'), ["required","class"=>"form-control form-control-sm","placeholder"=>trans('backend/voucher.minimum_amount'),"id"=>"minimum_amount","name"=>"minimum_amount",'min'=>0]) }}
+                {{ Form::number('minimum_amount', empty($voucherData->maximum_amount) ?  0 : old('minimum_amount'), ["required","class"=>"form-control form-control-sm","placeholder"=>trans('backend/voucher.minimum_amount'),"id"=>"minimum_amount","name"=>"minimum_amount",'min'=>0]) }}
             </div>
         </div>
         <div class="col-md-3 required">
@@ -168,7 +168,7 @@
         <div class="col-md-6 required">
             <div class="form-group">
                 {{ Form::label('status',trans('backend/voucher.status')) }}
-                {!! Form::select('status',['1' => 'Active','2'=>'IN-active'],null, ["required",'class'=>'form-control form-control-sm','placeholder'=>trans('backend/voucher.status')]) !!}
+                {!! Form::select('status',['1' => 'Active','2'=>'IN-active'], empty($voucherData->status) ?  1 :old('status'), ["required",'class'=>'form-control form-control-sm','placeholder'=>trans('backend/voucher.status')]) !!}
             </div>
         </div>
     </div>
