@@ -60,4 +60,29 @@
     </div>
 </div>
 
+@if($hasPermission)
+<div class="form-sec mt-4">
+<div class="card card-secondary">
+    <div class="card-header ">
+        <h3 class="card-title">{{trans('backend/users.assign_branch')}}</h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            @if(isset($branchList))
+                @foreach($branchList as $key => $value)
+                    <div class="col-md-2">
+                        <label class="switch">
+                            <input type="checkbox" name="branch_id[]"
+                                   value="{{$value->branch_id}}" @if(isset($selectedBranchList)) {{ (in_array($value->branch_id, $selectedBranchList))? "checked" : "" }}@endif>
+                            <span class="slider round"></span>
+                            <span class="switch-label">{{$value->name}}</span>
+                        </label>
+                    </div>
+                @endforeach
+            @endif
+        </div>
+    </div>
+</div>
+</div>
+@endif
 {{ Form::close() }}

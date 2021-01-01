@@ -9,8 +9,10 @@ use App\Models\Helper;
 use App\Models\Languages;
 use App\Models\Permissions;
 use App\Models\Tax;
+use App\Models\UserBranch;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class TaxController extends Controller
 {
@@ -26,7 +28,16 @@ class TaxController extends Controller
         if ($checkPermission == false) {
             return view('backend.access-denied');
         }
-        $taxList = Tax::where('status', '!=', 2)->get();
+        if (Auth::user()->role != 1) {
+            $branchIds = UserBranch::where('user_id', Auth::id())->pluck('branch_id');
+            $taxIds = BranchTax::whereIn('branch_id', $branchIds)->where([ 'status' => 1])->pluck('tax_id');
+        }
+        $taxList = Tax::where('status', '!=', 2);
+        if (isset($taxIds)) {
+            $taxList = $taxList->whereIn('tax_id', $taxIds);
+        }
+        $taxList = $taxList->get();
+
         if(!empty($taxList)){
             foreach($taxList as $key => $value){
                 $branchData = BranchTax::where('tax_id', $value->tax_id)->get();
@@ -61,7 +72,19 @@ class TaxController extends Controller
         if ($checkPermission == false) {
             return view('backend.access-denied');
         }
-        return view('backend.tax.create');
+        $hasPermission = Auth::user()->role == 1;
+        $branchList = [];
+        $userId = Auth::id();
+        if (!$hasPermission && $userId > 0) {
+            $branchIds = UserBranch::where('user_id', $userId)->pluck('branch_id');
+            if (count($branchIds) > 0) {
+                $branchList = Branch::whereIn('branch_id', $branchIds)->select('name', 'branch_id')->get();
+                $hasPermission = true;
+            }
+         } else {
+            $branchList = Branch::select('name', 'branch_id')->get();
+         }
+        return view('backend.tax.create', compact('hasPermission', 'branchList'));
     }
 
     /**
@@ -78,7 +101,10 @@ class TaxController extends Controller
             $description = $request->description;
             $rate = $request->rate;
             $status = $request->status;
+            $branch_id = $request->branch_id;
 
+            Helper::log($branch_id);
+            dd($branch_id);
             $is_fixed = 0;
             if ($request->is_fixed != '') {
                 $is_fixed = 1;
@@ -99,16 +125,29 @@ class TaxController extends Controller
                     'updated_at' => date('Y-m-d H:i:s'),
                     'updated_by' => Auth::user()->id,
                 ];
-                $Tax = Tax::create($insertData);
-                Helper::saveLogAction('1', 'Tax', 'Store', 'Add new Tax ' . $Tax->uuid, Auth::user()->id);
-
+                $tax = Tax::create($insertData);
+                Helper::saveLogAction('1', 'Tax', 'Store', 'Add new Tax ' . $tax->uuid, Auth::id());
                 Helper::log('Tax create : finish');
+                Helper::log($tax);
+                if (!empty($branch_id)) {
+                    foreach ($branch_id as $key => $value) {
+                        $insertBranchTax = [
+                            'tax_id' => $tax->tax_id,
+                            'branch_id' => $value,
+                            'rate' => $rate,
+                            'status' => $status,
+                            'updated_at' => config('constants.date_time'),
+                            'updated_by' => Auth::id(),
+                        ];
+                        BranchTax::create($insertBranchTax);
+                    }
+                }
                 return response()->json(['status' => 200, 'message' => trans('backend/common.save_information')]);
             }
         } catch (\Exception $exception) {
             Helper::log('Tax create : exception');
             Helper::log($exception);
-            Helper::saveLogAction('1', 'Tax', 'Create Tax exception :' . $exception->getMessage(), Auth::user()->id);
+            Helper::saveLogAction('1', 'Tax', 'Exception', 'Create Tax exception :' . $exception->getMessage(), Auth::id());
             return response()->json(['status' => 500, 'message' => trans('backend/common.oops')]);
         }
     }
@@ -137,10 +176,24 @@ class TaxController extends Controller
         if ($checkPermission == false) {
             return view('backend.access-denied');
         }
-
+        $hasPermission = Auth::user()->role == 1;
+        $userId = Auth::id();
+        $branchList = [];
+        $selectedBranchList = [];
         $taxData = Tax::where('uuid', $uuid)->first();
+        if (!$hasPermission && $userId > 0) {
+            $branchIds = UserBranch::where('user_id', $userId)->pluck('branch_id');
+            $selectedBranchList = BranchTax::whereIn('branch_id', $branchIds)->where([ 'status' => 1, 'tax_id' => $taxData->tax_id ])->pluck('branch_id')->toArray();
+            $branchList = Branch::whereIn('branch_id', $branchIds)->select('name', 'branch_id')->get();
+            if (count($branchList) > 0) {
+                $hasPermission = BranchTax::whereIn('branch_id', $branchIds)->where([ 'status' => 1, 'tax_id' => $taxData->tax_id ])->exists();
+            }
 
-        return view('backend.tax.edit', compact('taxData'));
+        } else {
+            $branchList = Branch::select('name', 'branch_id')->get();
+            $selectedBranchList = BranchTax::where([ 'status' => 1, 'tax_id' => $taxData->tax_id ])->pluck('branch_id')->toArray();
+        }
+        return view('backend.tax.edit', compact('taxData', 'branchList', 'hasPermission', 'selectedBranchList'));
     }
 
     /**
@@ -158,6 +211,7 @@ class TaxController extends Controller
             $description = $request->description;
             $rate = $request->rate;
             $status = $request->status;
+            $branch_id = $request->branch_id;
 
             $is_fixed = 0;
             if ($request->is_fixed != '') {
@@ -179,7 +233,37 @@ class TaxController extends Controller
                     'updated_by' => Auth::user()->id,
                 ];
 
-                Tax::where('uuid', $uuid)->update($taxData);
+                $tax = Tax::where('uuid', $uuid)->first();
+                $tax->update($taxData);
+                if (!empty($branch_id)) {
+                    $updateObj = [
+                        'status' => 1,
+                        'updated_at' => date('Y-m-d H:i:s'),
+                        'updated_by' => Auth::id(),
+                    ];
+                    $currentExistIds = BranchTax::withTrashed()->where([ 'tax_id' => $tax->tax_id, 'status' => 1])->pluck('branch_id')->toArray();
+                    //$branchData->whereNotNull('deleted_at')->whereIn('branch_id', $branch_id)->restore();
+                    BranchTax::withTrashed()->where([ 'tax_id' => $tax->tax_id, 'status' => 1])->whereNotNull('deleted_at')->whereIn('branch_id', $branch_id)->restore();
+                    BranchTax::withTrashed()->where([ 'tax_id' => $tax->tax_id, 'status' => 1])->whereNotNull('deleted_at')->whereIn('branch_id', $branch_id)->update($updateObj);
+                    BranchTax::where([ 'tax_id' => $tax->tax_id, 'status' => 1])->whereNotIn('branch_id', $branch_id)->delete();
+                    BranchTax::where([ 'tax_id' => $tax->tax_id, 'status' => 1])->whereNotIn('branch_id', $branch_id)->update($updateObj);
+                    $newBranch = array_diff($branch_id, $currentExistIds);
+                    if (isset($newBranch) && !empty($newBranch)) {
+                        foreach ($newBranch as $key => $value) {
+                            $insertBranchTax = [
+                                'tax_id' => $tax->tax_id,
+                                'branch_id' => $value,
+                                'rate' => $rate,
+                                'status' => $status,
+                                'updated_at' => config('constants.date_time'),
+                                'updated_by' => Auth::id(),
+                            ];
+                            BranchTax::create($insertBranchTax);
+                        }
+                    }
+                } else {
+                    BranchTax::where([ 'tax_id' => $tax->tax_id, 'status' => 1])->delete();
+                }
                 Helper::saveLogAction('1', 'Tax', 'Update', 'Update Tax' . $uuid, Auth::user()->id);
                 Helper::log('Tax update : finish');
                 return response()->json(['status' => 200, 'message' => trans('backend/common.update_information')]);
@@ -187,7 +271,7 @@ class TaxController extends Controller
         } catch (\Exception $exception) {
             Helper::log('Tax update : exception');
             Helper::log($exception);
-            Helper::saveLogAction('1', 'Tax', 'Update Tax exception :' . $exception->getMessage(), Auth::user()->id);
+            Helper::saveLogAction('1', 'Tax', 'Exception', 'Update Tax exception :' . $exception->getMessage(), Auth::user()->id);
             return response()->json(['status' => 500, 'message' => trans('backend/common.oops')]);
         }
     }
