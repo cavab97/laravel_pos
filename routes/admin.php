@@ -65,7 +65,7 @@ Route::group(['namespace' => 'Admin'], function () {
         Route::resource('table', 'TableController');
         Route::get('table/{uuid}/delete', 'TableController@delete')->name('table.delete');
         Route::get('table/generateQr/{uuid}', 'TableController@generateQr')->name('table.generate-Qr');
-		
+
 		Route::resource('table-color', 'TableColorController');
         Route::get('table-color/{uuid}/delete', 'TableColorController@delete')->name('table-color.delete');
 
@@ -128,7 +128,7 @@ Route::group(['namespace' => 'Admin'], function () {
         Route::post('reports-customer-export', 'ReportsController@customerExportData')->name('reports.customer.export');
         Route::get('reports-category-index', 'ReportsController@categoryReportIndex')->name('reports.categroy_report.index');
         Route::post('reports-category-paginate', 'ReportsController@categoryReportPaginate')->name('reports.categroy_report.paginate');
-        Route::get('reports-shift-index', 'ReportsController@shiftReportIndex')->name('reports.shift_report.index');
+        Route::get('shift_reports', 'ReportsController@shiftReportIndex')->name('reports.shift_report.index');
         Route::post('reports-shift-paginate', 'ReportsController@shiftPaginate')->name('reports.shift.paginate');
 
         Route::resource('setmeal','SetMealController');
@@ -139,9 +139,9 @@ Route::group(['namespace' => 'Admin'], function () {
 
         Route::post('order-paginate', 'OrderController@paginate')->name('order.paginate');
         Route::resource('order', 'OrderController');
-		
+
 		Route::resource('wine_store_management', 'CustomerLiquorInventoryController');
-		
+
 		Route::resource('country', 'CountriesController');
         Route::get('country/{id}/delete', 'CountriesController@delete')->name('country.delete');
 

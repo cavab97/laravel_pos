@@ -952,7 +952,10 @@ class SynchronizeController extends Controller
                         $proImage['base64'] = '';
                         if ($proImage['asset_path'] != "") {
                             $file = asset($proImage['asset_path']);
-                            $proImage['base64'] = $this->getImageDataFromUrl($file);
+                            if (file_exists($file)) {
+                                $proImage['base64'] = $this->getImageDataFromUrl($file);
+                            }
+                            $proImage['base64'] = "";
                             //$proImage['base64'] = $file;
                         }
                         $pusImage[] = $proImage;

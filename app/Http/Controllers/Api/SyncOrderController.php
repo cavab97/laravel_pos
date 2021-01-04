@@ -1174,7 +1174,7 @@ class SyncOrderController extends Controller
                                     $shift->start_amount = $setShiftArray['start_amount'];
                                     $shift->end_amount = $setShiftArray['end_amount'];
                                     $shift->updated_by = ($setShiftArray['updated_by'] != 0) ? $setShiftArray['updated_by'] : NULL;
-                                    $shift->updated_at = ($setShiftArray['updated_at'] != '') ? $setShiftArray['updated_at'] : NULL;
+                                    $shift->updated_at = ($setShiftArray['updated_at'] != '') ? $setShiftArray['updated_at'] : date('Y-m-d');
 
                                     $shift = Shift::create($shift->toArray());
                                     $pushShift[] = $shift;
@@ -1188,7 +1188,7 @@ class SyncOrderController extends Controller
                                     $shift->start_amount = $setShiftArray['start_amount'];
                                     $shift->end_amount = $setShiftArray['end_amount'];
                                     $shift->updated_by = ($setShiftArray['updated_by'] != 0) ? $setShiftArray['updated_by'] : NULL;
-                                    $shift->updated_at = ($setShiftArray['updated_at'] != '') ? $setShiftArray['updated_at'] : NULL;
+                                    $shift->updated_at = ($setShiftArray['updated_at'] != '') ? $setShiftArray['updated_at'] : date('Y-m-d');
 
                                     Shift::where('shift_id',$serverId)->update($shift->toArray());
                                     $pushShift[] = $shift;
@@ -1205,7 +1205,7 @@ class SyncOrderController extends Controller
                                 $shift->start_amount = $setShiftArray['start_amount'];
                                 $shift->end_amount = $setShiftArray['end_amount'];
                                 $shift->updated_by = ($setShiftArray['updated_by'] != 0) ? $setShiftArray['updated_by'] : NULL;
-                                $shift->updated_at = ($setShiftArray['updated_at'] != '') ? $setShiftArray['updated_at'] : NULL;
+                                $shift->updated_at = ($setShiftArray['updated_at'] != '') ? $setShiftArray['updated_at'] : date('Y-m-d');
 
                                 $shift = Shift::create($shift->toArray());
                                 $pushShift[] = $shift;

@@ -161,7 +161,7 @@ class Helper extends Model
             'table_name' => $table_name,
             'entity_id' => $entity_id,
             'status' => 1,
-            'updated_at' => config('constants.date_time'),
+            'updated_at' => config('constants.date_time') ?? date('H:i:s'),
             'updated_by' => $updated_by,
         ];
         $actionData = TerminalLog::create($insertData);

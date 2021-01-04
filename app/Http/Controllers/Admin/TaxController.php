@@ -12,7 +12,6 @@ use App\Models\Tax;
 use App\Models\UserBranch;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class TaxController extends Controller
 {
@@ -103,7 +102,6 @@ class TaxController extends Controller
             $status = $request->status;
             $branch_id = $request->branch_id;
 
-            Helper::log($branch_id);
             dd($branch_id);
             $is_fixed = 0;
             if ($request->is_fixed != '') {
@@ -128,7 +126,6 @@ class TaxController extends Controller
                 $tax = Tax::create($insertData);
                 Helper::saveLogAction('1', 'Tax', 'Store', 'Add new Tax ' . $tax->uuid, Auth::id());
                 Helper::log('Tax create : finish');
-                Helper::log($tax);
                 if (!empty($branch_id)) {
                     foreach ($branch_id as $key => $value) {
                         $insertBranchTax = [
