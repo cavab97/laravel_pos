@@ -77,6 +77,7 @@ return [
 
     /*Reports*/
     'reports' => 'Reports',
+    'cancelled_reports' => "Void Reports",
     'customer_reports' => 'Customers Reports',
     'category_reports' => 'Category Reports',
     'total_quantity' => 'Total Quantity',
@@ -90,4 +91,7 @@ return [
     'end_amount' => 'End Amount',
     'select_terminal' => 'Select Terminal',
     'date_and_time' => 'Date & Time',
+    'reason' => 'Reason',
+    'total_amount' => 'Total Amount',
+    'cashier' => 'Cashier'
 ];

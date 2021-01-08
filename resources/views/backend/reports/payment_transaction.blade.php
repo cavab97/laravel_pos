@@ -19,8 +19,8 @@
                 "iDisplayLength": 10,
                 "bServerSide": true,
                 "bPaginate": true,
-                "sAjaxSource": adminUrl + '/reports-shift-paginate',
-                lengthChange: true,
+                "sAjaxSource": adminUrl + '/reports-cancelled-paginate',
+                "lengthChange": true,
                 "fnServerParams": function (aoData) {
                     var acolumns = this.fnSettings().aoColumns,
                         columns = [];
@@ -29,22 +29,23 @@
                     });
                     var terminal_id = $('#terminal_id').val();
                     var branch_id = $('#branch_id').val();
-                    console.log(branch_id)
                     aoData.push({name: 'columns', value: columns});
                     aoData.push({name: 'terminal_id', value: terminal_id});
                     aoData.push({name: 'branch_id', value: branch_id});
 
                 },
                 "columns": [
-                    {data: 'shift_id'},
+                    {data: 'id'},
+                    {data: 'invoice_no', sortables: false},
                     {data: "terminal_name"},
+                    {data: "cashier"},
                     {data: "branch_name"},
-                    {data: "user_name"},
-                    {data: "start_amount"},
-                    {data: "end_amount"},
+                    {data: "reason"},
+                    {data: "status"},
+                    {data: "grand_total"},
                     {data: "updated_at"},
                 ],
-                "order": [[0, "desc"]],
+                "order": [[8, "desc"]],
                 "oLanguage": {
                     "sLengthMenu": "Show _MENU_ entries"
                 },
@@ -66,9 +67,27 @@
                 "fnDrawCallback": function () {
                     $('body').css('min-height', ($('#shift-list tr').length * 50) + 200);
                     $(window).trigger('resize');
+                    /* if ($('#branch_id').val().length == 1) {
+                        oTable.fnSetColumnVis(3).visible( false ).adjust(false)
+                        //oTable.column(3).visible(false);
+                        oTable.columns.adjust().draw();
+                    } */
                 },
                 "columnDefs": [
                     {
+                        "render": function (data, type, row) {
+                            var order_number = row.invoice_no;
+                            var uuid = row.uuid;
+                            var url = '';
+                            url += '<a href="' + adminUrl + '/order/' + uuid + '" >' + order_number + '\</a> ';
+                            return [
+                                url
+                            ].join('');
+                        },
+                        "targets": $('#shift-list th#invoice_no').index(),
+                        "orderable": false,
+                        "sortable": false
+                    }, {
                         "render": function (data, type, row, meta) {
                             return [
                                 parseInt(meta.row) + parseInt(meta.settings._iDisplayStart) + 1
@@ -76,13 +95,36 @@
                         },
                         "targets": $('#shift-list th#id').index(),
                         "orderable": false,
-                        sortable: false
+                        "sortable": false
                     },
                     {"searchable": true, "bSortable": false, "targets": [0]},
                 ]
             });
             $('#btnSubmit').click(function () {
                 oTable.fnDraw();
+            });
+
+            $('#to_date').datetimepicker({
+                format: 'DD-MM-YYYY',
+                timePicker: false,
+                todayHighlight: true,
+                todayBtn: "linked",
+                autoclose: true
+            });
+            $('#from_date').datetimepicker({
+                format: 'DD-MM-YYYY',
+                timePicker: false,
+                todayHighlight: true,
+                todayBtn: "linked",
+                autoclose: true
+            })
+            ;
+            $("#from_date").on("change.datetimepicker", function (e) {
+                $('#to_date').datetimepicker('minDate', e.date);
+            });
+
+            $("#to_date").on("change.datetimepicker", function (e) {
+                $('#from_date').datetimepicker('maxDate', e.date);
             });
         });
         function pressEnter(event) {
@@ -178,6 +220,24 @@
                                     </select>
                                 </div>
                                 @endif
+                                <div class="col-md-3 mt-2">
+                                    <div class="input-group date" id="from_date" data-target-input="nearest">
+                                        {{ Form::text('from_date', old('from_date'), ["required","class"=>"form-control form-control-sm datetimepicker-input","placeholder"=>trans('backend/common.from_date'),"id"=>"from_date","data-target"=>"#from_date"]) }}
+                                        <div class="input-group-append" data-target="#from_date"
+                                             data-toggle="datetimepicker">
+                                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mt-2">
+                                    <div class="input-group date" id="to_date" data-target-input="nearest">
+                                        {{ Form::text('to_date', old('to_date'), ["required","class"=>"form-control form-control-sm datetimepicker-input","placeholder"=>trans('backend/common.to_date'),"id"=>"to_date","data-target"=>"#to_date"]) }}
+                                        <div class="input-group-append" data-target="#to_date"
+                                             data-toggle="datetimepicker">
+                                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="col-1 mt-2">
                                     <button type="button" id="btnSubmit" name="submit"
                                             class="btn btn btn-warning btn-sm">Filter
@@ -189,12 +249,14 @@
                                     <thead>
                                     <tr>
                                         <th id="id">{{trans('backend/common.no')}}</th>
+                                        <th id="invoice_no">{{trans('backend/order.invoice_no')}}</th>
                                         <th>{{trans('backend/common.terminal_name')}}</th>
+                                        <th>{{trans('backend/common.cashier')}}</th>
                                         <th>{{trans('backend/common.branch_name')}}</th>
-                                        <th>{{trans('backend/common.user_name')}}</th>
-                                        <th>{{trans('backend/common.start_amount')}}</th>
-                                        <th>{{trans('backend/common.end_amount')}}</th>
-                                        <th>{{trans('backend/common.date_and_time')}}</th>
+                                        <th>{{trans('backend/common.reason')}}</th>
+                                        <th>{{trans('backend/common.status')}}</th>
+                                        <th>{{trans('backend/common.total_amount')}}</th>
+                                        <th id="data_time">{{trans('backend/common.date_and_time')}}</th>
                                     </tr>
                                     </thead>
                                     <tbody>

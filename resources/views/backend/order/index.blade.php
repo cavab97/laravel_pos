@@ -7,8 +7,12 @@
 @section('scripts')
     <script src="{{asset('backend/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js')}}"></script>
     <script src="{{asset('backend/plugins/jquery-validation/jquery.validate.min.js')}}"></script>
+    <script src="{{asset('backend/plugins/select2/js/select2.full.min.js')}}"></script>
     <script>
         $(function () {
+            $('#payment_id').select2({
+                allowClear: true
+            });
             var oTable = $('#order-list').dataTable({
                 "bStateSave": false,
                 "processing": true,
@@ -25,16 +29,13 @@
                     $.each(acolumns, function (i, item) {
                         columns.push(item.data);
                     });
-                    var name = $('#name').val();
-                    var invoice_no = $('#invoice_no').val();
-                    var from_date = $('[name="from_date"]').val();
-                    var to_date = $('[name="to_date"]').val();
 
                     aoData.push({name: 'columns', value: columns});
-                    aoData.push({name: 'name', value: name});
-                    aoData.push({name: 'invoice_no', value: invoice_no});
-                    aoData.push({name: 'from_date', value: from_date});
-                    aoData.push({name: 'to_date', value: to_date});
+                    aoData.push({name: 'name', value: $('#name').val()});
+                    aoData.push({name: 'invoice_no', value: $('#invoice_no').val()});
+                    aoData.push({name: 'from_date', value: $('[name="from_date"]').val()});
+                    aoData.push({name: 'to_date', value: $('[name="to_date"]').val()});
+                    aoData.push({name: 'payment_id', value: $('#payment_id').val()});
                 },
                 "columns": [
                     {"data": 'order_id', sortables: false},
@@ -165,6 +166,33 @@
             }
         }
     </script>
+
+    <style>
+        ul.select2-selection__rendered {
+            padding: .25rem !important;
+            margin-top: 0 !important;
+            vertical-align: middle;
+        }
+        .select2 > span.selection > span > ul > li > button{
+            border-right: none !important;
+        }
+        .select2-container > span.selection > span {
+            padding-bottom: 0;
+            /* padding: .25rem; */
+        }
+        .select2-container--default .select2-selection--multiple .select2-selection__clear {
+            content: "&#215;";
+            color: blue;
+            line-height: .8;
+            font-size: 22px;
+            margin: 0;
+            margin-right: -.25rem;
+            padding: .5rem .38rem;
+        }
+        .select2-container--default .select2-selection--multiple .select2-selection__clear:hover {
+            background: #bbb;
+        }
+    </style>
 @endsection
 @section('content')
     <div class="content-wrapper">
@@ -227,6 +255,19 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                @if(isset($paymentOption))
+                                <div class="col-md-3 mt-2 select2-purple">
+                                <select name="payment_id[]" id="payment_id" multiple
+                                        class="form-control form-control-sm select2 js-example-basic-multiple js-states"
+                                        data-placeholder="{{trans('backend/reports.select_payment')}}"
+                                        required>
+                                        @foreach($paymentOption as $key => $value)
+                                            <option value="{{$key}}">{{$value}}</option>
+                                        @endforeach
+                                </select>
+                                </div>
+                                @endif
                                 <div class="col-md-3 mt-2">
                                     <button type="button" id="btnSubmit" name="submit"
                                             class="btn btn btn-warning btn-sm">Filter

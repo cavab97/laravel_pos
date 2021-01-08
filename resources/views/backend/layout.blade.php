@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="{{asset('backend/dist/css/custom.css')}}">
     <link rel="stylesheet" href="{{asset('backend/dist/css/adminlte.min.css')}}">
     <link rel="stylesheet" href="{{asset('backend/plugins/overlayScrollbars/css/OverlayScrollbars.min.css')}}">
-    <link rel="stylesheet" href="{{asset('backend/dist/css/_loader.scss')}}">
+    <link rel="stylesheet" type="text/plain" href="{{asset('backend/dist/css/_loader.scss')}}">
     <link rel="stylesheet" href="{{asset('backend/plugins/datatables-bs4/css/dataTables.bootstrap4.css')}}">
     <link rel="stylesheet" href="{{asset('backend/plugins/toastr/css/toastr.min.css')}}">
     <link rel="stylesheet" href="{{asset('backend/dist/css/bootstrap-datetimepicker.min.css')}}">
@@ -50,6 +50,7 @@
 <script src="https://use.fontawesome.com/298cad8fec.js"></script>
 <script src="{{asset('backend/plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
 <script src="{{asset('backend/plugins/datatables/jquery.dataTables.js')}}"></script>
+<!-- <script defer src="//cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script> -->
 <script src="{{asset('backend/plugins/datatables-bs4/js/dataTables.bootstrap4.js')}}"></script>
 <script src="{{asset('backend/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js')}}"></script>
 <script src="{{asset('backend/plugins/toastr/js/toastr.min.js')}}"></script>

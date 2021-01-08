@@ -221,4 +221,19 @@ class Helper extends Model
         }
         return $orderNumber;
     }
+
+    public static function convertImageToWebP($source, $destination, $quality = 50) {
+        $extension = $source->getClientOriginalExtension();//pathinfo($source, PATHINFO_EXTENSION);
+        try {
+            if ($extension == 'jpeg' || $extension == 'jpg')
+                $image = imagecreatefromjpeg($source);
+            elseif ($extension == 'gif')
+                $image = imagecreatefromgif($source);
+            elseif ($extension == 'png')
+                $image = imagecreatefrompng($source);
+        } catch (\Exception $exception) {
+            Helper::log($exception);
+        }
+        return imagewebp($image, $destination, $quality);
+    }
 }

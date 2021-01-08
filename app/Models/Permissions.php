@@ -16,7 +16,7 @@ class Permissions extends Model
     static $allPermissionList = [
         'dashboard', 'roles', 'customer', 'branch', 'cashier', 'waiter', 'attributes', 'modifier', 'category', 'price_type', 'printer', 'table', 'kitchen',
         'banner', 'product', 'product_inventory', 'tax', 'category_attribute', 'logs', 'attendance', 'users',
-        'rac', 'box', 'setmeal'
+        'rac', 'box', 'setmeal', 'category_reports', 'shift_reports'
     ];
 
     static $actionList = ['view', 'add', 'edit', 'delete'];

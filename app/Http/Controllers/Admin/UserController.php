@@ -874,7 +874,6 @@ class UserController extends Controller
             //UserPermission::where('user_id', $userId)->delete();
             $getpermissions = $request->permissions;
             $pos_permissions = $request->pos_permissions;
-
             $permissions = array();
             if (isset($getpermissions) && count($getpermissions) > 0) {
                 foreach ($getpermissions as $value) {
@@ -898,6 +897,8 @@ class UserController extends Controller
                     $oldPermissionArray = array_diff($existPermissionArray, $permissions);
                     $updatePermissionArray = array_intersect($existPermissionArray, $permissions);
                     $removePermissionArray = array_diff($oldPermissionArray, $permissions);
+                    Log::debug($newPermission);
+                    Log::debug($updatePermissionArray);
                     if (empty($oldPermissionArray) && empty($updatePermissionArray) && empty($newPermission)) {
                         $is_exist = true;
                     } else {

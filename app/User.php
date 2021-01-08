@@ -42,4 +42,13 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
     protected $dates = ['deleted_at'];
+
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     **/
+    public function getBranchIds()
+    {
+        return $this->hasMany(\App\Models\UserBranch::class, 'user_id')->pluck('branch_id');
+    }
 }

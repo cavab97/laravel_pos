@@ -64,6 +64,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\File;
 
 class SynchronizeController extends Controller
 {
@@ -149,13 +150,18 @@ class SynchronizeController extends Controller
 
                 // Products ProductsImage collection
                 $loadProductsImage = Assets::whereIn('asset_type_id', $productIds)->where('asset_type', 1)->get()->toArray();
+
                 $pusImage = [];
                 if (!empty($loadProductsImage)) {
                     foreach ($loadProductsImage as $proImage) {
                         $proImage['base64'] = '';
                         if ($proImage['asset_path'] != "") {
                             $file = asset($proImage['asset_path']);
-                            $proImage['base64'] = $this->getImageDataFromUrl($file);
+                            if (file_exists(public_path($proImage['asset_path']))) {
+                                $proImage['base64'] = $this->getImageDataFromUrl($file);
+                            } else {
+                                $proImage['base64'] = "";
+                            }
                         }
                         $pusImage[] = $proImage;
                     }
@@ -382,8 +388,6 @@ class SynchronizeController extends Controller
                 if (empty($terminalData)) {
                     return response()->json(['status' => 422, 'show' => true, "message" => trans('api.terminal_no_found')]);
                 }
-                Helper::log('Print terminal data');
-                Helper::log($terminalData);
                 $branchId = $terminalData->branch_id;
 
                 // Categories Data collection
@@ -952,11 +956,12 @@ class SynchronizeController extends Controller
                         $proImage['base64'] = '';
                         if ($proImage['asset_path'] != "") {
                             $file = asset($proImage['asset_path']);
-                            if (file_exists($file)) {
+                            if (file_exists(public_path($proImage['asset_path']))) {
                                 $proImage['base64'] = $this->getImageDataFromUrl($file);
+                            } else {
+                                $proImage['base64'] = "";
                             }
-                            $proImage['base64'] = "";
-                            //$proImage['base64'] = $file;
+                            //base 64 maximun is 2MB;
                         }
                         $pusImage[] = $proImage;
                     }
@@ -1536,7 +1541,11 @@ class SynchronizeController extends Controller
                     $imageInfo['base64'] = '';
                     if ($imageInfo['asset_path'] != '') {
                         $file = asset($imageInfo['asset_path']);
-                        $imageInfo['base64'] = $this->getImageDataFromUrl($file);
+                        if (file_exists(public_path($imageInfo['asset_path']))) {
+                            $imageInfo['base64'] = $this->getImageDataFromUrl($file);
+                        } else {
+                            $imageInfo['base64'] = "";
+                        }
                     }
                     $pushImage[] = $imageInfo;
                 }

@@ -215,94 +215,45 @@ class SyncOrderController extends Controller
 
                                     // add payemnt
                                     $getPaymentdetail = $setOrdersArray['order_payment'];
+                                    Helper::log('add payment');
+                                    Helper::log($getPaymentdetail);
                                     if (!empty($getPaymentdetail) && is_array($getPaymentdetail)) {
                                         foreach ($getPaymentdetail as $setPaymentdetail) {
                                             $orderspayments = new OrderPayment();
                                             $isExistingOrderItem = array_key_exists("server_id", $setPaymentdetail);
-                                            if ($isExistingOrderItem) {
-                                                $serverId = $setPaymentdetail['server_id'];
-                                                $orderspayments = OrderPayment::where('op_id', $serverId)->first();
-                                                if (empty($orderspayments)) {
+                                            $serverId = $setPaymentdetail['server_id'];
+                                            $isNew = ($isExistingOrderItem && OrderPayment::where('op_id', $serverId)->exists()) ? false : true;
+                                            $orderspayments = new OrderPayment();
 
-                                                    $orderspayments = new OrderPayment();
-
-                                                    $orderspayments->uuid = Helper::getUuid();
-                                                    $orderspayments->order_id = $ordersId;
-                                                    $orderspayments->branch_id = $branch_id;
-                                                    $orderspayments->terminal_id = $setPaymentdetail['terminal_id'];
-                                                    $orderspayments->app_id = $setPaymentdetail['app_id']; // application auto inc id
-                                                    $orderspayments->order_app_id = $setPaymentdetail['order_app_id'];
-                                                    $orderspayments->is_split = $setPaymentdetail['is_split'];
-                                                    $orderspayments->is_cash = $setPaymentdetail['is_cash'];
-                                                    $orderspayments->remark = $setPaymentdetail['remark'];
-                                                    $orderspayments->last_digits = $setPaymentdetail['last_digits'];
-                                                    $orderspayments->approval_code = $setPaymentdetail['approval_code'];
-                                                    $orderspayments->reference_number = $setPaymentdetail['reference_number'];
-                                                    $orderspayments->op_method_id = $setPaymentdetail['op_method_id'];
-                                                    $orderspayments->op_amount = $setPaymentdetail['op_amount'];
-                                                    $orderspayments->op_amount_change = $setPaymentdetail['op_amount_change'];
-                                                    $orderspayments->op_method_response = $setPaymentdetail['op_method_response'];
-                                                    $orderspayments->op_status = $setPaymentdetail['op_status'];
-                                                    $orderspayments->op_datetime = $setPaymentdetail['op_datetime'];
-                                                    $orderspayments->op_by = $setPaymentdetail['op_by'];
-                                                    $orderspayments->updated_at = $setPaymentdetail['updated_at'];
-                                                    $orderspayments->updated_by = ($setPaymentdetail['updated_by'] != 0) ? $setPaymentdetail['updated_by'] : NULL;
-                                                    $orderspayments = OrderPayment::create($orderspayments->toArray());
-                                                    $orderspaymentsId = $orderspayments->op_id;  //get order payment id
-                                                    $setPaymentdetail['server_id'] = $orderspaymentsId;
-                                                } else {
-                                                    $orderspayments = new OrderPayment();
-                                                    $orderspayments->order_id = $ordersId;
-                                                    $orderspayments->branch_id = $branch_id;
-                                                    $orderspayments->terminal_id = $setPaymentdetail['terminal_id'];
-                                                    $orderspayments->app_id = $setPaymentdetail['app_id']; // application auto inc id
-                                                    $orderspayments->order_app_id = $setPaymentdetail['order_app_id']; // application auto inc id
-                                                    $orderspayments->is_split = $setPaymentdetail['is_split'];
-                                                    $orderspayments->is_cash = $setPaymentdetail['is_cash'];
-                                                    $orderspayments->remark = $setPaymentdetail['remark'];
-                                                    $orderspayments->last_digits = $setPaymentdetail['last_digits'];
-                                                    $orderspayments->approval_code = $setPaymentdetail['approval_code'];
-                                                    $orderspayments->reference_number = $setPaymentdetail['reference_number'];
-                                                    $orderspayments->op_method_id = $setPaymentdetail['op_method_id'];
-                                                    $orderspayments->op_amount = $setPaymentdetail['op_amount'];
-                                                    $orderspayments->op_amount_change = $setPaymentdetail['op_amount_change'];
-                                                    $orderspayments->op_method_response = $setPaymentdetail['op_method_response'];
-                                                    $orderspayments->op_status = $setPaymentdetail['op_status'];
-                                                    $orderspayments->op_datetime = $setPaymentdetail['op_datetime'];
-                                                    $orderspayments->op_by = $setPaymentdetail['op_by'];
-                                                    $orderspayments->updated_at = $setPaymentdetail['updated_at'];
-                                                    $orderspayments->updated_by = ($setPaymentdetail['updated_by'] != 0) ? $setPaymentdetail['updated_by'] : NULL;
-                                                    OrderPayment::where('op_id',$serverId)->update($orderspayments->toArray());
-                                                    $orderspaymentsId = $orderspayments->op_id;  //get order payment id
-                                                    $setPaymentdetail['server_id'] = $orderspaymentsId;
-                                                }
-                                            } else {
-                                                $orderspayments = new OrderPayment();
+                                            $orderspayments->order_id = $ordersId;
+                                            $orderspayments->branch_id = $branch_id;
+                                            $orderspayments->terminal_id = $setPaymentdetail['terminal_id'];
+                                            $orderspayments->app_id = $setPaymentdetail['app_id']; // application auto inc id
+                                            $orderspayments->order_app_id = $setPaymentdetail['order_app_id'];
+                                            $orderspayments->is_split = $setPaymentdetail['is_split'] ?? 0;
+                                            $orderspayments->is_cash = $setPaymentdetail['is_cash'];
+                                            $orderspayments->remark = $setPaymentdetail['remark'];
+                                            $orderspayments->last_digits = $setPaymentdetail['last_digits'];
+                                            $orderspayments->approval_code = $setPaymentdetail['approval_code'];
+                                            $orderspayments->reference_number = $setPaymentdetail['reference_number'];
+                                            $orderspayments->op_method_id = $setPaymentdetail['op_method_id'] ?? 0;
+                                            $orderspayments->op_amount = $setPaymentdetail['op_amount'];
+                                            $orderspayments->op_amount_change = $setPaymentdetail['op_amount_change'];
+                                            $orderspayments->op_method_response = $setPaymentdetail['op_method_response'];
+                                            $orderspayments->op_status = $setPaymentdetail['op_status'];
+                                            $orderspayments->op_datetime = $setPaymentdetail['op_datetime'];
+                                            $orderspayments->op_by = $setPaymentdetail['op_by'];
+                                            $orderspayments->updated_at = $setPaymentdetail['updated_at'];
+                                            $orderspayments->updated_by = ($setPaymentdetail['updated_by'] != 0) ? $setPaymentdetail['updated_by'] : NULL;
+                                            if ($isNew) {
                                                 $orderspayments->uuid = Helper::getUuid();
-                                                $orderspayments->order_id = $ordersId;
-                                                $orderspayments->branch_id = $branch_id;
-                                                $orderspayments->terminal_id = $setPaymentdetail['terminal_id'];
-                                                $orderspayments->app_id = $setPaymentdetail['app_id']; // application auto inc id
-                                                $orderspayments->order_app_id = $setPaymentdetail['order_app_id']; // application auto inc id
-                                                $orderspayments->is_split = $setPaymentdetail['is_split'];
-                                                $orderspayments->is_cash = $setPaymentdetail['is_cash'];
-                                                $orderspayments->remark = $setPaymentdetail['remark'];
-                                                $orderspayments->last_digits = $setPaymentdetail['last_digits'];
-                                                $orderspayments->approval_code = $setPaymentdetail['approval_code'];
-                                                $orderspayments->reference_number = $setPaymentdetail['reference_number'];
-                                                $orderspayments->op_method_id = $setPaymentdetail['op_method_id'];
-                                                $orderspayments->op_amount = $setPaymentdetail['op_amount'];
-                                                $orderspayments->op_amount_change = $setPaymentdetail['op_amount_change'];
-                                                $orderspayments->op_method_response = $setPaymentdetail['op_method_response'];
-                                                $orderspayments->op_status = $setPaymentdetail['op_status'];
-                                                $orderspayments->op_datetime = $setPaymentdetail['op_datetime'];
-                                                $orderspayments->op_by = $setPaymentdetail['op_by'];
-                                                $orderspayments->updated_at = $setPaymentdetail['updated_at'];
-                                                $orderspayments->updated_by = ($setPaymentdetail['updated_by'] != 0) ? $setPaymentdetail['updated_by'] : NULL;
                                                 $orderspayments = OrderPayment::create($orderspayments->toArray());
-                                                $orderspaymentsId = $orderspayments->op_id;  //get order payment id
-                                                $setPaymentdetail['server_id'] = $orderspaymentsId;
+                                            }  else {
+                                                OrderPayment::where('op_id',$serverId)->update($orderspayments->toArray());
                                             }
+
+                                            $orderspaymentsId = $orderspayments->op_id;  //get order payment id
+                                            $setPaymentdetail['server_id'] = $orderspaymentsId;
                                         }
                                     }
 
@@ -1109,6 +1060,7 @@ class SyncOrderController extends Controller
                 $shift->status          = $shiftArray['status'] ?? 1;
                 $shift->start_amount    = $shiftArray['start_amount'];
                 $shift->end_amount      = $shiftArray['end_amount'] ?? 0 ;
+                $shift->create_at       = $shiftArray['created_at'] ?? date("Y-m-d H:i:s");
                 $shift->updated_by      = $shiftArray['updated_by'] ?? NULL;
 
                 $shift = Shift::create($shift->toArray());
@@ -1173,8 +1125,9 @@ class SyncOrderController extends Controller
                                     $shift->status = $setShiftArray['status'];
                                     $shift->start_amount = $setShiftArray['start_amount'];
                                     $shift->end_amount = $setShiftArray['end_amount'];
+                                    $shift->create_at  = $setShiftArray['created_at'] ?? date("Y-m-d H:i:s");
                                     $shift->updated_by = ($setShiftArray['updated_by'] != 0) ? $setShiftArray['updated_by'] : NULL;
-                                    $shift->updated_at = ($setShiftArray['updated_at'] != '') ? $setShiftArray['updated_at'] : date('Y-m-d');
+                                    $shift->updated_at = ($setShiftArray['updated_at'] != '') ? $setShiftArray['updated_at'] : date('Y-m-d H:i:s');
 
                                     $shift = Shift::create($shift->toArray());
                                     $pushShift[] = $shift;
@@ -1187,8 +1140,9 @@ class SyncOrderController extends Controller
                                     $shift->status = $setShiftArray['status'];
                                     $shift->start_amount = $setShiftArray['start_amount'];
                                     $shift->end_amount = $setShiftArray['end_amount'];
+                                    $shift->create_at  = $setShiftArray['created_at'] ?? date("Y-m-d H:i:s");
                                     $shift->updated_by = ($setShiftArray['updated_by'] != 0) ? $setShiftArray['updated_by'] : NULL;
-                                    $shift->updated_at = ($setShiftArray['updated_at'] != '') ? $setShiftArray['updated_at'] : date('Y-m-d');
+                                    $shift->updated_at = ($setShiftArray['updated_at'] != '') ? $setShiftArray['updated_at'] : date('Y-m-d H:i:s');
 
                                     Shift::where('shift_id',$serverId)->update($shift->toArray());
                                     $pushShift[] = $shift;
@@ -1204,8 +1158,9 @@ class SyncOrderController extends Controller
                                 $shift->status = $setShiftArray['status'];
                                 $shift->start_amount = $setShiftArray['start_amount'];
                                 $shift->end_amount = $setShiftArray['end_amount'];
+                                $shift->create_at  = $setShiftArray['created_at'] ?? date("Y-m-d H:i:s");
                                 $shift->updated_by = ($setShiftArray['updated_by'] != 0) ? $setShiftArray['updated_by'] : NULL;
-                                $shift->updated_at = ($setShiftArray['updated_at'] != '') ? $setShiftArray['updated_at'] : date('Y-m-d');
+                                $shift->updated_at = ($setShiftArray['updated_at'] != '') ? $setShiftArray['updated_at'] : date('Y-m-d H:i:s');
 
                                 $shift = Shift::create($shift->toArray());
                                 $pushShift[] = $shift;

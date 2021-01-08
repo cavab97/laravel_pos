@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Exports\CustomerExport;
 use App\Http\Controllers\Controller;
+use App\Models\Branch;
 use App\Models\Customer;
 use App\Models\Helper;
 use App\Models\Languages;
 use App\Models\Order;
+use App\Models\OrderCancel;
 use App\Models\OrderDetail;
 use App\Models\Permissions;
 use App\Models\Shift;
@@ -20,6 +22,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Log;
 
 class ReportsController extends Controller
 {
@@ -174,24 +177,29 @@ class ReportsController extends Controller
             if (!empty($from) && !empty($to)) {
                 $defaultCondition .= " AND DATE_FORMAT(`order`.order_date, '%Y-%m-%d') BETWEEN '" . $from . "' AND '" . $to . "'";
             }
-
             $categoryCount = OrderDetail::leftjoin('product','product.product_id','order_detail.product_id')
-                ->leftjoin('order','order.order_id','order_detail.order_id')
-                ->leftjoin('product_category','product_category.product_id','product.product_id')
-                ->leftjoin('category','category.category_id','product_category.category_id')
-                ->whereRaw($defaultCondition)
-                ->where('order.order_status',4)
-                ->select('category.category_id','category.name',DB::raw('SUM(order_detail.detail_qty) AS TotalQuantity'),DB::raw('SUM(order.grand_total) AS Total'))
-                ->groupBy('category.category_id')
-                ->get();
-            $categoryCount = count($categoryCount);
+            ->leftjoin('order','order.order_id','order_detail.order_id')
+            ->leftjoin('product_category','product_category.product_id','product.product_id')
+            ->leftjoin('category','category.category_id','product_category.category_id');
             $categoryList = OrderDetail::leftjoin('product','product.product_id','order_detail.product_id')
-                ->leftjoin('order','order.order_id','order_detail.order_id')
-                ->leftjoin('product_category','product_category.product_id','product.product_id')
-                ->leftjoin('category','category.category_id','product_category.category_id')
+            ->leftjoin('order','order.order_id','order_detail.order_id')
+            ->leftjoin('product_category','product_category.product_id','product.product_id')
+            ->leftjoin('category','category.category_id','product_category.category_id');
+            if(Auth::user()->role > 1) {
+                $categoryCount = $categoryCount->join('product_branch', 'product_branch.product_id', 'product.product_id')->whereIn('product_branch.branch_id', Auth::user()->getBranchIds());
+                $categoryList = $categoryList->join('product_branch', 'product_branch.product_id', 'product.product_id')->whereIn('product_branch.branch_id', Auth::user()->getBranchIds());
+            }
+            $categoryCount = $categoryCount
                 ->whereRaw($defaultCondition)
                 ->where('order.order_status',4)
-                ->select('category.category_id','category.name',DB::raw('SUM(order_detail.detail_qty) AS TotalQuantity'),DB::raw('SUM(order.grand_total) AS Total'))
+                ->select('category.category_id','category.name', DB::raw('SUM(order_detail.detail_qty) AS TotalQuantity'), DB::raw('SUM(order.grand_total) AS Total'))
+                ->groupBy('category.category_id')
+                ->count();
+            //$categoryCount = count($categoryCount);
+            $categoryList = $categoryList
+                ->whereRaw($defaultCondition)
+                ->where('order.order_status',4)
+                ->select('category.category_id','category.name', DB::raw('SUM(order_detail.detail_qty) AS TotalQuantity'), DB::raw('SUM(order.grand_total) AS Total'))
                 ->groupBy('category.category_id')
                 ->orderBy('Total','DESC')
                 ->orderBy($order_by_field, $order_by)
@@ -222,8 +230,15 @@ class ReportsController extends Controller
         if ($checkPermission == false) {
             return view('backend.access-denied');
         }
-        $terminalList = Terminal::all();
-        return view('backend.reports.shift_report', compact('terminalList'));
+        $availableBranch = [];
+        if(Auth::user()->role > 1) {
+            $availableBranch = Branch::whereIn('branch_id', Auth::user()->getBranchIds())->pluck('name', 'branch_id')->toArray();//
+            $terminalList = Terminal::whereIn('branch_id', Auth::user()->getBranchIds());
+        } else {
+            $availableBranch = Branch::pluck('name', 'branch_id')->toArray();
+            $terminalList = Terminal::all();
+        }
+        return view('backend.reports.shift_report', compact('terminalList', 'availableBranch'));
     }
 
     public function shiftPaginate(Request $request)
@@ -236,8 +251,8 @@ class ReportsController extends Controller
             $col = 'mDataProp_' . $iSortCol;
             $order_by_field = $request->$col;
             $order_by = $request['sSortDir_0'];
+            $branchIds = $request->branch_id;
             $getTerId = array();
-
             $defaultCondition = 'shift.uuid != ""';
             if (!empty($search)) {
                 $search = Helper::string_sanitize($search);
@@ -259,12 +274,24 @@ class ReportsController extends Controller
                 $defaultCondition .= " AND `shift`.terminal_id = '$terminal_id' ";
             }
 
-            $shiftCount = Shift::whereRaw($defaultCondition)->count();
-
             $shiftList = Shift::select('shift.*',
                 DB::raw("(select terminal_name FROM terminal where terminal_id = shift.terminal_id) AS terminal_name"),
                 DB::raw("(select name FROM branch where branch_id = shift.branch_id) AS branch_name"),
-                DB::raw("(select name FROM users where id = shift.user_id) AS user_name"))
+                DB::raw("(SELECT CAST(shift.start_amount AS DECIMAL(16,2))) AS start_amount"),
+                DB::raw("(SELECT CAST(shift.end_amount AS DECIMAL(16,2))) AS end_amount"),
+                DB::raw("(select name FROM users where id = shift.user_id) AS user_name"));
+            $shiftCount = Shift::whereRaw($defaultCondition);
+            if (!isset($branchIds) || empty($branchIds)) {
+                $branchIds = Auth::user()->getBranchIds();
+            } else {
+                $branchIds = explode(',', $branchIds);
+            }
+            if(Auth::user()->role > 1) {
+                $shiftList = $shiftList->whereIn('shift.branch_id', $branchIds);
+                $shiftCount = $shiftCount->whereIn('shift.branch_id', $branchIds);
+            }
+            $shiftCount = Shift::whereRaw($defaultCondition)->count();
+            $shiftList = $shiftList
                 ->whereRaw($defaultCondition)
                 ->orderBy($order_by_field, $order_by)
                 ->limit($page_length)
@@ -285,6 +312,204 @@ class ReportsController extends Controller
         }
     }
 
+
+    public function cancelledReportIndex(Request $request)
+    {
+        Languages::setBackLang();
+        $checkPermission = Permissions::checkActionPermission('view_shift_reports');
+        if ($checkPermission == false) {
+            return view('backend.access-denied');
+        }
+        $availableBranch = [];
+        if(Auth::user()->role > 1) {
+            $availableBranch = Branch::whereIn('branch_id', Auth::user()->getBranchIds())->pluck('name', 'branch_id')->toArray();//
+            $terminalList = Terminal::whereIn('branch_id', Auth::user()->getBranchIds());
+        } else {
+            $availableBranch = Branch::pluck('name', 'branch_id')->toArray();
+            $terminalList = Terminal::all();
+        }
+        return view('backend.reports.cancelled_report', compact('terminalList', 'availableBranch'));
+    }
+
+    public function cancelledPaginate(Request $request)
+    {
+        try {
+            $search = $request['sSearch'];
+            $start = $request['iDisplayStart'];
+            $page_length = $request['iDisplayLength'];
+            $iSortCol = $request['iSortCol_0'];
+            $col = 'mDataProp_' . $iSortCol;
+            $order_by_field = $request->$col;
+            $order_by = $request['sSortDir_0'];
+            $branchIds = $request->branch_id;
+            $getTerId = array();
+            $defaultCondition = 'order_cancel.status != ""';
+            if (!empty($search)) {
+                $search = Helper::string_sanitize($search);
+                $whereterminal = " ( terminal_name LIKE '%$search%' ) ";
+                $getTerminalId = Terminal::whereRaw($whereterminal)->select('terminal_id')->get()->toArray();
+                foreach ($getTerminalId as $value) {
+                    array_push($getTerId, $value['terminal_id']);
+                }
+                $implodeTermId = implode(',', $getTerId);
+                if (!empty($implodeTermId)) {
+                    $defaultCondition .= " AND shift.terminal_id in ($implodeTermId)";
+                } else {
+                    $defaultCondition .= " AND shift.terminal_id in ('$implodeTermId')";
+                }
+            }
+
+            $terminal_id = $request->input('terminal_id', null);
+            if ($terminal_id != null) {
+                $defaultCondition .= " AND `order_cancel`.terminal_id = '$terminal_id' ";
+            }
+
+            if (!isset($branchIds) || empty($branchIds)) {
+                $branchIds = Auth::user()->getBranchIds();
+            } else {
+                $branchIds = explode(',', $branchIds);
+            }
+            if(Auth::user()->role > 1) {
+                $ordersIdsList = Order::join('order', 'order.order_id', 'order_cancel.order_id')->whereIn('order.branch_id', $branchIds);
+                $shiftList = $shiftList->whereIn('order_cancel.order_id', $ordersIdsList);
+            }
+            $invoice_no = $request->input('invoice_no', null);
+            if ($invoice_no != null) {
+                $invoice_no = Helper::string_sanitize($invoice_no);
+                $ordersIdsList = $ordersIdsList->where('invoice_no', 'LIKE', $invoice_no);
+            }
+            $orderCancelList = OrderCancel::join('order', 'order.order_id', 'order_cancel.order_id')->whereIn('order.branch_id', $branchIds)
+            ->select('order_cancel.*',
+                DB::raw("(SELECT name FROM branch where branch_id = order.branch_id) AS branch_name"),
+                DB::raw("(SELECT CAST(order.grand_total AS DECIMAL(16,2))) AS grand_total"),
+                DB::raw("(SELECT name FROM users WHERE id = order_cancel.created_by) AS cashier"),
+                DB::raw("(SELECT order.uuid) AS uuid"),
+                DB::raw("(SELECT order.invoice_no) AS invoice_no"),
+                DB::raw("(SELECT terminal_name FROM terminal where terminal_id = order_cancel.terminal_id) AS terminal_name"),
+            );
+                /* ,
+                DB::raw("(select name FROM users where id = shift.user_id) AS user_name")); */
+            $orderCancelCount = $orderCancelList
+            ->whereRaw($defaultCondition);
+            $orderCancelCount = $orderCancelList->count();
+            $orderCancelData = $orderCancelList
+                ->orderBy($order_by_field, $order_by)
+                ->limit($page_length)
+                ->offset($start)
+                ->get();
+            return response()->json([
+                "aaData" => $orderCancelData,
+                "iTotalDisplayRecords" => $orderCancelCount,
+                "iTotalRecords" => $orderCancelCount,
+                "sColumns" => $request->sColumns,
+                "sEcho" => $request->sEcho,
+            ]);
+
+        } catch (\Exception $exception) {
+            Helper::log('Shift report pagination : exception');
+            Helper::log($exception);
+        }
+    }
+    public function paymentReportIndex(Request $request)
+    {
+        Languages::setBackLang();
+        $checkPermission = Permissions::checkActionPermission('view_shift_reports');
+        if ($checkPermission == false) {
+            return view('backend.access-denied');
+        }
+        $availableBranch = [];
+        if(Auth::user()->role > 1) {
+            $availableBranch = Branch::whereIn('branch_id', Auth::user()->getBranchIds())->pluck('name', 'branch_id')->toArray();//
+            $terminalList = Terminal::whereIn('branch_id', Auth::user()->getBranchIds());
+        } else {
+            $availableBranch = Branch::pluck('name', 'branch_id')->toArray();
+            $terminalList = Terminal::all();
+        }
+        return view('backend.reports.payment_transaction', compact('terminalList', 'availableBranch'));
+    }
+    public function paymentPaginate(Request $request)
+    {
+        try {
+            $search = $request['sSearch'];
+            $start = $request['iDisplayStart'];
+            $page_length = $request['iDisplayLength'];
+            $iSortCol = $request['iSortCol_0'];
+            $col = 'mDataProp_' . $iSortCol;
+            $order_by_field = $request->$col;
+            $order_by = $request['sSortDir_0'];
+            $branchIds = $request->branch_id;
+            $getTerId = array();
+            $defaultCondition = 'order_cancel.status != ""';
+            if (!empty($search)) {
+                $search = Helper::string_sanitize($search);
+                $whereterminal = " ( terminal_name LIKE '%$search%' ) ";
+                $getTerminalId = Terminal::whereRaw($whereterminal)->select('terminal_id')->get()->toArray();
+                foreach ($getTerminalId as $value) {
+                    array_push($getTerId, $value['terminal_id']);
+                }
+                $implodeTermId = implode(',', $getTerId);
+                if (!empty($implodeTermId)) {
+                    $defaultCondition .= " AND shift.terminal_id in ($implodeTermId)";
+                } else {
+                    $defaultCondition .= " AND shift.terminal_id in ('$implodeTermId')";
+                }
+            }
+
+            $terminal_id = $request->input('terminal_id', null);
+            if ($terminal_id != null) {
+                $defaultCondition .= " AND `order_cancel`.terminal_id = '$terminal_id' ";
+            }
+
+            if (!isset($branchIds) || empty($branchIds)) {
+                $branchIds = Auth::user()->getBranchIds();
+            } else {
+                $branchIds = explode(',', $branchIds);
+            }
+            if(Auth::user()->role > 1) {
+                $ordersIdsList = Order::join('order', 'order.order_id', 'order_cancel.order_id')->whereIn('order.branch_id', $branchIds);
+                $shiftList = $shiftList->whereIn('order_cancel.order_id', $ordersIdsList);
+            }
+            $invoice_no = $request->input('invoice_no', null);
+            if ($invoice_no != null) {
+                $invoice_no = Helper::string_sanitize($invoice_no);
+                $ordersIdsList = $ordersIdsList->where('invoice_no', 'LIKE', $invoice_no);
+            }
+            $paymentList = OrderPayment::select('order_payment',
+                DB::raw("(SELECT count(id) FROM order_cancel WHERE order_id = order_payment.order_id) AS refunds_transaction"),
+                DB::raw("(SELECT SUM(order_payment.op_amount) WHERE  order_id = order_payment.order_id) AS refunds_amount"),
+            );
+            $orderCancelList = OrderCancel::join('order', 'order.order_id', 'order_cancel.order_id')->whereIn('order.branch_id', $branchIds)
+            ->select('order_cancel.*',
+                DB::raw("(SELECT name FROM branch WHERE branch_id = order.branch_id) AS branch_name"),
+                DB::raw("(SELECT CAST(order.grand_total AS DECIMAL(16,2))) AS grand_total"),
+                DB::raw("(SELECT name FROM users WHERE id = order_cancel.created_by) AS cashier"),
+                DB::raw("(SELECT order.uuid) AS uuid"),
+                DB::raw("(SELECT order.invoice_no) AS invoice_no"),
+                DB::raw("(SELECT terminal_name FROM terminal WHERE terminal_id = order_cancel.terminal_id) AS terminal_name"),
+            );
+                /* ,
+                DB::raw("(select name FROM users where id = shift.user_id) AS user_name")); */
+            $orderCancelCount = $orderCancelList
+            ->whereRaw($defaultCondition);
+            $orderCancelCount = $orderCancelList->count();
+            $orderCancelData = $orderCancelList
+                ->orderBy($order_by_field, $order_by)
+                ->limit($page_length)
+                ->offset($start)
+                ->get();
+            return response()->json([
+                "aaData" => $orderCancelData,
+                "iTotalDisplayRecords" => $orderCancelCount,
+                "iTotalRecords" => $orderCancelCount,
+                "sColumns" => $request->sColumns,
+                "sEcho" => $request->sEcho,
+            ]);
+
+        } catch (\Exception $exception) {
+            Helper::log('Shift report pagination : exception');
+            Helper::log($exception);
+        }
+    }
 }
 
 

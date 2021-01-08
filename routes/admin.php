@@ -130,6 +130,10 @@ Route::group(['namespace' => 'Admin'], function () {
         Route::post('reports-category-paginate', 'ReportsController@categoryReportPaginate')->name('reports.categroy_report.paginate');
         Route::get('shift_reports', 'ReportsController@shiftReportIndex')->name('reports.shift_report.index');
         Route::post('reports-shift-paginate', 'ReportsController@shiftPaginate')->name('reports.shift.paginate');
+        Route::get('cancelled_reports', 'ReportsController@cancelledReportIndex')->name('reports.cancelled_reports.index');
+        Route::post('reports-cancelled-paginate', 'ReportsController@cancelledPaginate')->name('reports.cancelled.paginate');
+        Route::get('payment_transaction.blade', 'ReportsController@paymentReportIndex')->name('reports.payment_transaction.index');
+        Route::post('reports-payment-paginate', 'ReportsController@paymentPaginate')->name('reports.payment.paginate');
 
         Route::resource('setmeal','SetMealController');
 		Route::get('setmeal/{uuid}/delete', 'SetMealController@delete')->name('setmeal.delete');

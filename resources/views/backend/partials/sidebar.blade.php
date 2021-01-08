@@ -36,7 +36,7 @@
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 <!-- Add icons to the links using the .nav-icon class
                          with font-awesome or any other icon font library -->
-                <li class="nav-item has-treeview {{(Request::is($backend.'/profile')) ? 'menu-open' : ''}}">
+                <li class="nav-item has-treeview {{ isRequest('admin.profile') ? 'menu-open' : ''}}">
                     <a href="#" class="nav-link custom-user-panel-nav-link px-0">
                         <div class="custom-user-panel user-panel">
                             <div class="image">
@@ -51,10 +51,10 @@
                             </div>
                         </div>
                     </a>
-                    <ul class="nav nav-treeview {{(Request::is($backend.'/profile')) ? '' : 'display_none'}}">
+                    <ul class="nav nav-treeview {{ isRequest('admin.profile') ? '' : 'display_none'}}">
                         <li class="nav-item">
                             <a href="{{route('admin.profile')}}"
-                               class="nav-link {{(Request::is($backend.'/profile')) ? 'active' : ''}}">
+                               class="nav-link {{ isRequest('admin.profile') ? 'active' : ''}}">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>{{trans('backend/common.profile')}}</p>
                             </a>
@@ -63,7 +63,7 @@
                 </li>
                 @if($permission::checkActionPermission('view_dashboard'))
                     <li class="nav-item">
-                        <a class="nav-link {{(Request::is('$backend', $backend.'/404', $backend.'/403', $backend.'/500')) ? 'active' : ''}}"
+                        <a class="nav-link {{ Request::is(getPath('admin.home')) ? 'active' : ''}}"
                            href="{{route('admin.home')}}">
                             <i class="nav-icon fas fa-tachometer-alt"></i>
                             <p>{{trans('backend/common.dashboard')}}</p>
@@ -76,7 +76,7 @@
                             (   isRequest('admin.roles.index')
                             ||  isRequest('admin.users.index')
                             ||  isRequest('admin.branch.index')
-                            ) ? 'menu-open' : '111'}}">
+                            ) ? 'menu-open' : ''}}">
                         <a class="nav-link {{
                             (   isRequest('admin.roles.index')
                             ||  isRequest('admin.users.index')
@@ -379,13 +379,13 @@
                             @if($permission::checkActionPermission(['view_country','view_states','view_cities']))
                                 <li class="nav-item has-treeview  {{
                             (   isRequest('admin.city.index')
-                                ||  isRequest('admin.state.index')
-                                ||  isRequest('admin.country.index')
+                            ||  isRequest('admin.state.index')
+                            ||  isRequest('admin.country.index')
                             )  ? 'menu-open' : ''}}">
                                     <a class="nav-link {{
                             (   isRequest('admin.city.index')
-                                ||  isRequest('admin.state.index')
-                                ||  isRequest('admin.country.index')
+                            ||  isRequest('admin.state.index')
+                            ||  isRequest('admin.country.index')
                             )  ? 'active' : ''}}">
                                         <i class="nav-icon fa fa-map-marker"></i>
                                         <p> {{trans('backend/common.location')}}</p>
@@ -429,14 +429,14 @@
                 @if($permission::checkActionPermission(['view_rac','view_box']))
                     <li class="nav-item has-treeview {{
                             (   isRequest('admin.wine_store_management.index')
-                                ||  isRequest('admin.rac.index')
-                                ||  isRequest('admin.box.index')
+                            ||  isRequest('admin.rac.index')
+                            ||  isRequest('admin.box.index')
                             ) ? 'menu-open' : ''}}">
 
                         <a class="nav-link {{
                             (   isRequest('admin.wine_store_management.index')
-                                ||  isRequest('admin.rac.index')
-                                ||  isRequest('admin.box.index')
+                            ||  isRequest('admin.rac.index')
+                            ||  isRequest('admin.box.index')
                             )  ? 'active' : ''}}">
                             <i class="nav-icon fas fa-th"></i>
                             <p> {{trans('backend/rac.rac_management')}}</p>
@@ -486,13 +486,17 @@
                 @if($permission::checkActionPermission(['view_customer_reports','view_category_reports','view_shift_reports']))
                     <li class="nav-item has-treeview {{
                             (   isRequest('admin.reports.customer.index')
-                                ||  isRequest('admin.reports.categroy_report.index')
-                                ||  isRequest('admin.reports.shift_report.index')
+                            ||  isRequest('admin.reports.categroy_report.index')
+                            ||  isRequest('admin.reports.shift_report.index')
+                            ||  isRequest('admin.reports.cancelled_reports.index')
+                            ||  isRequest('admin.reports.payment_transaction.index')
                             ) ? 'menu-open' : ''}}">
                         <a class="nav-link {{
                             (   isRequest('admin.reports.customer.index')
-                                ||  isRequest('admin.reports.categroy_report.index')
-                                ||  isRequest('admin.reports.shift_report.index')
+                            ||  isRequest('admin.reports.categroy_report.index')
+                            ||  isRequest('admin.reports.shift_report.index')
+                            ||  isRequest('admin.reports.cancelled_reports.index')
+                            ||  isRequest('admin.reports.payment_transaction.index')
                             ) ? 'active' : ''}}">
                             <i class="nav-icon fas fa-database"></i>
                             <p> {{trans('backend/common.reports')}}</p>
@@ -517,6 +521,20 @@
                                     </a>
                                 </li>
                             @endif
+                                <li class="nav-item">
+                                    <a class="nav-link {{ isRequest('admin.reports.cancelled_reports.index') ? 'active' : ''}}"
+                                       href="{{route('admin.reports.cancelled_reports.index')}}">
+                                        <i class="nav-icon fas fa fa-user-circle"></i>
+                                    <p>{{trans('backend/common.cancelled_reports')}}</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link {{ isRequest('admin.reports.payment_transaction.index') ? 'active' : ''}}"
+                                       href="{{route('admin.reports.payment_transaction.index')}}">
+                                        <i class="nav-icon fas fa fa-user-circle"></i>
+                                    <p>{{trans('backend/common.payment_transaction')}}</p>
+                                    </a>
+                                </li>
                             {{--@if($permission::checkActionPermission('view_customer_reports'))
                                 <li class="nav-item">
                                     <a class="nav-link {{isRequest('admin.reports.customer.index') ? 'active' : ''}}"

@@ -335,8 +335,14 @@ class ProductController extends Controller
                             $folder = $this->createDirectory('products');
                             $extension = $file->getClientOriginalExtension();
                             $fileName = time() . '_' . $key . '.' . $extension;
-                            $file->move($folder, $fileName);
-                            chmod($folder . $fileName, 0777);
+                            if (($file->getSize()/1024) > 2000) {
+                                $fileName = time() . '_' . $key . '.webp';
+                                Helper::convertImageToWebP($file, $folder.$fileName, number_format((2000/($file->getSize()/1024)) * 100), 2);
+                            } else {
+                                $file->move($folder, $fileName);
+                                chmod($folder . $fileName, 0777);
+                            }
+                            //dd($file);
                             $image = 'uploads/products/' . $fileName;
                             $imageData = [
                                 'uuid' => Helper::getUuid(),
@@ -665,7 +671,6 @@ class ProductController extends Controller
 
         return view('backend.product.edit', compact('productData', 'categoryProductList', 'priceTypeList', 'attributeList', 'modifierList', 'globalModifierList', 'branchList', 'categoryAttributeList', 'categoryProductListHasRac'));
     }
-
     /**
      * Update the specified resource in storage.
      *
@@ -749,7 +754,13 @@ class ProductController extends Controller
                             $folder = $this->createDirectory('products');
                             $extension = $file->getClientOriginalExtension();
                             $fileName = time() . '_' . $key . '.' . $extension;
-                            $file->move($folder, $fileName);
+                            if (($file->getSize()/1024) > 2000) {
+                                $fileName = time() . '_' . $key . '.webp';
+                                Helper::convertImageToWebP($file, $folder.$fileName, number_format((2000/($file->getSize()/1024)) * 100), 2);
+                            } else {
+                                $file->move($folder, $fileName);
+                                chmod($folder . $fileName, 0777);
+                            }
                             chmod($folder . $fileName, 0777);
                             $image = 'uploads/products/' . $fileName;
                             $imageData = [

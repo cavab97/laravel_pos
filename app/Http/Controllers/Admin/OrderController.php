@@ -11,6 +11,7 @@ use App\Models\OrderAttributes;
 use App\Models\OrderDetail;
 use App\Models\OrderPayment;
 use App\Models\Permissions;
+use App\Models\Payment;
 use App\Models\Terminal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -31,7 +32,9 @@ class OrderController extends Controller
         if ($checkPermission == false) {
             return view('backend.access-denied');
         }
-        return view('backend.order.index');
+
+        $paymentOption = Payment::pluck('name', 'uuid')->toArray();
+        return view('backend.order.index', compact('paymentOption'));
     }
 
     /**
@@ -83,11 +86,26 @@ class OrderController extends Controller
             if (!empty($from) && !empty($to)) {
                 $defaultCondition .= " AND DATE_FORMAT(`order`.order_date, '%Y-%m-%d') BETWEEN '" . $from . "' AND '" . $to . "'";
             }
+
+            $payment_id = $request->input('payment_id', null);
+            //dd($payment_id);
+            if ($payment_id != null) {
+                $payment_id = explode(',', $payment_id);
+                $paymentIds = Payment::whereIn('uuid', $payment_id)->pluck('payment_id')->toArray();
+                $orderIds = OrderPayment::join('payment', 'payment.payment_id', 'order_payment.op_method_id')->whereIn('payment.uuid', $payment_id)->groupBy('order_id')->pluck('order_id')->toArray();
+                if (count($orderIds) > 0) {
+                    $defaultCondition .= " AND `order`.order_id IN (".implode(",",$orderIds).")";
+                } else {
+                    $defaultCondition .= " AND `order`.order_id = ''";
+                }
+
+            }
             $userCount = Order::leftjoin('customer', 'customer.customer_id', '=', 'order.customer_id')->whereRaw($defaultCondition)
                 ->count();
             $userList = Order::leftjoin('customer', 'customer.customer_id', '=', 'order.customer_id')->whereRaw($defaultCondition)
                 ->select(
-                    'order_id', 'order.uuid', 'table_id', DB::raw("CONCAT( order.invoice_no, '-', order.terminal_id ) AS invoice_no"), 'sub_total', 'sub_total_after_discount', 'grand_total', 'order_source', 'order_status', 'customer.name as customer_name',
+                    // '-', order.terminal_id
+                    'order_id', 'order.uuid', 'table_id', DB::raw("CONCAT( order.invoice_no) AS invoice_no"), 'sub_total', 'sub_total_after_discount', 'grand_total', 'order_source', 'order_status', 'customer.name as customer_name',
                     DB::raw('DATE_FORMAT(order.order_date, "%d-%m-%Y %h:%i %p") as order_date'),
                     DB::raw('(SELECT name FROM branch WHERE branch.branch_id = order.branch_id) AS branch_name'),
                     DB::raw('(SELECT terminal_name FROM terminal WHERE terminal.terminal_id = order.terminal_id) AS terminal_name')
@@ -130,7 +148,7 @@ class OrderController extends Controller
             $orderData->branch_name = $branchName->name;
             $orderData->taxDetail = json_decode($orderData->tax_json, true);
         }
-		
+
 		if ($orderData->terminal_id) {
             $terminal_id = $orderData->terminal_id;
             $terminalData = Terminal::select('terminal_name')->where('terminal_id',$terminal_id)->first();
@@ -159,7 +177,7 @@ class OrderController extends Controller
         $orderDetail_discount2 = 0;
         foreach ($orderDetails as $key => $value) {
              $productDetail = json_decode($value['product_detail'], true);
-			 
+
              $orderDetails[$key]['product_name'] = $productDetail['name'];
              /*$orderDetail_discount1 += $value['discount'];*/
             $attributeData = OrderAttributes::where('order_id', $orderData->order_id)->where('detail_id', $value['detail_id'])->get()->toArray();
