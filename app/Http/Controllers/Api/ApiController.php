@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Helper;
 use App\Models\Terminal;
+use App\Models\Order;
 use App\Models\Roles;
 use App\Models\UserBranch;
 use App\Models\UserPosPermission;
@@ -318,7 +319,6 @@ class ApiController extends Controller
             Helper::log('Get Permission List : start');
             DB::beginTransaction();
             App::setLocale($locale);
-            App::setLocale($locale);
             $branch_id = $request->branch_id;
             /*
             $user_id = $request->user_id;
@@ -343,6 +343,28 @@ class ApiController extends Controller
         } catch (\Exception $exception) {
             DB::rollBack();
             Helper::log('Get Permission List : exception');
+            Helper::log($exception);
+            return response()->json(['status' => 500, 'show' => true, 'message' => trans('api.ooops')]);
+        }
+    }
+
+    public function getLastOrderId(Request $request, $locale) {
+
+        DB::beginTransaction();
+        App::setLocale($locale);
+        Helper::log('API get Order Id : start');
+        try {
+            $branchId = $request->branch_id;
+            $terminalId = $request->terminal_id;
+            return response()->json(['status' => 200, 'show' => true, 'message' => trans('api.permission_get_sucess'),
+            'order_id' => Order::where([
+                ['terminal_id', $terminalId],
+                ['branch_id', $branchId],
+            ])->orderByDesc('order_id')->limit(1)->pluck('order_id')[0]]);
+            ;
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            Helper::log('Get Order Id : exception');
             Helper::log($exception);
             return response()->json(['status' => 500, 'show' => true, 'message' => trans('api.ooops')]);
         }

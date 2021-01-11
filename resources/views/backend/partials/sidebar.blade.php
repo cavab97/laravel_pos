@@ -10,6 +10,11 @@
         return Request::is(getPath($route), getPath($route).'/*');
     }
 @endphp
+<style>
+ul.nav > li.nav-item{
+    max-width: 100%;
+}
+</style>
 <!-- Main Sidebar Container -->
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->

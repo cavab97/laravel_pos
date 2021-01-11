@@ -215,8 +215,6 @@ class SyncOrderController extends Controller
 
                                     // add payemnt
                                     $getPaymentdetail = $setOrdersArray['order_payment'];
-                                    Helper::log('add payment');
-                                    Helper::log($getPaymentdetail);
                                     if (!empty($getPaymentdetail) && is_array($getPaymentdetail)) {
                                         foreach ($getPaymentdetail as $setPaymentdetail) {
                                             $orderspayments = new OrderPayment();

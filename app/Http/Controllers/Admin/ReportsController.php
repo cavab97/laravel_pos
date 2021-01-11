@@ -11,6 +11,7 @@ use App\Models\Languages;
 use App\Models\Order;
 use App\Models\OrderCancel;
 use App\Models\OrderDetail;
+use App\Models\OrderPayment;
 use App\Models\Permissions;
 use App\Models\Shift;
 use App\Models\Terminal;
@@ -442,7 +443,7 @@ class ReportsController extends Controller
             $defaultCondition = 'order_cancel.status != ""';
             if (!empty($search)) {
                 $search = Helper::string_sanitize($search);
-                $whereterminal = " ( terminal_name LIKE '%$search%' ) ";
+                $whereterminal = " ( invoice_no LIKE '%$search%' ) ";
                 $getTerminalId = Terminal::whereRaw($whereterminal)->select('terminal_id')->get()->toArray();
                 foreach ($getTerminalId as $value) {
                     array_push($getTerId, $value['terminal_id']);
@@ -474,25 +475,29 @@ class ReportsController extends Controller
                 $invoice_no = Helper::string_sanitize($invoice_no);
                 $ordersIdsList = $ordersIdsList->where('invoice_no', 'LIKE', $invoice_no);
             }
-            $paymentList = OrderPayment::select('order_payment',
-                DB::raw("(SELECT count(id) FROM order_cancel WHERE order_id = order_payment.order_id) AS refunds_transaction"),
-                DB::raw("(SELECT SUM(order_payment.op_amount) WHERE  order_id = order_payment.order_id) AS refunds_amount"),
+            $paymentList = OrderPayment::whereIn('op_method_id', [4,5])->select('order_payment.*',
+                DB::raw("(SELECT count(order_id) FROM `order` WHERE order_id = order_payment.order_id) AS refunds_transaction"),
+                DB::raw("(SELECT terminal_name FROM `terminal` WHERE terminal_id = order_payment.terminal_id) AS terminal_name"),
+                DB::raw("(SELECT SUM(order_payment.op_amount) WHERE order_id = order_payment.order_id) AS refunds_amount"),
+                DB::raw("(SELECT invoice_no FROM `order` WHERE order_id = order_payment.order_id) AS invoice_no"),
+                DB::raw("(SELECT uuid FROM `order` WHERE order_id = order_payment.order_id) AS uuid"),
             );
-            $orderCancelList = OrderCancel::join('order', 'order.order_id', 'order_cancel.order_id')->whereIn('order.branch_id', $branchIds)
+            Log::debug(OrderPayment::whereIn('op_method_id', [4,5])->get()->toArray());
+           /*  $orderCancelList = OrderCancel::join('order', 'order.order_id', 'order_cancel.order_id')->whereIn('order.branch_id', $branchIds)
             ->select('order_cancel.*',
                 DB::raw("(SELECT name FROM branch WHERE branch_id = order.branch_id) AS branch_name"),
                 DB::raw("(SELECT CAST(order.grand_total AS DECIMAL(16,2))) AS grand_total"),
                 DB::raw("(SELECT name FROM users WHERE id = order_cancel.created_by) AS cashier"),
                 DB::raw("(SELECT order.uuid) AS uuid"),
                 DB::raw("(SELECT order.invoice_no) AS invoice_no"),
-                DB::raw("(SELECT terminal_name FROM terminal WHERE terminal_id = order_cancel.terminal_id) AS terminal_name"),
-            );
+                //DB::raw("(SELECT terminal_name FROM terminal WHERE terminal_id = order_cancel.terminal_id) AS terminal_name"),
+            ); */
                 /* ,
                 DB::raw("(select name FROM users where id = shift.user_id) AS user_name")); */
-            $orderCancelCount = $orderCancelList
+            $orderCancelCount = $paymentList
             ->whereRaw($defaultCondition);
-            $orderCancelCount = $orderCancelList->count();
-            $orderCancelData = $orderCancelList
+            $orderCancelCount = $paymentList->count();
+            $orderCancelData = $paymentList
                 ->orderBy($order_by_field, $order_by)
                 ->limit($page_length)
                 ->offset($start)

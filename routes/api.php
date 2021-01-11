@@ -24,6 +24,7 @@ Route::group(['prefix' => 'v1/{locale}', 'namespace' => 'Api'], function () {
     Route::post('login', 'ApiController@login');
     Route::post('verifyOtherUserPIN', 'ApiController@verifyOtherUserPIN');
     Route::post('verifyPIN', 'ApiController@verifyPIN');
+    Route::post('get-order-id', 'ApiController@getLastOrderId');
     Route::post('verifyTerminalkey','ApiController@verifyTerminalKey');
     Route::get('getPermissionList','ApiController@getPermissionList');
     Route::post('synch-table','SynchronizeController@actionTableData');
