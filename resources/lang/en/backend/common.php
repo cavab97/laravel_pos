@@ -76,6 +76,7 @@ return [
     'postal_code' => 'Postal Code',
     'try_excel_import' => 'Too many item? Let\'s try ',
     'import_excel' => 'import Excel File',
+    'discount_item_report' => 'Discount item report',
 
     /*Reports*/
     'reports' => 'Reports',
@@ -97,5 +98,8 @@ return [
     'reason' => 'Reason',
     'total_amount' => 'Total Amount',
     'cashier' => 'Cashier',
-    'payment_transaction' => 'Payment Summary Reports'
+    'payment_transaction' => 'Payment Summary Reports',
+    'list_item' => 'List of item discount',
+    'list_trasaction' => 'List of payment trasaction',
+    'list_cancelled' => 'List of cancelled order',
 ];

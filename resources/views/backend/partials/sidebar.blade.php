@@ -459,6 +459,7 @@ return Request::is(getPath($route), getPath($route).'/*');
                             ||  isRequest('admin.reports.shift.index')
                             ||  isRequest('admin.reports.cancelled.index')
                             ||  isRequest('admin.reports.payment.index')
+                            ||  isRequest('admin.reports.discount_item.index')
                             ) ? 'menu-open' : ''}}">
                 <a class="nav-link {{
                             (   isRequest('admin.reports.customer.index')
@@ -466,20 +467,21 @@ return Request::is(getPath($route), getPath($route).'/*');
                             ||  isRequest('admin.reports.shift.index')
                             ||  isRequest('admin.reports.cancelled.index')
                             ||  isRequest('admin.reports.payment.index')
+                            ||  isRequest('admin.reports.discount_item.index')
                             ) ? 'active' : ''}}">
                     <i class="nav-icon fas fa-database"></i>
                     <p> {{trans('backend/common.reports')}}</p>
                     <i class="right fas fa-angle-left"></i>
                 </a>
                 <ul class="nav nav-treeview">
-                    @if($permission::checkActionPermission('view_category_reports'))
+                   <!--  @if($permission::checkActionPermission('view_category_reports'))
                     <li class="nav-item">
                         <a class="nav-link {{isRequest('admin.reports.categroy_report.index') ? 'active' : ''}}" href="{{route('admin.reports.categroy_report.index')}}">
                             <i class="nav-icon fas fa fa-tasks"></i>
                             <p>{{trans('backend/common.category_reports')}}</p>
                         </a>
                     </li>
-                    @endif
+                    @endif -->
                     @if($permission::checkActionPermission('view_shift_reports'))
                     <li class="nav-item">
                         <a class="nav-link {{isRequest('admin.reports.shift.index') ? 'active' : ''}}" href="{{route('admin.reports.shift.index')}}">
@@ -503,7 +505,7 @@ return Request::is(getPath($route), getPath($route).'/*');
                     <li class="nav-item">
                         <a class="nav-link {{ isRequest('admin.reports.discount_item.index') ? 'active' : ''}}" href="{{route('admin.reports.discount_item.index')}}">
                             <i class="nav-icon fas fa fa-user-circle"></i>
-                            <p>{{trans('backend/common.discount_item')}}</p>
+                            <p>{{trans('backend/common.discount_item_report')}}</p>
                         </a>
                     </li>
                     {{--@if($permission::checkActionPermission('view_customer_reports'))

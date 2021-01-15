@@ -38,12 +38,13 @@
                 <div class="card-header">{{trans('backend/product.select_format')}}</div>
                 <div class="card-body">
                     <div class="row btn-group">
-                        <a href="{{ isset($xls_path) ? $xls_path : '' }}" class="btn btn-default">.xls</a>
-                        <a href="{{ isset($xlsx_path) ? $xlsx_path : '' }}" class="btn btn-default">.xlsx</a>
+                        <a href="{{ isset($xls_path) ? $xls_path : '#' }}" class="btn btn-default" data-toggle="tooltip" title="Comming Soon">.xls</a>
+                        <a href="{{ isset($xlsx_path) ? $xlsx_path : '#' }}" class="btn btn-default" data-toggle="tooltip" title="Comming Soon">.xlsx</a>
                     </div>
                 </div>
             </div>
-            <button class="popper btn btn-primary" data-toggle="popover" type="button">{{trans('backend/product.upload_file')}}</button>
+            <a href="#" class="btn btn-primary" data-toggle="tooltip" title="Comming Soon">{{trans('backend/product.upload_file')}}</a>
+            <!-- <button class="popper btn btn-primary" type="button">{{trans('backend/product.upload_file')}}</button> -->
             </div>
         </div>
         <div class="row justify-content-center py-2 text-secondary">{{trans('backend/product.format_support')}} (.xls and xlsx)</div>
@@ -51,8 +52,11 @@
 </div>
 
 <div class="form-group " style="float: right;">
-    {{ Form::button(trans('backend/common.submit'),['type'=>'submit','class'=>'btn btn-info','id'=>'btnSubmit', 'data-loading-text'=>'<i class="fa fa-spinner fa-spin"></i> loading','data-original-text'=>trans('backend/common.submit')])}}
-    &nbsp;&nbsp;
+
+<a href="{{ route('admin.product.create')}}"
+        class="btn btn-info">{{trans('backend/common.submit')}}</a>
+    <!-- {{ Form::button(trans('backend/common.submit'),['type'=>'submit','class'=>'btn btn-info disabled','id'=>'btnSubmit', 'data-loading-text'=>'<i class="fa fa-spinner fa-spin"></i> loading','data-original-text'=>trans('backend/common.submit')])}}
+    &nbsp;&nbsp; -->
     <a href="{{ route('admin.product.create')}}"
         class="btn btn-danger">{{trans('backend/common.back')}}</a>
 </div>

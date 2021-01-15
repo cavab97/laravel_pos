@@ -184,12 +184,12 @@ $lang = \App\Models\Languages::getBackLang();
         <div class="container-fluid">
             <div class="content-header-row row mb-2">
                 <div class="col-sm-6">
-                    <h1>{{trans('backend/common.shift_reports')}}</h1>
+                    <h1>{{trans('backend/common.cancelled_reports')}}</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{{route('admin.home')}}">{{trans('backend/common.home')}}</a></li>
-                        <li class="breadcrumb-item active">{{trans('backend/common.shift_reports')}}</li>
+                        <li class="breadcrumb-item active">{{trans('backend/common.cancelled_reports')}}</li>
                     </ol>
                 </div>
             </div>
@@ -203,7 +203,7 @@ $lang = \App\Models\Languages::getBackLang();
             <div class="col-12">
                 <div class="card">
                     <div class="card-header bg-secondary">
-                        <h3 class="card-title">{{trans('backend/common.list_shift')}}</h3>
+                        <h3 class="card-title">{{trans('backend/common.list_cancelled')}}</h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
