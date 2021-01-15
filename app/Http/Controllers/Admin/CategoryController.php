@@ -54,14 +54,17 @@ class CategoryController extends Controller
         if ($checkPermission == false) {
             return view('backend.access-denied');
         }
-        $parentCategoryList = Category::where(['parent_id' => 0, 'status' => Category::ACTIVE])->get()->toArray();
+        $parentCategoryList = Category::where(['parent_id' => 0, 'status' => Category::ACTIVE]);
         $userData = Auth::user();
-        if ($userData->role == 1) {
-            $branchList = Branch::where('status', 1)->get()->toArray();
-        } else {
-            $branchIds = UserBranch::where('user_id', $userData->id)->select("branch_id")->get();
-            $branchList = Branch::where('status', 1)->whereIn('branch_id', $branchIds)->get()->toArray();
+        $branchList = Branch::where('status', 1);
+        if ($userData->role != 1) {
+            $branchIds = UserBranch::where('user_id', $userData->id)->pluck("branch_id")->toArray();
+            $branchList = $branchList->whereIn('branch_id', $branchIds);
+            $categoryIds = CategoryBranch::whereIn('branch_id', $branchIds)->pluck('category_id');
+            $parentCategoryList = $parentCategoryList->whereIn('category_id', $categoryIds);
         }
+        $branchList = $branchList->get()->toArray();
+        $parentCategoryList = $parentCategoryList->get()->toArray();
         return view('backend.category.create', compact('parentCategoryList', 'branchList'));
 
     }

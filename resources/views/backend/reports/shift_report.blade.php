@@ -19,6 +19,7 @@
                 "iDisplayLength": 10,
                 "bServerSide": true,
                 "bPaginate": true,
+                //"pagingType": "full_numbers",
                 "sAjaxSource": adminUrl + '/reports-shift-paginate',
                 lengthChange: true,
                 "fnServerParams": function (aoData) {
@@ -29,7 +30,6 @@
                     });
                     var terminal_id = $('#terminal_id').val();
                     var branch_id = $('#branch_id').val();
-                    console.log(branch_id)
                     aoData.push({name: 'columns', value: columns});
                     aoData.push({name: 'terminal_id', value: terminal_id});
                     aoData.push({name: 'branch_id', value: branch_id});

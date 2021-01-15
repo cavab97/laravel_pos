@@ -74,6 +74,8 @@ return [
 	'delete_state' => 'You can not delete this state already occupied.',
     'delete_city' => 'You can not delete this city already occupied.',
     'postal_code' => 'Postal Code',
+    'try_excel_import' => 'Too many item? Let\'s try ',
+    'import_excel' => 'import Excel File',
 
     /*Reports*/
     'reports' => 'Reports',
@@ -90,8 +92,10 @@ return [
     'start_amount' => 'Start Amount',
     'end_amount' => 'End Amount',
     'select_terminal' => 'Select Terminal',
+    'select_category' => 'Select Category',
     'date_and_time' => 'Date & Time',
     'reason' => 'Reason',
     'total_amount' => 'Total Amount',
-    'cashier' => 'Cashier'
+    'cashier' => 'Cashier',
+    'payment_transaction' => 'Payment Summary Reports'
 ];

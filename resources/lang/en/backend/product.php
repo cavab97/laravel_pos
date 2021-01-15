@@ -28,4 +28,9 @@ return [
     'quantity' => 'Quantity',
     'select_product' => 'Select Item',
     'has_setmeal' => 'Has Setmeal',
+    'upload_file' => 'Upload File',
+    'select_format' => 'Select a format',
+    'download_template' => 'Download Template',
+    'upload_excel_file' => 'Upload Excel File',
+    'format_support' => 'File format support',
 ];

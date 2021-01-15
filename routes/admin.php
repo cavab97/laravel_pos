@@ -74,6 +74,7 @@ Route::group(['namespace' => 'Admin'], function () {
         Route::get('product/delete-image/{id}', 'ProductController@ImageDelete')->name('product.delete-image');
         Route::get('product/category-attribute/{id}', 'ProductController@getcategoryattribute')->name('product.category-attribute');
         Route::resource('product', 'ProductController');
+        Route::get('product_bulk_upload', 'ProductController@getExcelImportPage')->name('product.excel-import');
 
         Route::resource('printer', 'PrinterController');
         Route::get('printer/{uuid}/delete', 'PrinterController@delete')->name('printer.delete');
@@ -128,12 +129,14 @@ Route::group(['namespace' => 'Admin'], function () {
         Route::post('reports-customer-export', 'ReportsController@customerExportData')->name('reports.customer.export');
         Route::get('reports-category-index', 'ReportsController@categoryReportIndex')->name('reports.categroy_report.index');
         Route::post('reports-category-paginate', 'ReportsController@categoryReportPaginate')->name('reports.categroy_report.paginate');
-        Route::get('shift_reports', 'ReportsController@shiftReportIndex')->name('reports.shift_report.index');
+        Route::get('reports-shift', 'ReportsController@shiftReportIndex')->name('reports.shift.index');
         Route::post('reports-shift-paginate', 'ReportsController@shiftPaginate')->name('reports.shift.paginate');
-        Route::get('cancelled_reports', 'ReportsController@cancelledReportIndex')->name('reports.cancelled_reports.index');
+        Route::get('reports-cancelled', 'ReportsController@cancelledReportIndex')->name('reports.cancelled.index');
         Route::post('reports-cancelled-paginate', 'ReportsController@cancelledPaginate')->name('reports.cancelled.paginate');
-        Route::get('payment_transaction.blade', 'ReportsController@paymentReportIndex')->name('reports.payment_transaction.index');
+        Route::get('reports-payment', 'ReportsController@paymentReportIndex')->name('reports.payment.index');
         Route::post('reports-payment-paginate', 'ReportsController@paymentPaginate')->name('reports.payment.paginate');
+        Route::get('reports-discount-item-index', 'ReportsController@itemDiscountReportIndex')->name('reports.discount_item.index');
+        Route::post('reports-discount-item-paginate', 'ReportsController@itemDiscountPaginate')->name('reports.payment.paginate');
 
         Route::resource('setmeal','SetMealController');
 		Route::get('setmeal/{uuid}/delete', 'SetMealController@delete')->name('setmeal.delete');

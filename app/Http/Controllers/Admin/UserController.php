@@ -218,7 +218,6 @@ class UserController extends Controller
             $checkMobile = User::where('mobile', $mobile)->count();
             $checkEmail = User::where('email', $email)->count();
             $checkUsername = User::where('username', $username)->count();
-
             if ($checkEmail > 0) {
                 return response()->json(['status' => 409, 'message' => trans('backend/users.email_exists')]);
             } elseif ($checkMobile > 0) {

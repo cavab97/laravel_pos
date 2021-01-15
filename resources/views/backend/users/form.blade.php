@@ -83,7 +83,7 @@
         <div class="col-md-6">
             <div class="form-group">
                 {{ Form::label('password',trans('backend/users.password')) }}
-                {{ Form::password('password', ["class"=>"form-control form-control-sm","placeholder"=>trans('backend/users.password'),"id"=>"password","name"=>"password","maxlength" => "8","minlength" => "8",$required]) }}
+                {{ Form::password('password', ["class"=>"form-control form-control-sm","placeholder"=>trans('backend/users.password'),"id"=>"password","name"=>"password","maxlength" => "30","minlength" => "8",$required]) }}
             </div>
         </div>
     </div>
@@ -91,7 +91,7 @@
         <div class="col-md-6">
             <div class="form-group">
                 {{ Form::label('confirm_password',trans('backend/users.confirm_password')) }}
-                {{ Form::password('confirm_password', ["class"=>"form-control form-control-sm", "placeholder"=>trans('backend/users.confirm_password'), "id"=>"confirm_password","maxlength" => "8","minlength" => "8", $required]) }}
+                {{ Form::password('confirm_password', ["class"=>"form-control form-control-sm", "placeholder"=>trans('backend/users.confirm_password'), "id"=>"confirm_password","maxlength" => "30","minlength" => "8", $required]) }}
             </div>
         </div>
         <div class="col-md-6 required">

@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
+use App\Models\CategoryBranch;
 
 class Category extends Model
 {
@@ -53,9 +55,15 @@ class Category extends Model
 
     static function categoryRepeat1($pId, $level, $parentName, $has_rac)
     {
+        $userData = Auth::user();
         $categoryData = self::select('category_id', 'parent_id', 'name')
-            ->where('has_rac_managemant', $has_rac)
-            ->get()->toArray();
+            ->where('has_rac_managemant', $has_rac);
+        if ($userData->role != 1) {
+            $branchIds = UserBranch::where('user_id', $userData->id)->where('status',1)->pluck("branch_id")->toArray();
+            $categoryIds = CategoryBranch::whereIn('branch_id', $branchIds)->pluck('category_id');
+            $categoryData = $categoryData->whereIn('category_id', $categoryIds);
+        }
+        $categoryData = $categoryData->get()->toArray();
         foreach ($categoryData as $key => $value) {
             $categoryId = $value['category_id'];
             $name = $value['name'];

@@ -21,7 +21,19 @@
            $stock_level_requires = 'disabled';
        }
 @endphp
+<script src="{{asset('backend/plugins/jquery/jquery.min.js')}}"></script>
+<script>
+$(function() {
+    $('#import_excel_url').attr('href', '{{ route('admin.product.excel-import') }}');
+});
+</script>
 <div class="card card-secondary">
+    <div class="row col-12 justify-content-end">
+    <div style="padding:1rem .5rem" class="row">
+        <p>{{ trans('backend/common.try_excel_import') }}</p>
+        <a id="import_excel_url" style="margin-left: .3rem">{{ trans('backend/common.import_excel') }}</a>
+    </div>
+    </div>
     <div class="card-header">
         <h3 class="card-title">
             <i class="fa fa-info-circle" aria-hidden="true"></i>
@@ -92,7 +104,7 @@
                     <div class="col-md-6 required">
                         <div class="form-group">
                             {{ Form::label('price_type_value',trans('backend/product.unit_type_value')) }}
-                            {{ Form::text('price_type_value', old('price_type_value'), ["required","class"=>"form-control form-control-sm","placeholder"=>trans('backend/product.unit_type_value'),"id"=>"price_type_value","name"=>"price_type_value"]) }}
+                            {{ Form::text('price_type_value', old('price_type_value') ?? 1, ["required","class"=>"form-control form-control-sm","placeholder"=>trans('backend/product.unit_type_value'),"id"=>"price_type_value","name"=>"price_type_value"]) }}
                         </div>
                     </div>
                 </div>
@@ -467,7 +479,6 @@
 </div>
 {{--End modifier Block--}}
 
-@if($user->role == 1)
     {{--Start Branch Block--}}
     <div class="card card-secondary">
         <div class="card-header">
@@ -579,7 +590,6 @@
         </div>
     </div>
     {{--End Branch Block--}}
-@endif
 
 <!-- <div class="card">
     <div class="card-header ui-sortable-handle" style="cursor: move;">

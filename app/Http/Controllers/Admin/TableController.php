@@ -8,6 +8,7 @@ use App\Models\Helper;
 use App\Models\Languages;
 use App\Models\Permissions;
 use App\Models\Table;
+use App\Models\UserBranch;
 use Facade\Ignition\Tabs\Tab;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,7 +30,14 @@ class TableController extends Controller
         if ($checkPermission == false) {
             return view('backend.access-denied');
         }
-        $tableList = Table::select('table.*', DB::raw('(Select `name` From branch WHERE branch_id = `table`.branch_id) AS branch_name'))->get();
+        $userData = Auth::user();
+        if ($userData->role != 1) {
+            $branchIds = UserBranch::where('user_id', $userData->id)->pluck("branch_id")->toArray();
+            $tableList = Table::whereIn('branch_id', $branchIds)->select('table.*', DB::raw('(Select `name` From branch WHERE branch_id = `table`.branch_id) AS branch_name'))->get();
+        } else {
+
+            $tableList =Table::select('table.*', DB::raw('(Select `name` From branch WHERE branch_id = `table`.branch_id) AS branch_name'))->get();
+        }
         return view('backend.table.index', compact('tableList'));
     }
 
@@ -45,7 +53,13 @@ class TableController extends Controller
         if ($checkPermission == false) {
             return view('backend.access-denied');
         }
-        $branchList = Branch::where('status', 1)->get()->toArray();
+        $userData = Auth::user();
+        $branchList = Branch::where('status', 1);
+        if ($userData->role != 1) {
+            $branchIds = UserBranch::where('user_id', $userData->id)->pluck("branch_id")->toArray();
+            $branchList = $branchList->whereIn('branch_id', $branchIds);
+        }
+        $branchList = $branchList->get()->toArray();
         return view('backend.table.create', compact('branchList'));
     }
 
@@ -80,7 +94,7 @@ class TableController extends Controller
                     'branch_id' => $branch_id,
                     'table_type' => $table_type,
                     'table_qr' => $table_qr,
-                    'table_capacity' => $table_capacity,					
+                    'table_capacity' => $table_capacity,
                     'status' => $request->status,
                     'table_section' => $table_section,
                     'updated_at' => date('Y-m-d H:i:s'),
@@ -136,7 +150,13 @@ class TableController extends Controller
             Helper::log('Table edit : No record found');
             return redirect()->back()->with('error', trans('backend/common.oops'));
         }
-        $branchList = Branch::where('status', 1)->get()->toArray();
+        $userData = Auth::user();
+        $branchList = Branch::where('status', 1);
+        if ($userData->role != 1) {
+            $branchIds = UserBranch::where('user_id', $userData->id)->pluck("branch_id")->toArray();
+            $branchList = $branchList->whereIn('branch_id', $branchIds);
+        }
+        $branchList = $branchList->get()->toArray();
         return view('backend.table.edit', compact('tableData', 'branchList'));
     }
 
@@ -172,8 +192,8 @@ class TableController extends Controller
                     'branch_id' => $branch_id,
                     'table_type' => $table_type,
                     'table_qr' => $table_qr,
-                    'table_capacity' => $table_capacity,	
-                    'table_section' => $table_section,				
+                    'table_capacity' => $table_capacity,
+                    'table_section' => $table_section,
                     'status' => $request->status,
                     'updated_at' => date('Y-m-d H:i:s'),
                     'updated_by' => $loginId,

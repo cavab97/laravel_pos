@@ -20,7 +20,7 @@ $lang = \App\Models\Languages::getBackLang();
             "iDisplayLength": 10,
             "bServerSide": true,
             "bPaginate": true,
-            "sAjaxSource": adminUrl + '/reports-payment-paginate',
+            "sAjaxSource": adminUrl + '/reports-discount-item-paginate',
             "lengthChange": true,
             "fnServerParams": function(aoData) {
                 var acolumns = this.fnSettings().aoColumns,
@@ -48,18 +48,38 @@ $lang = \App\Models\Languages::getBackLang();
                     name: 'to_date',
                     value: $('#to_date').val()
                 });
+                aoData.push({
+                    name: 'category_id',
+                    value: $('#category_id').val()
+                });
+                if ($('#choose-price-type').val() == '%') {
+                    aoData.push({
+                        name: 'percentage_discount',
+                        value: $('#percentage_select').val()
+                    });
+                } else {
+                    aoData.push({
+                        name: 'price_opt',
+                        value: $('#price_opt').val()
+                    });
+                    aoData.push({
+                        name: 'price',
+                        value: $('#price').val()
+                    });
+
+                }
+
 
             },
-            "columns": [{
-                    data: 'id'
-                },
-                { data: 'payment_option' },
-                { data: "sales_amount" },
-                { data: "total_sales_transaction" },
-                { data: "refunds_amount" },
-                { data: "refunds_transaction" },
-                { data: "cancel_amount" },
-                { data: "cancel_transaction" },
+            "columns": [
+                { data: 'id' },
+                { data: 'invoice_no' },
+                { data: "terminal_name" },
+                { data: "cashier" },
+                { data: "product_name" },
+                { data: "discount_amount" },
+                { data: "discount_remark" },
+                { data: "updated_at" },
             ],
             "ordering": false,
             //"order": [[1, "desc"]],
@@ -99,61 +119,28 @@ $lang = \App\Models\Languages::getBackLang();
                 "sortable": false
             }, {
                 "render": function(data, type, row) {
-                    return row.total_sales_transaction ?? 0;
+                    var order_number = row.invoice_no;
+                    var uuid = row.uuid;
+                    var url = '';
+                    url += '<a href="' + adminUrl + '/order/' + uuid + '" >' + order_number + '\</a> ';
+                    return [
+                        url
+                    ].join('');
                 },
-                "targets": $('#shift-list th#total_sales_transaction').index(),
+                "targets": $('#shift-list th#invoice_no').index(),
+                "orderable": false,
+                "searchable": false
             }, {
                 "render": function(data, type, row) {
-                    if (row.sales_amount < 0) {
-                        return (0).toFixed(2);
-                    } else {
-                        return (row.sales_amount ?? 0).toFixed(2);
-                    }
+                    var amount = row.discount_amount;
+                    var discountType = row.discount_type;
+                    return discountType == 1 ? amount + '%' : 'RM ' + amount.toFixed(2);
                 },
-                "targets": $('#shift-list th#sales_amount').index(),
-            }, {
-                "render": function(data, type, row) {
-                    if (row.refunds_amount) {
-                        return (row.refunds_amount * -1).toFixed(2)
-                    } else {
-                        return (0).toFixed(2);
-                    }
-                },
-                "targets": $('#shift-list th#refunds_amount').index(),
-            }, {
-                "render": function(data, type, row) {
-                    return row.refunds_transaction ?? 0;
-                },
-                "targets": $('#shift-list th#refunds_transaction').index(),
-            }, {
-                "render": function(data, type, row) {
-                    return (row.cancel_amount ?? 0).toFixed(2);
-                },
-                "targets": $('#shift-list th#cancel_amount').index(),
-            }, {
-                "render": function(data, type, row) {
-                    return row.cancel_transaction ?? 0;
-                },
-                "targets": $('#shift-list th#cancel_transaction').index(),
-            }, {
-                "render": function(data, type, row) {
-                    let total_net = 0.00;
-                    let sales_amount = row.sales_amount ?? 0;
-                    let refunds_amount = row.refunds_amount ?? 0;
-                    let cancel_amount = row.cancel_amount ?? 0;
-                    total_net = sales_amount - refunds_amount - cancel_amount;
-                    return total_net.toFixed(2);
-                },
-                "targets": $('#shift-list th#net').index(),
-            }, {
-                "render": function(data, type, row) {
-                    let count_sales = row.total_sales_transaction ?? 0;
-                    let count_cancel = row.cancel_transaction ?? 0;
-                    let count_refund = row.refunds_transaction ?? 0;
-                    return count_sales + count_refund + count_cancel;
-                },
-                "targets": $('#shift-list th#total_transaction').index(),
-            }, ]
+                "targets": $('#shift-list th#discount_amount').index(),
+                "orderable": false,
+                "searchable": false
+            }
+            ]
         });
         $('#btnSubmit').click(function() {
             oTable.fnDraw();
@@ -187,7 +174,17 @@ $lang = \App\Models\Languages::getBackLang();
             $("#to_date").val($.datepicker.formatDate('yy-mm-dd', new Date(e.date)));
             $('#from_date').datetimepicker('maxDate', e.date);
         });
+        $('#choose-price-type').change(function(e) {
+            if (this.value == "%") {
+                $('#percentage_select').removeClass('d-none');
+                $('#price-option').addClass('d-none');
+            } else {//if (this.value = "RM") {
 
+                $('#percentage_select').addClass('d-none');
+                $('#price-option').removeClass('d-none');
+            }
+            console.log(this.value);
+        });
         $('#branch_id').select2({
             placeholder: "Select a Branch",
             allowClear: true
@@ -253,6 +250,10 @@ $lang = \App\Models\Languages::getBackLang();
 
     <!-- Main content -->
     <section class="custom-content content">
+        <!-- <ul class="nav nav-tabs nav-justified">
+            <li class="nav-item"><a class="nav-link active" href="#">Discount Item</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Discount Order</a></li>
+        </ul> -->
         <div class="row">
             <div class="col-12">
                 <div class="card">
@@ -297,6 +298,38 @@ $lang = \App\Models\Languages::getBackLang();
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-md-3 mt-2">
+                                <select class="form-control form-control-sm" id="category_id" name="category_id">
+                                    <option value="">{{trans('backend/common.select_category')}}</option>
+                                    @foreach($categoryList as $key => $value)
+                                        <option value="{{$key}}">{{$value}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-3 mt-2 input-group">
+                                <select class="form-control form-control-sm" id="percentage_select" name="percentage_select" style="border-radius: .2rem;">
+                                    @for($index=0; $index < 100; $index+=10)
+                                    <option value="{{$index}}">{{$index}}</option>
+                                    @endfor
+                                    <option value="100">100 / Free</option>
+                                </select>
+                                <select class="form-control form-control-sm col-4" id="choose-price-type" name="choose-price-type">
+                                    <option value="%">%</option>
+                                    <option value="RM">RM</option>
+                                </select>
+                                <div class="col-8 px-0 d-none" id="price-option">
+                                <input type="number" id="price" name="price" class="form-control form-control-sm price-padding"
+                                           placeholder="{{trans('backend/product.price')}}" min="0"
+                                           onkeyup="pressEnter(event)">
+                                    <span id="number">
+                                        <select name="price_opt" class="price_opt" id="price_opt">
+                                            <option value="=">{{'='}}</option>
+                                            <option value=">=">{{'>='}}</option>
+                                            <option value="<=">{{'<='}}</option>
+                                        </select>
+                                    </span>
+                                </div>
+                            </div>
                             <div class="col-1 mt-2">
                                 <button type="button" id="btnSubmit" name="submit" class="btn btn btn-warning btn-sm">Filter
                                 </button>
@@ -307,15 +340,13 @@ $lang = \App\Models\Languages::getBackLang();
                                 <thead>
                                     <tr>
                                         <th id="id">{{trans('backend/common.no')}}</th>
-                                        <th id="payment_option">{{trans('backend/reports.payment_option')}}</th>
-                                        <th id="sales_amount">{{trans('backend/reports.sales_amount')}}</th>
-                                        <th id="total_sales_transaction">{{trans('backend/reports.total_sales_transaction')}}</th>
-                                        <th id="refunds_amount">{{trans('backend/reports.refunds_amount')}}</th>
-                                        <th id="refunds_transaction">{{trans('backend/reports.refunds_transaction')}}</th>
-                                        <th id="cancel_amount">{{trans('backend/reports.cancel_amount')}}</th>
-                                        <th id="cancel_transaction">{{trans('backend/reports.cancel_transaction')}}</th>
-                                        <th id="net">{{trans('backend/reports.net')}}</th>
-                                        <th id="total_transaction">{{trans('backend/reports.total_transaction')}}</th>
+                                        <th id="invoice_no">{{trans('backend/reports.invoice_no')}}</th>
+                                        <th id="terminal_name">{{trans('backend/reports.terminal_name')}}</th>
+                                        <th id="cashier">{{trans('backend/reports.cashier')}}</th>
+                                        <th id="product_name">{{trans('backend/reports.product_name')}}</th>
+                                        <th id="discount_amount">{{trans('backend/reports.discount_amount')}}</th>
+                                        <th id="discount_remark">{{trans('backend/reports.discount_remark')}}</th>
+                                        <th id="updated_at">{{trans('backend/common.updated_at')}}</th>
                                     </tr>
                                 </thead>
                                 <tbody>

@@ -216,6 +216,7 @@ class ProductController extends Controller
         $priceTypeList = PriceType::where('status', 1)->get();
 
         /*Product Category List*/
+        $userData = Auth::user();
         $categoryProductList = Category::getListForSelectBox1('', '', 0);
         $categoryProductListHasRac = Category::getListForSelectBox1('', '', 1);
         /*Attribute List*/
@@ -1283,5 +1284,55 @@ class ProductController extends Controller
         }
 
     }
+    public function getExcelImportPage() {
+        Languages::setBackLang();
+        $checkPermission = Permissions::checkActionPermission('add_product');
+        if ($checkPermission == false) {
+            return view('backend.access-denied');
+        }
+
+        $priceTypeList = PriceType::where('status', 1)->get();
+
+        /*Product Category List*/
+        $categoryProductList = Category::getListForSelectBox1('', '', 0);
+        $categoryProductListHasRac = Category::getListForSelectBox1('', '', 1);
+        /*Attribute List*/
+        $attributeList = Attributes::where('status', 1)->get();
+
+        /*Modifier List*/
+        $modifierList = Modifier::where('status', 1)->get();
+        $globalModifierList = Modifier::where('status', 1)->where('is_global', 1)->get();
+
+        /* Category Attribute List */
+        $categoryAttributeList = CategoryAttribute::join('attributes','attributes.ca_id','category_attribute.ca_id')
+            ->where('category_attribute.status', 1)
+            ->select('category_attribute.*')
+            ->groupBy('ca_id')
+            ->get();
+
+        /* Branch List */
+        $userData = Auth::user();
+        if ($userData->role == 1) {
+            $branchList = Branch::where('status', 1)->get()->toArray();
+            if(!empty($branchList)){
+                foreach ($branchList as $key => $value){
+                    $printerList = Printer::where(['branch_id'=>$value['branch_id'], 'status'=>1])->get();
+                    $branchList[$key]['printer'] = $printerList;
+                }
+            }
+        } else {
+            $branchIds = UserBranch::where('user_id', $userData->id)->where('status',1)->select("branch_id")->get();
+            $branchList = Branch::where('status', 1)->whereIn('branch_id', $branchIds)->get();
+            if(!empty($branchList)){
+                foreach ($branchList as $key => $value){
+                    $printerList = Printer::where(['branch_id'=>$value['branch_id'], 'status'=>1])->get();
+                    $branchList[$key]['printer'] = $printerList;
+                }
+            }
+        }
+
+        return view('backend.product.create-excel', compact('categoryProductList', 'priceTypeList', 'attributeList', 'modifierList', 'globalModifierList', 'branchList', 'categoryAttributeList','categoryProductListHasRac'));
+    }
+
 
 }

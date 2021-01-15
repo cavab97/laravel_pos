@@ -8,6 +8,7 @@ use App\Models\Helper;
 use App\Models\Languages;
 use App\Models\Permissions;
 use App\Models\Terminal;
+use App\Models\UserBranch;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -27,6 +28,11 @@ class TerminalController extends Controller
             return view('backend.access-denied');
         }
         $terminalList = Terminal::all();
+        $userData = Auth::user();
+        if ($userData->role != 1) {
+            $branchIds = UserBranch::where('user_id', $userData->id)->pluck("branch_id")->toArray();
+            $terminalList = $terminalList->whereIn('branch_id', $branchIds);
+        }
         return view('backend.terminal.index', compact('terminalList'));
     }
 
@@ -42,7 +48,13 @@ class TerminalController extends Controller
         if ($checkPermission == false) {
             return view('backend.access-denied');
         }
-        $branchList = Branch::where('status', 1)->get();
+        $userData = Auth::user();
+        $branchList = Branch::where('status', 1);
+        if ($userData->role != 1) {
+            $branchIds = UserBranch::where('user_id', $userData->id)->pluck("branch_id")->toArray();
+            $branchList = $branchList->whereIn('branch_id', $branchIds);
+        }
+        $branchList = $branchList->get()->toArray();
         return view('backend.terminal.create', compact('branchList'));
     }
 
@@ -126,7 +138,13 @@ class TerminalController extends Controller
             return view('backend.access-denied');
         }
         $terminalData = Terminal::where('uuid', $id)->first();
-        $branchList = Branch::where('status', 1)->get();
+        $userData = Auth::user();
+        $branchList = Branch::where('status', 1);
+        if ($userData->role != 1) {
+            $branchIds = UserBranch::where('user_id', $userData->id)->pluck("branch_id")->toArray();
+            $branchList = $branchList->whereIn('branch_id', $branchIds);
+        }
+        $branchList = $branchList->get()->toArray();
         if (empty($terminalData)) {
             Helper::log('Terminal edit : No record found');
             return redirect()->back()->with('error', trans('backend/common.oops'));
