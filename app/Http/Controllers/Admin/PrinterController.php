@@ -25,8 +25,13 @@ class PrinterController extends Controller
         if ($checkPermission == false) {
             return view('backend.access-denied');
         }
-        $printerList = Printer::leftjoin('branch', 'branch.branch_id', 'printer.branch_id')
-            ->select('printer.*', 'branch.name as branch_name')
+        $printerList = Printer::leftjoin('branch', 'branch.branch_id', 'printer.branch_id');
+        $userData = Auth::user();
+        if ($userData->role != 1) {
+            $branchIds = UserBranch::where('user_id', $userData->id)->pluck("branch_id")->toArray();
+            $printerListt = $printerList->whereIn('printer.branch_id', $branchIds);
+        }
+        $printerList = $printerList->select('printer.*', 'branch.name as branch_name')
             ->get();
         return view('backend.printer.index', compact('printerList'));
     }
@@ -43,7 +48,13 @@ class PrinterController extends Controller
         if ($checkPermission == false) {
             return view('backend.access-denied');
         }
-        $branchList = Branch::where('status', 1)->get();
+        $branchList = Branch::where('status', 1);
+
+        if (Auth::user()->role > 1) {
+            $branchIds = Auth::user()->getBranchIds();
+            $branchList = $branchList->whereIn('branch_id', $branchIds);
+        }
+        $branchList = $branchList->get();
         return view('backend.printer.create', compact('branchList'));
     }
 

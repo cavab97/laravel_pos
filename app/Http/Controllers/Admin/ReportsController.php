@@ -568,9 +568,9 @@ class ReportsController extends Controller
         $availableBranch = [];
         if (Auth::user()->role > 1) {
             $branchIds = Auth::user()->getBranchIds();
-            $availableBranch = Branch::whereIn('branch_id', $branchId)->pluck('name', 'branch_id')->toArray();
-            $terminalList = Terminal::whereIn('branch_id', $branchId);
-            $categoryIds = CategoryBranch::whereIn('branch_id', $branchId);
+            $availableBranch = Branch::whereIn('branch_id', $branchIds)->pluck('name', 'branch_id')->toArray();
+            $terminalList = Terminal::whereIn('branch_id', $branchIds);
+            $categoryIds = CategoryBranch::whereIn('branch_id', $branchIds);
             $categoryList = Category::whereIn('category_id', $categoryIds)->pluck('name', 'category_id')->toArray();
         } else {
             $availableBranch = Branch::pluck('name', 'branch_id')->toArray();

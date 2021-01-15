@@ -129,7 +129,6 @@
 
 </div>
 
-@if($user->role == 1)
 <div class="form-sec mt-4">
 <div class="card card-secondary">
     <div class="card-header ">
@@ -142,7 +141,7 @@
                     <div class="col-md-2">
                         <label class="switch">
                             <input type="checkbox" name="branch_id[]"
-                                   value="{{$value->branch_id}}" @if(isset($userBranchIds)) {{ (in_array($value->branch_id,$userBranchIds))? "checked" : "" }}@endif>
+                                   value="{{$value->branch_id}}" @if(isset($userBranchIds)) {{ (in_array($value->branch_id,$userBranchIds))? "checked" : "" }} @else {{ (count($branchList) == 1 ? "checked" : "" ) }} @endif>
                             <span class="slider round"></span>
                             <span class="switch-label">{{$value->name}}</span>
                         </label>
@@ -153,7 +152,6 @@
     </div>
 </div>
 </div>
-@endif
 
 <div id="display_message" class="col-md-12 display-none">
     <div class="alert display-none alert-success"></div>
