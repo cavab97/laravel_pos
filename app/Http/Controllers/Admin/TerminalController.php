@@ -54,7 +54,7 @@ class TerminalController extends Controller
             $branchIds = UserBranch::where('user_id', $userData->id)->pluck("branch_id")->toArray();
             $branchList = $branchList->whereIn('branch_id', $branchIds);
         }
-        $branchList = $branchList->get()->toArray();
+        $branchList = $branchList->get();
         return view('backend.terminal.create', compact('branchList'));
     }
 
