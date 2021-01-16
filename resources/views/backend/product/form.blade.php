@@ -511,7 +511,7 @@ $(function() {
                                     $printer = $v->printer_id;
                                 } else {
                                     $checked = '';
-                                     $is_enabled = 0;
+                                    $is_enabled = 0;
                                 }
                             }
                         }
@@ -529,7 +529,10 @@ $(function() {
                                         <input type="checkbox" onclick="switchDisable(this,'{{$value["branch_id"]}}')"
                                                id="customSwitch{{$key}}"
                                                name="branch_id[]"
-                                               value="{{$value['branch_id']}}" @if(isset($productData)) {{ (in_array($value["branch_id"],explode(',',$productData->branch))) ? 'checked':''  }} @endif>
+                                               value="{{$value['branch_id']}}"
+                                               @if(isset($productData)) {{ (in_array($value["branch_id"],explode(',',$productData->branch))) ? 'checked':''  }}
+                                               @else {{count($branchList) == 1 ? 'checked':''}}
+                                               @endif>
                                         <span class="slider round"></span>
                                     </label>
                                     <input type="number" placeholder="{{trans('backend/common.display_order')}}"
@@ -537,7 +540,8 @@ $(function() {
                                            id="display_order_{{$value["branch_id"]}}"
                                            value="{{$display_order}}" {{$checked_requires}} min="1"
                                            class="form-control form-control-sm"
-                                           @if(isset($productData)) {{ (!in_array($value["branch_id"],explode(',',$productData->branch))) ? 'disabled':'' }} @else disabled @endif>
+                                           @if(isset($productData)) {{ (!in_array($value["branch_id"],explode(',',$productData->branch))) ? 'disabled':'' }}
+                                           else {{count($branchList) == 1 ? '':'disabled'}} @endif>
 
                                     <input type="number"
                                            placeholder="{{trans('backend/inventory.warning_stock_level')}}"
@@ -555,7 +559,8 @@ $(function() {
                                 <div class="form-group">
                                     <select class="form-control form-control-sm" id="printer_id{{$value["branch_id"]}}"
                                             name="printer_id[{{$value["branch_id"]}}]"
-                                            @if(isset($productData)) {{ (!in_array($value["branch_id"],explode(',',$productData->branch))) ? 'disabled':'' }} @else disabled
+                                            @if(isset($productData)) {{ (!in_array($value["branch_id"],explode(',',$productData->branch))) ? 'disabled':'' }}
+                                            @else {{count($branchList) == 1 ? '':'disabled'}}
                                             @endif required>
                                         <option value="">{{trans('backend/product.select_printer')}}</option>
                                         @if(isset($value['printer']))

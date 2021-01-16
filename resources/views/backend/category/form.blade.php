@@ -59,7 +59,7 @@
             </div>
         </div>
         <?php
-        $rac_checked = 'checked';
+        $rac_checked = '';
         if (isset($categoryData->has_rac_managemant)) {
             if ($categoryData->has_rac_managemant == 1) {
                 $rac_checked = 'checked';
