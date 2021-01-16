@@ -8,6 +8,7 @@ use App\Models\Helper;
 use App\Models\Languages;
 use App\Models\Permissions;
 use App\Models\Printer;
+use App\Models\UserBranch;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
