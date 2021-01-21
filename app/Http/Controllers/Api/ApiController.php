@@ -360,7 +360,7 @@ class ApiController extends Controller
             'order_id' => Order::where([
                 ['terminal_id', $terminalId],
                 ['branch_id', $branchId],
-            ])->orderByDesc('order_id')->limit(1)->pluck('order_id')[0]]);
+            ])->orderByDesc('order_id')->first()->pluck('order_id')[0]]);
             ;
         } catch (\Exception $exception) {
             DB::rollBack();

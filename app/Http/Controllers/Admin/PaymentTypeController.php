@@ -150,7 +150,7 @@ class PaymentTypeController extends Controller
         Languages::setBackLang();
         $paymentTypeData = Payment::where('uuid', $uuid)->first();
         $paymentId = $paymentTypeData->payment_id;
-        $parentPaymentList = Payment::where(['is_parent' => 0, 'status' => Payment::ACTIVE])->get()->toArray();
+        $parentPaymentList = Payment::where(['is_parent' => 0, 'status' => Payment::ACTIVE])->where('uuid', '!=', $uuid)->get()->toArray();
         $paymentImage = Assets::where('asset_type', 3)->where('asset_type_id', $paymentId)->orderBy('asset_id','DESC')->first();
         if(!empty($paymentImage)) {
             $paymentTypeData->payment_icon = $paymentImage->asset_path;
