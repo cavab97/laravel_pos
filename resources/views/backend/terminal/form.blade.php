@@ -57,8 +57,7 @@
                                 @endphp
                                 <option value="{{$value->branch_id}}" {{$selected}}>{{$value->name}}</option>
                             @endforeach
-                        @endif
-                        @if(isset($branchList) && count($branchList) == 0)
+                        @elseif(isset($branchList) && count($branchList) == 0)
                             <option disabled="true">No branch available</option>
                         @endif
                     </select>

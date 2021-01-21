@@ -54,7 +54,7 @@ class TerminalController extends Controller
             $branchIds = UserBranch::where('user_id', $userData->id)->pluck("branch_id")->toArray();
             $branchList = $branchList->whereIn('branch_id', $branchIds);
         }
-        $branchList = $branchList->get();
+        $branchList = $branchList->select('branch_id', 'name')->get();
         return view('backend.terminal.create', compact('branchList'));
     }
 
@@ -144,7 +144,7 @@ class TerminalController extends Controller
             $branchIds = UserBranch::where('user_id', $userData->id)->pluck("branch_id")->toArray();
             $branchList = $branchList->whereIn('branch_id', $branchIds);
         }
-        $branchList = $branchList->get()->toArray();
+        $branchList = $branchList->select('branch_id', 'name')->get();
         if (empty($terminalData)) {
             Helper::log('Terminal edit : No record found');
             return redirect()->back()->with('error', trans('backend/common.oops'));

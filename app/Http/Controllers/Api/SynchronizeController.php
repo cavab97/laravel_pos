@@ -672,7 +672,7 @@ class SynchronizeController extends Controller
             $timeStart = microtime(true);
 
             $response['timezone'] = Helper::getSettingValue('timezone');//config('app.timezone');
-            $response['serverdatetime'] = date('Y-m-d h:i:s');
+            $response['serverdatetime'] = date('Y-m-d h:i:s', strtotime('-5 minutes'));
 
             $datetime = $request->datetime;
             $terminalId = $request->terminal_id;
@@ -695,6 +695,8 @@ class SynchronizeController extends Controller
 
                 //Voucher Data collection
                 $loadVouchers = Voucher::where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
+                Helper::log(Voucher::where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->toSql());
+                Helper::log($response['postdatetime']);
                 $response['voucher'] = $loadVouchers;
 
                 //Voucher History Data collection
