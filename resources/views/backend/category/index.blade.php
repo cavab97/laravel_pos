@@ -61,7 +61,13 @@
                                     <tr>
                                         <td>{{++$key}}</td>
                                         <td>{{$value->name}}</td>
-                                        <td><img src="{{asset($value->category_icon)}}" width="50px" height="50px"></td>
+                                        <td>
+                                            @if($value->category_icon)
+                                                <img src="{{asset($value->category_icon)}}" width="50px" height="50px">
+                                            @else
+                                                <img src="{{asset("frontend/images/No_image_available.jpg")}}" width="50px" height="50px">
+                                            @endif
+                                        </td>
                                         <td>
                                             @if($value->is_for_web == 1)
                                                 <span class="badge badge-success">{{trans('backend/category.web')}}</span>

@@ -322,7 +322,7 @@ class ProductController extends Controller
                         'has_inventory' => $has_inventory,
                         'has_rac_managemant' => $has_rac_managemant,
                         'has_setmeal' => $has_setmeal,
-                        'status' => $status,
+                        'status' => $status ?? 1,
                         'updated_at' => date('Y-m-d H:i:s'),
                         'updated_by' => Auth::user()->id,
                     ];

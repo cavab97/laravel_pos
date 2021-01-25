@@ -80,9 +80,9 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-6 required">
+        <div class="col-md-6">
             {{ Form::label('category_icon',trans('backend/category.icon')) }}
-            {{ Form::file('category_icon', [$required, "accept"=>"image/*", "onChange"=>"previewImage(this)" ,"class"=>"file-input form-control form-control-sm","id"=>"category_icon","name"=>"category_icon"]) }}
+            {{ Form::file('category_icon', ["accept"=>"image/*", "onChange"=>"previewImage(this)" ,"class"=>"file-input form-control form-control-sm","id"=>"category_icon","name"=>"category_icon"]) }}
             <div class="col-3 mt-2" id="icon_uploaded">
                 @if(!empty($categoryData->category_icon))
                     <img src="{{asset($categoryData->category_icon)}}" width="80px" height="80px">
@@ -147,12 +147,16 @@
                                  if(in_array($value['branch_id'],$branchArray)){
                                     $checked = 'checked';
                                 }
+                                else if (count($branchList) == 1) {
+                                    $checked = 'checked';
+                                    $display_order = 1;
+                                }
                                 @endphp
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="branch_id">{{$value['name']}}</label>
                                         <br>
-                                        <label class="switch">
+                                        <label class="switch {{ (count($branchList) == 1 ? 'd-none' : '') }}"">
                                             <input type="checkbox" onclick="switchCash(this,'{{$value["branch_id"]}}')"
                                                    id="customSwitch{{$key}}"
                                                    name="branch_id[]" {{$checked}}
@@ -162,8 +166,8 @@
                                         <input type="number" placeholder="{{trans('backend/category.display_order')}}"
                                                name="display_order[{{$value['branch_id']}}]"
                                                id="display_order_{{$value["branch_id"]}}"
-                                               value="{{$display_order}}" {{$checked_requires}} min="0"
-                                               class="form-control form-control-sm">
+                                               value="{{$display_order}}" {{$checked_requires}} min="1"
+                                               class="form-control form-control-sm" required>
                                     </div>
                                 </div>
                             @endforeach

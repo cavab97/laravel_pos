@@ -346,7 +346,7 @@ class SynchronizeController extends Controller
                 $response['timetaking'] = $timeEnd - $timeStart;
 
                 Helper::log('AppData synch : Data Synchronize');
-                Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'Branch,Users,Role');
+                //Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'Branch,Users,Role');
                 $message = trans('api.data_synchronize');
                 return response()->json(['status' => 200, 'show' => true, 'message' => $message, 'data' => $response]);
             }
@@ -448,7 +448,7 @@ class SynchronizeController extends Controller
                 $response['timetaking'] = $timeEnd - $timeStart;
 
                 Helper::log('AppData synch : Data Synchronize');
-                Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'category,product,attribute,modifier');
+                //Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'category,product,attribute,modifier');
                 $message = trans('api.data_synchronize');
                 return response()->json(['status' => 200, 'show' => true, 'message' => $message, 'data' => $response]);
             }
@@ -521,7 +521,7 @@ class SynchronizeController extends Controller
                 $response['timetaking'] = $timeEnd - $timeStart;
 
                 Helper::log('AppData synch : Data Synchronize');
-                Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'product_attribute,product_modifier,product_cateogry,product_branch');
+                //Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'product_attribute,product_modifier,product_cateogry,product_branch');
                 $message = trans('api.data_synchronize');
                 return response()->json(['status' => 200, 'show' => true, 'message' => $message, 'data' => $response]);
             }
@@ -576,7 +576,7 @@ class SynchronizeController extends Controller
                 $response['timetaking'] = $timeEnd - $timeStart;
 
                 Helper::log('AppData synch : Data Synchronize');
-                Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'price_type,printer');
+                //Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'price_type,printer');
                 $message = trans('api.data_synchronize');
                 return response()->json(['status' => 200, 'show' => true, 'message' => $message, 'data' => $response]);
             }
@@ -651,7 +651,7 @@ class SynchronizeController extends Controller
                 $response['timetaking'] = $timeEnd - $timeStart;
 
                 Helper::log('AppData synch : Data Synchronize');
-                Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'customer,customer_address,table,payment');
+                //Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'customer,customer_address,table,payment');
                 $message = trans('api.data_synchronize');
                 return response()->json(['status' => 200, 'show' => true, 'message' => $message, 'data' => $response]);
             }
@@ -732,7 +732,7 @@ class SynchronizeController extends Controller
                 $response['timetaking'] = $timeEnd - $timeStart;
 
                 Helper::log('AppData synch : Data Synchronize');
-                Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'order');
+                //Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'order');
                 $message = trans('api.data_synchronize');
                 return response()->json(['status' => 200, 'show' => true, 'message' => $message, 'data' => $response]);
             }
@@ -783,7 +783,7 @@ class SynchronizeController extends Controller
                 $response['timetaking'] = $timeEnd - $timeStart;
 
                 Helper::log('AppData synch : Data Synchronize');
-                Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'shift');
+                //Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'shift');
                 $message = trans('api.data_synchronize');
                 return response()->json(['status' => 200, 'show' => true, 'message' => $message, 'data' => $response]);
             }
@@ -842,7 +842,7 @@ class SynchronizeController extends Controller
                 $response['timetaking'] = $timeEnd - $timeStart;
 
                 Helper::log('AppData synch : Data Synchronize');
-                Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'price_type,printer');
+                //Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'price_type,printer');
                 $message = trans('api.data_synchronize');
                 return response()->json(['status' => 200, 'show' => true, 'message' => $message, 'data' => $response]);
             }
@@ -905,7 +905,7 @@ class SynchronizeController extends Controller
                 $response['timetaking'] = $timeEnd - $timeStart;
 
                 Helper::log('AppData synch : Data Synchronize');
-                Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'price_type,printer');
+                //Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'price_type,printer');
                 $message = trans('api.data_synchronize');
                 return response()->json(['status' => 200, 'show' => true, 'message' => $message, 'data' => $response]);
             }
@@ -978,7 +978,7 @@ class SynchronizeController extends Controller
                 $response['timetaking'] = $timeEnd - $timeStart;
 
                 Helper::log('AppData synch : Data Synchronize');
-                Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'asset');
+                //Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'asset');
                 $message = trans('api.data_synchronize');
                 return response()->json(['status' => 200, 'show' => true, 'message' => $message, 'data' => $response]);
             }
@@ -1150,7 +1150,7 @@ class SynchronizeController extends Controller
             }
             $response['branch'] = Helper::replaceNullWithEmptyString($pushBranch);
             $message = trans('api.retrive_branch_updated_data');
-            Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'branch');
+            //Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'branch');
             return response()->json(['status' => 200, 'show' => false, 'message' => $message, 'data' => $response]);
 
         } catch (\Exception $exception) {
@@ -1175,7 +1175,7 @@ class SynchronizeController extends Controller
 
             $response['branch_tax'] = $loadBranchTax;
             $message = trans('api.retrive_branch_tax_updated_data');
-            Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'branch_tax');
+            //Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'branch_tax');
             return response()->json(['status' => 200, 'show' => false, 'message' => $message, 'data' => $response]);
 
         } catch (\Exception $exception) {
@@ -1198,7 +1198,7 @@ class SynchronizeController extends Controller
             $loadPrinter = Printer::withTrashed()->where('branch_id', $response['branch_id'])->where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
             $response['printer'] = Helper::replaceNullWithEmptyString($loadPrinter);
             $message = trans('api.retrive_printer_updated_data');
-            Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'printer');
+            //Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'printer');
             return response()->json(['status' => 200, 'show' => false, 'message' => $message, 'data' => $response]);
 
         } catch (\Exception $exception) {
@@ -1222,7 +1222,7 @@ class SynchronizeController extends Controller
             $loadCategory = Category::withTrashed()->whereIn('category_id', $categoryIds)->where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
             $response['category'] = Helper::replaceNullWithEmptyString($loadCategory);
             $message = trans('api.retrive_category_updated_data');
-            Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'category');
+            //Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'category');
             return response()->json(['status' => 200, 'show' => false, 'message' => $message, 'data' => $response]);
 
         } catch (\Exception $exception) {
@@ -1245,7 +1245,7 @@ class SynchronizeController extends Controller
             $loadProductsCategories = ProductCategory::whereIn('product_id', $productIds)->where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
             $response['product_category'] = Helper::replaceNullWithEmptyString($loadProductsCategories);
             $message = trans('api.retrive_product_category_updated_data');
-            Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'product_branch');
+            //Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'product_branch');
             return response()->json(['status' => 200, 'show' => false, 'message' => $message, 'data' => $response]);
 
         } catch (\Exception $exception) {
@@ -1268,7 +1268,7 @@ class SynchronizeController extends Controller
             $loadProduct = Product::withTrashed()->whereIn('product_ic', $productIds)->where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
             $response['product'] = Helper::replaceNullWithEmptyString($loadProduct);
             $message = trans('api.retrive_product_updated_data');
-            Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'product');
+            //Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'product');
             return response()->json(['status' => 200, 'show' => false, 'message' => $message, 'data' => $response]);
 
         } catch (\Exception $exception) {
@@ -1291,7 +1291,7 @@ class SynchronizeController extends Controller
             $loadProductInventory = ProductStoreInventory::where('branch_id', $response['branch_id'])->where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
             $response['product_store_inventory'] = Helper::replaceNullWithEmptyString($loadProductInventory);
             $message = trans('api.retrive_product_store_inventory_updated_data');
-            Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'product_store-inventory');
+            //Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'product_store-inventory');
             return response()->json(['status' => 200, 'show' => false, 'message' => $message, 'data' => $response]);
 
         } catch (\Exception $exception) {
@@ -1314,7 +1314,7 @@ class SynchronizeController extends Controller
             $loadProductAttribute = ProductAttribute::whereIn('product_ic', $productIds)->where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
             $response['product_attribute'] = Helper::replaceNullWithEmptyString($loadProductAttribute);
             $message = trans('api.retrive_product_attribute_updated_data');
-            Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'product_attribute');
+            //Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'product_attribute');
             return response()->json(['status' => 200, 'show' => false, 'message' => $message, 'data' => $response]);
 
         } catch (\Exception $exception) {
@@ -1337,7 +1337,7 @@ class SynchronizeController extends Controller
             $loadProductModifier = ProductModifier::whereIn('product_ic', $productIds)->where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
             $response['product_modifier'] = Helper::replaceNullWithEmptyString($loadProductModifier);
             $message = trans('api.retrive_product_modifier_updated_data');
-            Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'product_modifier');
+            //Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'product_modifier');
             return response()->json(['status' => 200, 'show' => false, 'message' => $message, 'data' => $response]);
 
         } catch (\Exception $exception) {
@@ -1360,7 +1360,7 @@ class SynchronizeController extends Controller
             $loadKitchen = Kitchen::withTrashed()->where('branch_id', $response['branch_id'])->where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
             $response['kitchen_department'] = Helper::replaceNullWithEmptyString($loadKitchen);
             $message = trans('api.retrive_kitchen_department_updated_data');
-            Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'kitchen');
+            //Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'kitchen');
             return response()->json(['status' => 200, 'show' => false, 'message' => $message, 'data' => $response]);
 
         } catch (\Exception $exception) {
@@ -1383,7 +1383,7 @@ class SynchronizeController extends Controller
             $loadPayment = Payment::where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
             $response['payment'] = Helper::replaceNullWithEmptyString($loadPayment);
             $message = trans('api.retrive_payment_updated_data');
-            Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'payment');
+            //Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'payment');
             return response()->json(['status' => 200, 'show' => false, 'message' => $message, 'data' => $response]);
 
         } catch (\Exception $exception) {
@@ -1406,7 +1406,7 @@ class SynchronizeController extends Controller
             $loadPriceType = PriceType::withTrashed()->where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
             $response['price_type'] = Helper::replaceNullWithEmptyString($loadPriceType);
             $message = trans('api.retrive_price_type_updated_data');
-            Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'price_type');
+            //Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'price_type');
             return response()->json(['status' => 200, 'show' => false, 'message' => $message, 'data' => $response]);
 
         } catch (\Exception $exception) {
@@ -1428,7 +1428,7 @@ class SynchronizeController extends Controller
             $loadAttributes = Attributes::withTrashed()->where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
             $response['attributes'] = Helper::replaceNullWithEmptyString($loadAttributes);
             $message = trans('api.retrive_attributes_updated_data');
-            Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'attribute');
+            //Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'attribute');
             return response()->json(['status' => 200, 'show' => false, 'message' => $message, 'data' => $response]);
 
         } catch (\Exception $exception) {
@@ -1450,7 +1450,7 @@ class SynchronizeController extends Controller
             $loadCategoryAttributes = CategoryAttribute::where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
             $response['category_attribute'] = $loadCategoryAttributes;
             $message = trans('api.retrive_category_attributes_updated_data');
-            Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'category_attribute');
+            //Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'category_attribute');
             return response()->json(['status' => 200, 'show' => false, 'message' => $message, 'data' => $response]);
 
         } catch (\Exception $exception) {
@@ -1472,7 +1472,7 @@ class SynchronizeController extends Controller
             $loadModifier = Modifier::withTrashed()->where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
             $response['modifier'] = Helper::replaceNullWithEmptyString($loadModifier);
             $message = trans('api.retrive_modifier_updated_data');
-            Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'modifier');
+            //Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'modifier');
             return response()->json(['status' => 200, 'show' => false, 'message' => $message, 'data' => $response]);
 
         } catch (\Exception $exception) {
@@ -1494,7 +1494,7 @@ class SynchronizeController extends Controller
             $loadVoucher = Voucher::withTrashed()->where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
             $response['voucher'] = Helper::replaceNullWithEmptyString($loadVoucher);
             $message = trans('api.retrive_voucher_updated_data');
-            Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'voucher');
+            //Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'voucher');
             return response()->json(['status' => 200, 'show' => false, 'message' => $message, 'data' => $response]);
 
         } catch (\Exception $exception) {
@@ -1516,7 +1516,7 @@ class SynchronizeController extends Controller
             $loadShift = Shift::where('branch_id', $response['branch_id'])->where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
             $response['shift'] = Helper::replaceNullWithEmptyString($loadShift);
             $message = trans('api.retrive_shift_updated_data');
-            Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'shift');
+            //Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'shift');
             return response()->json(['status' => 200, 'show' => false, 'message' => $message, 'data' => $response]);
 
         } catch (\Exception $exception) {
@@ -1554,7 +1554,7 @@ class SynchronizeController extends Controller
             }
             $response['product_image'] = Helper::replaceNullWithEmptyString($pushImage);
             $message = trans('api.retrive_product_image_updated_data');
-            Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'asset');
+            //Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'asset');
             return response()->json(['status' => 200, 'show' => false, 'message' => $message, 'data' => $response]);
 
         } catch (\Exception $exception) {
@@ -1576,7 +1576,7 @@ class SynchronizeController extends Controller
             $loadRole = Roles::whereNotIn('role_id',Roles::$notIn)->where(DB::raw('COALESCE(role_updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
             $response['role'] = Helper::replaceNullWithEmptyString($loadRole);
             $message = trans('api.retrive_role_updated_data');
-            Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'role');
+            //Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'role');
             return response()->json(['status' => 200, 'show' => false, 'message' => $message, 'data' => $response]);
 
         } catch (\Exception $exception) {
@@ -1602,7 +1602,7 @@ class SynchronizeController extends Controller
             $response['users'] = Helper::replaceNullWithEmptyString($loadUser);
             Helper::log($response['users']);
             $message = trans('api.retrive_user_updated_data');
-            Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'users');
+            //Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'users');
             return response()->json(['status' => 200, 'show' => false, 'message' => $message, 'data' => $response]);
 
         } catch (\Exception $exception) {
@@ -1624,7 +1624,7 @@ class SynchronizeController extends Controller
             $loadCustomer = Customer::withTrashed()->where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
             $response['customer'] = $loadCustomer;
             $message = trans('api.retrive_customer_updated_data');
-            Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'customer');
+            //Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'customer');
             return response()->json(['status' => 200, 'show' => false, 'message' => $message, 'data' => $response]);
 
         } catch (\Exception $exception) {
@@ -1646,7 +1646,7 @@ class SynchronizeController extends Controller
             $loadCustomerAddress = CustomerAddress::withTrashed()->where(DB::raw('COALESCE(updated_at,0)'), '>=', $response['postdatetime'])->get()->toArray();
             $response['customer_address'] = $loadCustomerAddress;
             $message = trans('api.retrive_customer_address_updated_data');
-            Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'customer_address');
+            //Helper::saveTerminalLog($response['terminal_id'], $response['branch_id'], 'Auto Sync', 'SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'customer_address');
             return response()->json(['status' => 200, 'show' => false, 'message' => $message, 'data' => $response]);
 
         } catch (\Exception $exception) {
@@ -1775,7 +1775,7 @@ class SynchronizeController extends Controller
                             $cartData[$key]['cart_detail'] = $cartDetail;
                         }
                     }
-                    Helper::saveTerminalLog($terminalId, $branchId, 'Web Order Sync', 'Web Order Synchronize Appdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'cart');
+                    //Helper::saveTerminalLog($terminalId, $branchId, 'Web Order Sync', 'Web Order Synchronize Appdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'cart');
                 }
                 $response['cart'] = $cartData;
                 // total time taking api response

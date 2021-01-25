@@ -953,7 +953,7 @@ class SyncOrderController extends Controller
                     } else {
                         DB::rollBack();
                         Helper::log('AppOrderData Table Synch : fail json to array converting');
-                        Helper::saveTerminalLog($terminalId, $branchId, 'AppOrderData Sync', 'Create Order data SynchronizeAppdata faid json to array conversation', date('Y-m-d'), date('H:i:s'), 'order');
+                        //Helper::saveTerminalLog($terminalId, $branchId, 'AppOrderData Sync', 'Create Order data SynchronizeAppdata faid json to array conversation', date('Y-m-d'), date('H:i:s'), 'order');
                         $message = trans('api.faid_json_to_array');
                         return response()->json(['status' => 422, 'show' => true, 'message' => $message]);
                     }
@@ -961,7 +961,7 @@ class SyncOrderController extends Controller
                     DB::rollBack();
                     Helper::log('AppOrderData Table Synch : Invalid Json String');
                     $message = trans('api.invalid_json_string');
-                    Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'Create Order data SynchronizeAppdata invalid json string', date('Y-m-d'), date('H:i:s'), 'order');
+                    //Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'Create Order data SynchronizeAppdata invalid json string', date('Y-m-d'), date('H:i:s'), 'order');
                     return response()->json(['status' => 422, 'show' => true, 'message' => $message]);
                 }
             }
@@ -1172,14 +1172,14 @@ class SyncOrderController extends Controller
                         DB::rollBack();
                         Helper::log('AppShiftData Table Synch : Invalid Json String');
                         $message = trans('api.invalid_json_string');
-                        Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'Create Order data SynchronizeAppdata invalid json string', date('Y-m-d'), date('H:i:s'), 'shift');
+                        //Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'Create Order data SynchronizeAppdata invalid json string', date('Y-m-d'), date('H:i:s'), 'shift');
                         return response()->json(['status' => 422, 'show' => true, 'message' => $message]);
                     }
                 } else {
                     DB::rollBack();
                     Helper::log('AppShiftData Table Synch : Invalid Json String');
                     $message = trans('api.invalid_json_string');
-                    Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'Create Order data SynchronizeAppdata invalid json string', date('Y-m-d'), date('H:i:s'), 'shift');
+                    //Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'Create Order data SynchronizeAppdata invalid json string', date('Y-m-d'), date('H:i:s'), 'shift');
                     return response()->json(['status' => 422, 'show' => true, 'message' => $message]);
                 }
             }
@@ -1284,14 +1284,14 @@ class SyncOrderController extends Controller
                         DB::rollBack();
                         Helper::log('AppShiftInvoiceData Table Synch : Invalid Json String');
                         $message = trans('api.invalid_json_string');
-                        Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'Create Order data SynchronizeAppdata invalid json string', date('Y-m-d'), date('H:i:s'), 'shift_detail');
+                        //Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'Create Order data SynchronizeAppdata invalid json string', date('Y-m-d'), date('H:i:s'), 'shift_detail');
                         return response()->json(['status' => 422, 'show' => true, 'message' => $message]);
                     }
                 } else {
                     DB::rollBack();
                     Helper::log('AppShiftInvoiceData Table Synch : Invalid Json String');
                     $message = trans('api.invalid_json_string');
-                    Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'Create Order data SynchronizeAppdata invalid json string', date('Y-m-d'), date('H:i:s'), 'shift_detail');
+                    //Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'Create Order data SynchronizeAppdata invalid json string', date('Y-m-d'), date('H:i:s'), 'shift_detail');
                     return response()->json(['status' => 422, 'show' => true, 'message' => $message]);
                 }
             }
@@ -1403,14 +1403,14 @@ class SyncOrderController extends Controller
                         DB::rollBack();
                         Helper::log('AppTerminalLogData Table Synch : Invalid Json String');
                         $message = trans('api.invalid_json_string');
-                        Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'Create Terminal Log data SynchronizeAppdata invalid json string', date('Y-m-d'), date('H:i:s'), 'terminal_log');
+                        //Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'Create Terminal Log data SynchronizeAppdata invalid json string', date('Y-m-d'), date('H:i:s'), 'terminal_log');
                         return response()->json(['status' => 422, 'show' => true, 'message' => $message]);
                     }
                 } else {
                     DB::rollBack();
                     Helper::log('AppTerminalLogData Table Synch : Invalid Json String');
                     $message = trans('api.invalid_json_string');
-                    Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'Create Terminal Log data SynchronizeAppdata invalid json string', date('Y-m-d'), date('H:i:s'), 'terminal_log');
+                    //Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'Create Terminal Log data SynchronizeAppdata invalid json string', date('Y-m-d'), date('H:i:s'), 'terminal_log');
                     return response()->json(['status' => 422, 'show' => true, 'message' => $message]);
                 }
             }
@@ -1549,7 +1549,7 @@ class SyncOrderController extends Controller
                     } else {
                         DB::rollBack();
                         Helper::log('Bulk Cancel Order AppOrderData Table Synch : fail json to array converting');
-                        Helper::saveTerminalLog($terminalId, $branchId, 'Cancel Order AppOrderData Sync', 'Cancel Order data SynchronizeAppdata faid json to array conversation', date('Y-m-d'), date('H:i:s'), 'cancel_order');
+                        //Helper::saveTerminalLog($terminalId, $branchId, 'Cancel Order AppOrderData Sync', 'Cancel Order data SynchronizeAppdata faid json to array conversation', date('Y-m-d'), date('H:i:s'), 'cancel_order');
                         $message = trans('api.faid_json_to_array');
                         return response()->json(['status' => 422, 'show' => true, 'message' => $message]);
                     }
@@ -1557,7 +1557,7 @@ class SyncOrderController extends Controller
                     DB::rollBack();
                     Helper::log('Bulk Cancel Order AppOrderData Table Synch : Invalid Json String');
                     $message = trans('api.invalid_json_string');
-                    Helper::saveTerminalLog($terminalId, $branchId, 'Cancel Order Sync', 'Cancel Order data SynchronizeAppdata invalid json string', date('Y-m-d'), date('H:i:s'), 'cancel_order');
+                    //Helper::saveTerminalLog($terminalId, $branchId, 'Cancel Order Sync', 'Cancel Order data SynchronizeAppdata invalid json string', date('Y-m-d'), date('H:i:s'), 'cancel_order');
                     return response()->json(['status' => 422, 'show' => true, 'message' => $message]);
                 }
             }
@@ -1756,7 +1756,7 @@ class SyncOrderController extends Controller
                     } else {
                         DB::rollBack();
                         Helper::log('Update Stock Inventory AppData Synch : fail json to array converting');
-                        Helper::saveTerminalLog($terminalId, $branchId, 'Store Inventory Order AppOrderData Sync', 'Update product Store inventory Order data SynchronizeAppdata faid json to array conversation', date('Y-m-d'), date('H:i:s'), 'product_store_inventory');
+                        //Helper::saveTerminalLog($terminalId, $branchId, 'Store Inventory Order AppOrderData Sync', 'Update product Store inventory Order data SynchronizeAppdata faid json to array conversation', date('Y-m-d'), date('H:i:s'), 'product_store_inventory');
                         $message = trans('api.faid_json_to_array');
                         return response()->json(['status' => 422, 'show' => true, 'message' => $message]);
                     }
@@ -1764,7 +1764,7 @@ class SyncOrderController extends Controller
                     DB::rollBack();
                     Helper::log('Update Stock Inventory AppData Synch : Invalid Json String');
                     $message = trans('api.invalid_json_string');
-                    Helper::saveTerminalLog($terminalId, $branchId, 'Store Inventory Order AppOrderData Sync', 'Update product Store inventory Order data SynchronizeAppdata invalid json string', date('Y-m-d'), date('H:i:s'), 'product_store_inventory');
+                    //Helper::saveTerminalLog($terminalId, $branchId, 'Store Inventory Order AppOrderData Sync', 'Update product Store inventory Order data SynchronizeAppdata invalid json string', date('Y-m-d'), date('H:i:s'), 'product_store_inventory');
                     return response()->json(['status' => 422, 'show' => true, 'message' => $message]);
                 }
             }
@@ -1953,7 +1953,7 @@ class SyncOrderController extends Controller
                     } else {
                         DB::rollBack();
                         Helper::log('Update Customer Liquor Inventory AppData Synch : fail json to array converting');
-                        Helper::saveTerminalLog($terminalId, $branchId, 'Store Customer Liquor Inventory Order AppOrderData Sync', 'Update product Store inventory Order data SynchronizeAppdata faid json to array conversation', date('Y-m-d'), date('H:i:s'), 'product_store_inventory');
+                        //Helper::saveTerminalLog($terminalId, $branchId, 'Store Customer Liquor Inventory Order AppOrderData Sync', 'Update product Store inventory Order data SynchronizeAppdata faid json to array conversation', date('Y-m-d'), date('H:i:s'), 'product_store_inventory');
                         $message = trans('api.faid_json_to_array');
                         return response()->json(['status' => 422, 'show' => true, 'message' => $message]);
                     }
@@ -1961,7 +1961,7 @@ class SyncOrderController extends Controller
                     DB::rollBack();
                     Helper::log('Update Stock Inventory AppData Synch : Invalid Json String');
                     $message = trans('api.invalid_json_string');
-                    Helper::saveTerminalLog($terminalId, $branchId, 'Store Customer Liquor Inventory Order AppOrderData Sync', 'Update product Store inventory Order data SynchronizeAppdata invalid json string', date('Y-m-d'), date('H:i:s'), 'product_store_inventory');
+                    //Helper::saveTerminalLog($terminalId, $branchId, 'Store Customer Liquor Inventory Order AppOrderData Sync', 'Update product Store inventory Order data SynchronizeAppdata invalid json string', date('Y-m-d'), date('H:i:s'), 'product_store_inventory');
                     return response()->json(['status' => 422, 'show' => true, 'message' => $message]);
                 }
             }
@@ -2150,14 +2150,14 @@ class SyncOrderController extends Controller
                         DB::rollBack();
                         Helper::log('AppCustomerData Table Synch : Invalid Json String');
                         $message = trans('api.invalid_json_string');
-                        Helper::saveTerminalLog($terminalId, $branchId, 'Customer Auto Sync', 'Create Customer data SynchronizeAppdata invalid json string', date('Y-m-d'), date('H:i:s'), 'customer');
+                        //Helper::saveTerminalLog($terminalId, $branchId, 'Customer Auto Sync', 'Create Customer data SynchronizeAppdata invalid json string', date('Y-m-d'), date('H:i:s'), 'customer');
                         return response()->json(['status' => 422, 'show' => true, 'message' => $message]);
                     }
                 } else {
                     DB::rollBack();
                     Helper::log('AppCustomerData Table Synch : Invalid Json String');
                     $message = trans('api.invalid_json_string');
-                    Helper::saveTerminalLog($terminalId, $branchId, 'Customer Auto Sync', 'Create Customer data SynchronizeAppdata invalid json string', date('Y-m-d'), date('H:i:s'), 'customer');
+                    //Helper::saveTerminalLog($terminalId, $branchId, 'Customer Auto Sync', 'Create Customer data SynchronizeAppdata invalid json string', date('Y-m-d'), date('H:i:s'), 'customer');
                     return response()->json(['status' => 422, 'show' => true, 'message' => $message]);
                 }
             }

@@ -515,6 +515,9 @@ $(function() {
                                 }
                             }
                         }
+                        if (count($branchList) == 1) {
+                            $display_order = 1;
+                        }
                     @endphp
                     <div class="col-md-3">
                         <div class="card card-dark">
@@ -525,14 +528,15 @@ $(function() {
                                 <div class="form-group">
                                     {{--<label for="branch_id{{$key}}">{{$value['name']}}</label>
                                     <br>--}}
-                                    <label class="switch">
+                                    <label class="switch {{ (count($branchList) == 1 ? 'd-none' : '') }}">
                                         <input type="checkbox" onclick="switchDisable(this,'{{$value["branch_id"]}}')"
                                                id="customSwitch{{$key}}"
                                                name="branch_id[]"
                                                value="{{$value['branch_id']}}"
                                                @if(isset($productData)) {{ (in_array($value["branch_id"],explode(',',$productData->branch))) ? 'checked':''  }}
                                                @else {{count($branchList) == 1 ? 'checked':''}}
-                                               @endif>
+                                               @endif
+                                        >
                                         <span class="slider round"></span>
                                     </label>
                                     <input type="number" placeholder="{{trans('backend/common.display_order')}}"
@@ -541,7 +545,7 @@ $(function() {
                                            value="{{$display_order}}" {{$checked_requires}} min="1"
                                            class="form-control form-control-sm"
                                            @if(isset($productData)) {{ (!in_array($value["branch_id"],explode(',',$productData->branch))) ? 'disabled':'' }}
-                                           else {{count($branchList) == 1 ? '':'disabled'}} @endif>
+                                           else {{count($branchList) == 1 ? '':'disabled'}} @endif required>
 
                                     <input type="number"
                                            placeholder="{{trans('backend/inventory.warning_stock_level')}}"
@@ -577,12 +581,12 @@ $(function() {
                                     <span class="radio-left">
                                     <input type="radio" name="is_enabled_status[{{$value['branch_id']}}]"
                                            value="1"
-                                           {{ ($branch_status==1)? "checked" : "" }} @if(isset($productData)) {{ (!in_array($value["branch_id"],explode(',',$productData->branch))) ? 'disabled':'' }} @else disabled @endif/>{{trans('backend/common.yes')}}
+                                           {{ ($branch_status==1)? "checked" : "" }} @if(isset($productData)) {{ (!in_array($value["branch_id"],explode(',',$productData->branch))) ? 'disabled':'' }} @endif/>{{trans('backend/common.yes')}}
                                     </span>
                                     <span class="radio-right">
                                     <input type="radio" name="is_enabled_status[{{$value['branch_id']}}]"
                                            value="0"
-                                           {{ ($branch_status==0)? "checked" : "" }} @if(isset($productData)) {{ (!in_array($value["branch_id"],explode(',',$productData->branch))) ? 'disabled':'' }} @else disabled @endif/>{{trans('backend/common.no')}}
+                                           {{ ($branch_status==0)? "checked" : "" }} @if(isset($productData)) {{ (!in_array($value["branch_id"],explode(',',$productData->branch))) ? 'disabled':'' }} @endif/>{{trans('backend/common.no')}}
                                     </span>
                                 </div>
 

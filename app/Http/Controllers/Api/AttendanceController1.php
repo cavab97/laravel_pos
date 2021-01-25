@@ -96,7 +96,7 @@ class AttendanceController extends Controller
                         'terminal_verified_at' => config('constants.date_time'),
                     ];
                     Terminal::where('terminal_key',$key)->update($updateData);
-                    Helper::saveTerminalLog($terminalId, $branchId, 'Verify Terminal', 'Attendance Terminal verify done', date('Y-m-d'), date('H:i:s'), 'terminal');
+                    //Helper::saveTerminalLog($terminalId, $branchId, 'Verify Terminal', 'Attendance Terminal verify done', date('Y-m-d'), date('H:i:s'), 'terminal');
                     DB::commit();
                     Helper::log('Attendance Terminal key verify: finish');
                     return response()->json(['status' => 200, 'show' => true, 'message' => trans('api.success'), 'terminal_id' => $terminalId, 'branch_id' => $branchId]);
@@ -170,7 +170,7 @@ class AttendanceController extends Controller
                 $response['timetaking'] = $timeEnd - $timeStart;
 
                 Helper::log('Role User Table Synch : Data Synchronize');
-                Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'Attendance SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'users');
+                //Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'Attendance SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'users');
                 $message = trans('api.data_synchronize');
                 return response()->json(['status' => 200, 'show' => true, 'message' => $message, 'data' => $response]);
             }
@@ -280,7 +280,7 @@ class AttendanceController extends Controller
                             }
 
                         }
-                        Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'Create Attendance data SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'attendance');
+                        //Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'Create Attendance data SynchronizeAppdata Synchronize Successfully done', date('Y-m-d'), date('H:i:s'), 'attendance');
                         DB::commit();
                         $loadAttendanceInfo = $this->attendanceInfo($pushOrders);
                         $response['attendance'] = $loadAttendanceInfo;
@@ -290,7 +290,7 @@ class AttendanceController extends Controller
                     } else {
                         DB::rollBack();
                         Helper::log('Attendance Table Synch : fail json to array converting');
-                        Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'Create Attendance data SynchronizeAppdata faid json to array conversation', date('Y-m-d'), date('H:i:s'), 'attendance');
+                        //Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'Create Attendance data SynchronizeAppdata faid json to array conversation', date('Y-m-d'), date('H:i:s'), 'attendance');
                         $message = trans('api.faid_json_to_array');
                         return response()->json(['status' => 422, 'show' => true, 'message' => $message]);
                     }
@@ -298,7 +298,7 @@ class AttendanceController extends Controller
                     DB::rollBack();
                     Helper::log('Attendance Table Synch : Invalid Json String');
                     $message = trans('api.invalid_json_string');
-                    Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'Create Attendance data SynchronizeAppdata invalid json string', date('Y-m-d'), date('H:i:s'), 'attendance');
+                    //Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', 'Create Attendance data SynchronizeAppdata invalid json string', date('Y-m-d'), date('H:i:s'), 'attendance');
                     return response()->json(['status' => 422, 'show' => true, 'message' => $message]);
                 }
             }
@@ -307,7 +307,7 @@ class AttendanceController extends Controller
             DB::rollBack();
             Helper::log('Attendance Table Synch : exception');
             Helper::log($exception);
-            Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', $exception->getMessage(), date('Y-m-d'), date('H:i:s'), 'attendance');
+            //Helper::saveTerminalLog($terminalId, $branchId, 'Auto Sync', $exception->getMessage(), date('Y-m-d'), date('H:i:s'), 'attendance');
             return response()->json(['status' => 500, 'show' => true, 'message' => trans('api.ooops')]);
         }
     }
