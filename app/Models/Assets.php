@@ -10,4 +10,5 @@ class Assets extends Model
     protected $table = "asset";
     protected $primaryKey = "asset_id";
     protected $guarded = ['asset_id'];
+
 }

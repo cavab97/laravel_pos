@@ -55,7 +55,10 @@ class PosPermission extends Model
         'close_table',
         'sync_order',
         'return_previous_transaction',
-        'view_shift'
+        'view_shift',
+        'view_system_amount',
+        'view_sales_amount',
+        "add_reservation"
     ];
 
     static $actionListPOS = ['action'];
