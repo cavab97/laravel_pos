@@ -22,17 +22,17 @@ class DatabaseMgmtController extends Controller
      * $reference: https://phpdox.net/demo/Symfony2/classes/Doctrine_DBAL_Schema_Column.xhtml
      * Doctrine\DBAL\Schema\Column
      *      */
-    public function usingAsset() {
+  /*   public function usingAsset() {
 
         $data = file_get_contents(public_path('storage\json\appVersion.json'), true);
         //$data = file_get_contents($_SERVER['DOCUMENT_ROOT'].'/storage/json/appVersion.json', true);
         return $data;
     }
-    public function usingFileGet() {
-
-        $data = File::get('storage/json/appVersion.json');
-        return $data;
-    }
+    public function test() {
+        $data = File::get('storage/app/public/json/appVersion.json', true);
+        $appVersionList = json_decode($data, true);
+        dd($appVersionList);
+    }*/
     private function getTablesArray($appVersion) {
         $arrayTableDetail = array();
         $tableDetail;
@@ -44,7 +44,10 @@ class DatabaseMgmtController extends Controller
 
         $data = file_get_contents('storage/json/appVersion.json', true);
         //$data = asset('resources/json/appVersion.json');
-        $appVersionList = json_decode($data, true);
+        $appVersionList = //json_decode($data, true);
+        [
+            "1.0.0+1" => "2021/02/01",
+        ];
         $getDateFromVersion = $appVersionList[array_key_last($appVersionList)];
         if (array_key_exists($appVersion, $appVersionList)) {
             $getDateFromVersion = $appVersionList[$appVersion];

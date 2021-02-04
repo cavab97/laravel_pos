@@ -44,8 +44,8 @@ Route::group(['prefix' => 'v1/{locale}', 'namespace' => 'Api'], function () {
     /* For Sync Order Data */
     Route::post('get-table-update', 'DatabaseMgmtController@getTablesUpdate');
     Route::post('get-table-insert', 'DatabaseMgmtController@getTableInsert');
-    Route::get('get-asset', 'DatabaseMgmtController@usingAsset');
-    Route::get('file-get', 'DatabaseMgmtController@usingFileGet');
+    /* Route::get('get-asset', 'DatabaseMgmtController@usingAsset');
+    Route::get('test', 'DatabaseMgmtController@test'); */
     Route::post('create-order-data','SyncOrderController@createBulkOrders');
     Route::post('open-shift','SyncOrderController@openShift');
     Route::post('create-shift-data','SyncOrderController@createShift');
