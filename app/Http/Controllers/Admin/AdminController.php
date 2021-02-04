@@ -34,6 +34,7 @@ class AdminController extends Controller
             return redirect()->route('admin.home');
         }
 
+        Helper::log('enter login page');
         return view('backend.login');
     }
 
