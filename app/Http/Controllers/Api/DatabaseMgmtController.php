@@ -33,8 +33,7 @@ class DatabaseMgmtController extends Controller
         $appVersionList = json_decode($data, true);
         dd($appVersionList);
     }*/
-    public function getTablesArray($appVersion) {
-        $appVersion = "1.0.0+2";
+    private function getTablesArray($appVersion) {
         $arrayTableDetail = array();
         $tableDetail;
 
@@ -154,16 +153,16 @@ class DatabaseMgmtController extends Controller
         $terminalID = $request->terminal_id;
         $userPIN = $request->pin;
         $userUUID = $request->user_uuid;
-        $branchID = $terminal->branch_id ?? 0;
         $terminal = Terminal::find($terminalID);
+        $branchID = $terminal->branch_id ?? 0;
         $userIds = UserBranch::where('branch_id', $branchID)->pluck('user_id');
         $user = User::where(['user_pin'=>$userPIN, 'uuid'=> $userUUID])->exists();
         $data = DB::table($tableName);
-        if (Schema::hasColumn($tableName, 'terminal_id')) {
-            $data = $data->where('terminal_id', $terminal->terminal_id);
-        }
+
         if (Schema::hasColumn($tableName, 'branch_id')) {
             $data = $data->where('branch_id', $branchID);
+        } else if (Schema::hasColumn($tableName, 'terminal_id') && $terminal != null) {
+            $data = $data->where('terminal_id', $terminalID);
         }
         switch (strtolower($tableName)) {
             case 'users':
@@ -171,13 +170,13 @@ class DatabaseMgmtController extends Controller
                 break;
             default:
             if (Schema::hasColumn($tableName, 'updated_at')) {
-                $data = $data->orderBy('updated_at', 'desc')->limit(30)->get();
+                $data = $data->orderBy('updated_at', 'desc')->get();//->limit(30)
             } else if(Schema::hasColumn($tableName, 'order_date')) {
-                $data = $data->orderBy('order_date', 'desc')->limit(30)->get();
+                $data = $data->orderBy('order_date', 'desc')->get();//->limit(30)
             } else if(Schema::hasColumn($tableName, 'created_at')) {
-                $data = $data->orderBy('created_at', 'desc')->limit(30)->get();
+                $data = $data->orderBy('created_at', 'desc')->get();//->limit(30)
             } else if(Schema::hasColumn($tableName, 'id')) {
-                $data = $data->orderBy('id', 'desc')->limit(30)->get();
+                $data = $data->orderBy('id', 'desc')->get();//->limit(30)
             } else {
                 $data = $data->orderBy->limit(30)->get();
             }
