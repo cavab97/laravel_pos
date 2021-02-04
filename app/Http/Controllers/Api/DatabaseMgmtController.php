@@ -29,7 +29,7 @@ class DatabaseMgmtController extends Controller
     }
     public function usingFileGet() {
 
-        $data = File::get('json/appVersion.json');
+        $data = File::get('storage/json/appVersion.json');
         return $data;
     }
     private function getTablesArray($appVersion) {
@@ -41,7 +41,7 @@ class DatabaseMgmtController extends Controller
         //dd($arrayTableDetail);
         $filterArray = array();
 
-        $data = File::get('json/appVersion.json');
+        $data = File::get('storage/json/appVersion.json');
         //$data = asset('resources/json/appVersion.json');
         $appVersionList = json_decode($data, true);
         $getDateFromVersion = $appVersionList[array_key_last($appVersionList)];
