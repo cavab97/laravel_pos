@@ -24,7 +24,8 @@ class DatabaseMgmtController extends Controller
      *      */
     public function usingAsset() {
 
-        $data = file_get_contents('storage/json/appVersion.json', true);
+        $data = file_get_contents(public_path('storage\json\appVersion.json'), true);
+        //$data = file_get_contents($_SERVER['DOCUMENT_ROOT'].'/storage/json/appVersion.json', true);
         return $data;
     }
     public function usingFileGet() {
