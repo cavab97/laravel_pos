@@ -53,15 +53,15 @@ class DatabaseMgmtController extends Controller
         } else {
             $getDateFromVersion = "2100/01/01";
         }
-        $db_database = env('DB_DATABASE', '123');
-        Log::debug($db_database);
+        $db_database = 'staging';//env('DB_DATABASE', 'mcnpos');
+        //Log::debug($db_database);
         $query =
             DB::raw(
                 "SELECT `TABLE_NAME`, `CREATE_TIME`, `UPDATE_TIME` FROM information_schema.tables "
                 ."WHERE `TABLE_SCHEMA` = '".$db_database."' "
                 ."AND (`CREATE_TIME` >= '".$getDateFromVersion."' OR `UPDATE_TIME` >= '".$getDateFromVersion."') ORDER BY `CREATE_TIME` DESC"
             );
-        Log::debug($query);
+        //Log::debug($query);
         $arrayTableDetail = DB::select($query);
         $updateDate = date('Y-m-d', strtotime($getDateFromVersion));
         foreach ($arrayTableDetail as $key => $value) {
