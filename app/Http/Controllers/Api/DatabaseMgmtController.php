@@ -37,8 +37,6 @@ class DatabaseMgmtController extends Controller
         $appVersion = "1.0.0+2";
         $arrayTableDetail = array();
         $tableDetail;
-        $query = DB::raw("SELECT `TABLE_NAME`, `CREATE_TIME`, `UPDATE_TIME` FROM information_schema.tables WHERE `TABLE_SCHEMA` = '".env('DB_DATABASE', 'mcnpos')."'");
-        $arrayTableDetail = DB::select($query);
 
         //dd($arrayTableDetail);
         $filterArray = array();
@@ -55,6 +53,13 @@ class DatabaseMgmtController extends Controller
         } else {
             $getDateFromVersion = "2100/01/01";
         }
+        $query =
+            DB::raw(
+                "SELECT `TABLE_NAME`, `CREATE_TIME`, `UPDATE_TIME` FROM information_schema.tables "
+                ."WHERE `TABLE_SCHEMA` = '".env('DB_DATABASE', 'mcnpos')."'"
+                ."AND (`CREATE_TIME` >= '".$getDateFromVersion."' OR `UPDATE_TIME` >= '".$getDateFromVersion."') ORDER BY `CREATE_TIME` DESC"
+            );
+        $arrayTableDetail = DB::select($query);
         $updateDate = date('Y-m-d', strtotime($getDateFromVersion));
         foreach ($arrayTableDetail as $key => $value) {
             $tableLastUpdateDate;
