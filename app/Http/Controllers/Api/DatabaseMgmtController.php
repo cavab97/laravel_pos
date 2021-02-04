@@ -53,7 +53,7 @@ class DatabaseMgmtController extends Controller
         } else {
             $getDateFromVersion = "2100/01/01";
         }
-        $db_database = env('DB_DATABASE', 'mcnpos');
+        $db_database = env('DB_DATABASE', '123');
         Log::debug($db_database);
         $query =
             DB::raw(
