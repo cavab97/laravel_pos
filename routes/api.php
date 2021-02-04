@@ -42,6 +42,7 @@ Route::group(['prefix' => 'v1/{locale}', 'namespace' => 'Api'], function () {
     Route::post('productimage','SynchronizeController@productImage');
 
     /* For Sync Order Data */
+    Route::get('get-table-array', 'DatabaseMgmtController@getTablesArray');
     Route::post('get-table-update', 'DatabaseMgmtController@getTablesUpdate');
     Route::post('get-table-insert', 'DatabaseMgmtController@getTableInsert');
     /* Route::get('get-asset', 'DatabaseMgmtController@usingAsset');

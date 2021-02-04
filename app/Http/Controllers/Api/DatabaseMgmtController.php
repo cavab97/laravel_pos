@@ -33,7 +33,8 @@ class DatabaseMgmtController extends Controller
         $appVersionList = json_decode($data, true);
         dd($appVersionList);
     }*/
-    private function getTablesArray($appVersion) {
+    public function getTablesArray($appVersion) {
+        $appVersion = "1.0.0+2";
         $arrayTableDetail = array();
         $tableDetail;
         $query = DB::raw("SELECT `TABLE_NAME`, `CREATE_TIME`, `UPDATE_TIME` FROM information_schema.tables WHERE `TABLE_SCHEMA` = '".env('DB_DATABASE', 'mcnpos')."'");
@@ -42,7 +43,7 @@ class DatabaseMgmtController extends Controller
         //dd($arrayTableDetail);
         $filterArray = array();
 
-        $data = file_get_contents('storage/json/appVersion.json', true);
+        //$data = file_get_contents('storage/json/appVersion.json', true);
         //$data = asset('resources/json/appVersion.json');
         $appVersionList = //json_decode($data, true);
         [
@@ -62,6 +63,7 @@ class DatabaseMgmtController extends Controller
             } else {
                 $tableLastUpdateDate = date('Y-m-d', strtotime($value->CREATE_TIME));
             }
+            Log::debug($tableLastUpdateDate.' '.$value->TABLE_NAME);
             if ($tableLastUpdateDate >= $updateDate) {
                 array_push($filterArray, $value->TABLE_NAME);
             }
