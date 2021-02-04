@@ -26,7 +26,10 @@ class AddServerIdToShift extends Migration
     public function down()
     {
         Schema::table('shift', function (Blueprint $table) {
-            //
+            if (Schema::hasColumn('shift', 'server_id'))
+            {
+                $table->dropColumn(['server_id']);
+            }
         });
     }
 }
