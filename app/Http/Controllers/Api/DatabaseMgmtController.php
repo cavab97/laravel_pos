@@ -46,11 +46,13 @@ class DatabaseMgmtController extends Controller
         //$data = asset('resources/json/appVersion.json');
         $appVersionList = //json_decode($data, true);
         [
-            "1.0.0+1" => "2021/02/01",
+            "1.0.0+2" => "2021/02/01",
         ];
         $getDateFromVersion = $appVersionList[array_key_last($appVersionList)];
         if (array_key_exists($appVersion, $appVersionList)) {
             $getDateFromVersion = $appVersionList[$appVersion];
+        } else {
+            $getDateFromVersion = "2100/01/01";
         }
         $updateDate = date('Y-m-d', strtotime($getDateFromVersion));
         foreach ($arrayTableDetail as $key => $value) {
@@ -62,7 +64,6 @@ class DatabaseMgmtController extends Controller
             }
             if ($tableLastUpdateDate >= $updateDate) {
                 array_push($filterArray, $value->TABLE_NAME);
-
             }
         }
         return $filterArray;
