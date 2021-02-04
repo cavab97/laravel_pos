@@ -56,9 +56,10 @@ class DatabaseMgmtController extends Controller
         $query =
             DB::raw(
                 "SELECT `TABLE_NAME`, `CREATE_TIME`, `UPDATE_TIME` FROM information_schema.tables "
-                ."WHERE `TABLE_SCHEMA` = '".env('DB_DATABASE', 'mcnpos')."'"
+                ."WHERE `TABLE_SCHEMA` = '".env('DB_DATABASE', 'mcnpos')."' "
                 ."AND (`CREATE_TIME` >= '".$getDateFromVersion."' OR `UPDATE_TIME` >= '".$getDateFromVersion."') ORDER BY `CREATE_TIME` DESC"
             );
+        Log::debug($query);
         $arrayTableDetail = DB::select($query);
         $updateDate = date('Y-m-d', strtotime($getDateFromVersion));
         foreach ($arrayTableDetail as $key => $value) {
