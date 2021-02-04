@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use App\Models\UserBranch;
 use App\Models\Terminal;
 use App\User;
@@ -21,6 +22,16 @@ class DatabaseMgmtController extends Controller
      * $reference: https://phpdox.net/demo/Symfony2/classes/Doctrine_DBAL_Schema_Column.xhtml
      * Doctrine\DBAL\Schema\Column
      *      */
+    public function usingAsset() {
+
+        $data = Storage::url('storage/json/appVersion.json');
+        return $data;
+    }
+    public function usingFileGet() {
+
+        $data = File::get('storage/json/appVersion.json');
+        return $data;
+    }
     private function getTablesArray($appVersion) {
         $arrayTableDetail = array();
         $tableDetail;
@@ -31,6 +42,7 @@ class DatabaseMgmtController extends Controller
         $filterArray = array();
 
         $data = File::get('resources/json/appVersion.json');
+        //$data = asset('resources/json/appVersion.json');
         $appVersionList = json_decode($data, true);
         $getDateFromVersion = $appVersionList[array_key_last($appVersionList)];
         if (array_key_exists($appVersion, $appVersionList)) {
@@ -73,7 +85,6 @@ class DatabaseMgmtController extends Controller
     private function getCreateTableQuery($tableName) {
         $query = 'CREATE TABLE `'.$tableName.'` (';
 
-        Log::debug($tableName);
         $columns = DB::connection()->getDoctrineSchemaManager()->listTableColumns($tableName);
         $index = 1;
         $max = count($columns);
