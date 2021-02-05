@@ -160,5 +160,8 @@ Route::group(['namespace' => 'Admin'], function () {
         Route::get('city/{id}/delete', 'CitiesController@delete')->name('city.delete');
         Route::get('city/{state_id}/list', 'CitiesController@cityByState')->name('city.list');
 
+        //export & import
+        Route::get('get-report', 'ProductImportController@getXlsFile')->name('reports.get.product');
+
     });
 });
