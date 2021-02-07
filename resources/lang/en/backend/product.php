@@ -33,4 +33,9 @@ return [
     'download_template' => 'Download Template',
     'upload_excel_file' => 'Upload Excel File',
     'format_support' => 'File format support',
+    'file_uploading' => 'File Uploading',
+    'checking_data' => 'Checking data',
+    'product_importing' => 'Product importing',
+    'product_imported' => 'Product imported',
+    'auto_redirect' => 'The page will auto redirect after 5 seconds.',
 ];

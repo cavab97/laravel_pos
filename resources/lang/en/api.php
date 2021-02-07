@@ -120,4 +120,8 @@ return [
     'branch_id_required' => 'Branch Id is required',
     'user_id_required' => 'User Id is required',
     'permission_get_sucess' => 'Permission List received successfully',
+    'error_loading_file' => 'Error loading file. File content incorrect',
+    'file_no_found' => 'File no found',
+    'data_error' => "Data Error",
+    'file_content_invalid' => 'File content invalid'
 ];

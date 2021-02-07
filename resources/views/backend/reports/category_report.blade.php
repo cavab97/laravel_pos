@@ -3,6 +3,17 @@ $permission = new \App\Models\Permissions();
 $lang = \App\Models\Languages::getBackLang();
 @endphp
 @extends('backend.layout')
+
+@section('styles')
+    <style>
+        .table-top-bar {
+            margin-top: 1rem !important;
+        }
+        .table-top-bar > div > div > label {
+            margin: auto 0;
+        }
+    </style>
+@endsection
 @section('scripts')
 <script src="{{asset('backend/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js')}}"></script>
 <script>
@@ -40,7 +51,27 @@ $lang = \App\Models\Languages::getBackLang();
                     value: to_date
                 });
 
-            },
+            },    
+            dom: '<"row"<"ml-auto d-inline-flex"B>><"row table-top-bar"<l><"ml-auto"f>>tip',
+            buttons: [
+                {
+                    extend: 'copy',
+                    title : 'Category_Report'
+                },
+                    
+                {
+                    extend: 'csv',
+                    title : 'Category_Report'
+                },    
+                {
+                    extend: 'excel',
+                    title : 'Category_Report'
+                },
+                {
+                    extend: 'pdf',
+                    title : 'Category_Report'
+                },
+            ],
             "columns": [{
                     data: "category_id"
                 },

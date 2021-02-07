@@ -27,6 +27,10 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Log;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Writer\Xls;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
 class ReportsController extends Controller
 {
@@ -265,6 +269,7 @@ class ReportsController extends Controller
             $branchIds = $request->branch_id;
             $getTerId = array();
             $defaultCondition = 'shift.uuid != ""';
+            $extension = $request->ext;
             if (!empty($search)) {
                 $search = Helper::string_sanitize($search);
                 $whereterminal = " ( terminal_name LIKE '%$search%' ) ";
@@ -311,7 +316,35 @@ class ReportsController extends Controller
                  ->skip($start)
                 ->take($page_length) */
                 ->get();
-
+                
+            if($extension) {
+                Log::debug('enter');
+                $headerArray = array_keys($shiftList->toArray()[0]);
+                $sheet = new Spreadsheet();
+                $sheet->setActiveSheetIndex(0);
+                $spreadsheet = $sheet->getActiveSheet();                
+                foreach($headerArray as $key=>$value) {
+                    $spreadsheet->setCellValueByColumnAndRow($key+1, 1, $value);
+                }
+                foreach ($shiftList as $no => $shift) {
+                    $col = 0;
+                    foreach ($shift as $key => $value) {
+                        $spreadsheet->setCellValueByColumnAndRow($col++, $no+1, $value);
+                    }
+                }
+                $endColumn = $spreadsheet->getHighestColumn();
+                $spreadsheet->getStyle('A1:'.$endColumn.'1')->getFont()->setSize(16)->setBold(true);        
+                if(isset($extension) && strtolower($extension) == "xlsx") {
+                    $fileName = 'Product_Template_' . time() . '.'.strtolower($extension);
+                    $writer = new Xlsx($sheet);
+                } else {
+                    $fileName = 'Product_Template_' . time() . '.xls';
+                    $writer = new Xls($sheet);
+                }
+                header('Content-Disposition: attachment; filename='.$fileName);
+                $writer->save('php://output');
+                Log::debug('asd');
+            }
             return response()->json([
                 "aaData" => $shiftList,
                 "iTotalDisplayRecords" => $shiftCount,
@@ -325,6 +358,99 @@ class ReportsController extends Controller
         }
     }
 
+    public function shiftDownload(Request $request)
+    {
+        try {
+            $search = $request['sSearch'];
+            $start = $request['iDisplayStart'];
+            $page_length = $request['iDisplayLength'];
+            $iSortCol = $request['iSortCol_0'];
+            $col = 'mDataProp_' . $iSortCol;
+            $order_by_field = $request->$col;
+            $order_by = $request['sSortDir_0'];
+            $branchIds = $request->branch_id;
+            $getTerId = array();
+            $defaultCondition = 'shift.uuid != ""';
+            $extension = $request->ext;
+            if (!empty($search)) {
+                $search = Helper::string_sanitize($search);
+                $whereterminal = " ( terminal_name LIKE '%$search%' ) ";
+                $getTerminalId = Terminal::whereRaw($whereterminal)->select('terminal_id')->get()->toArray();
+                foreach ($getTerminalId as $value) {
+                    array_push($getTerId, $value['terminal_id']);
+                }
+                $implodeTermId = implode(',', $getTerId);
+                if (!empty($implodeTermId)) {
+                    $defaultCondition .= " AND shift.terminal_id in ($implodeTermId)";
+                } else {
+                    $defaultCondition .= " AND shift.terminal_id in ('$implodeTermId')";
+                }
+            }
+
+            $terminal_id = $request->input('terminal_id', null);
+            if ($terminal_id != null) {
+                $defaultCondition .= " AND `shift`.terminal_id = '$terminal_id' ";
+            }
+
+            $shiftList = Shift::select(
+                'shift.*',
+                DB::raw("(select terminal_name FROM terminal where terminal_id = shift.terminal_id) AS terminal_name"),
+                DB::raw("(select name FROM branch where branch_id = shift.branch_id) AS branch_name"),
+                DB::raw("(SELECT CAST(shift.start_amount AS DECIMAL(16,2))) AS start_amount"),
+                DB::raw("(SELECT CAST(shift.end_amount AS DECIMAL(16,2))) AS end_amount"),
+                DB::raw("(select name FROM users where id = shift.user_id) AS user_name")
+            );
+            if (!isset($branchIds) || empty($branchIds)) {
+                $branchIds = Auth::user()->getBranchIds();
+            } else {
+                $branchIds = explode(',', $branchIds);
+            }
+            if (Auth::user()->role > 1) {
+                $shiftList = $shiftList->whereIn('shift.branch_id', $branchIds);
+            }
+            $shiftList = $shiftList->whereRaw($defaultCondition);
+            $shiftCount = $shiftList->count();
+            $shiftList = $shiftList
+                ->orderBy($order_by_field, $order_by)
+                ->limit($page_length)
+                ->offset($start)
+                /*->forPage($start, $page_length)
+                 ->skip($start)
+                ->take($page_length) */
+                ->get();
+                
+            if($extension) {
+                Log::debug('enter');
+                $headerArray = array_keys($shiftList->toArray()[0]);
+                $sheet = new Spreadsheet();
+                $sheet->setActiveSheetIndex(0);
+                $spreadsheet = $sheet->getActiveSheet();                
+                foreach($headerArray as $key=>$value) {
+                    $spreadsheet->setCellValueByColumnAndRow($key+1, 1, $value);
+                }
+                foreach ($shiftList as $no => $shift) {
+                    $col = 0;
+                    foreach ($shift as $key => $value) {
+                        $spreadsheet->setCellValueByColumnAndRow($col++, $no+1, $value);
+                    }
+                }
+                $endColumn = $spreadsheet->getHighestColumn();
+                $spreadsheet->getStyle('A1:'.$endColumn.'1')->getFont()->setSize(16)->setBold(true);        
+                if(isset($extension) && strtolower($extension) == "xlsx") {
+                    $fileName = 'Product_Template_' . time() . '.'.strtolower($extension);
+                    $writer = new Xlsx($sheet);
+                } else {
+                    $fileName = 'Product_Template_' . time() . '.xls';
+                    $writer = new Xls($sheet);
+                }
+                header('Content-Disposition: attachment; filename='.$fileName);
+                $writer->save('php://output');
+            }
+        } catch (\Exception $exception) {
+            Helper::log('Shift report pagination : exception');
+            Helper::log($exception);
+        }
+    }
 
     public function cancelledReportIndex(Request $request)
     {

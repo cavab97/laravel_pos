@@ -5,6 +5,14 @@ $lang = \App\Models\Languages::getBackLang();
 @extends('backend.layout')
 @section('styles')
 <link rel="stylesheet" href="{{asset('backend/plugins/select2/css/select2.min.css')}}">
+    <style>
+        .table-top-bar {
+            margin-top: 1rem !important;
+        }
+        .table-top-bar > div > div > label {
+            margin: auto 0;
+        }
+    </style>
 @endsection
 @section('scripts')
 <script src="{{asset('backend/plugins/select2/js/select2.full.min.js')}}"></script>
@@ -41,7 +49,27 @@ $lang = \App\Models\Languages::getBackLang();
                     value: branch_id
                 });
 
-            },
+            },    
+            dom: '<"row"<"ml-auto d-inline-flex"B>><"row table-top-bar"<l><"ml-auto"f>>tip',
+            buttons: [
+                {
+                    extend: 'copy',
+                    title : 'Cancelled_Report'
+                },
+                    
+                {
+                    extend: 'csv',
+                    title : 'Cancelled_Report'
+                },    
+                {
+                    extend: 'excel',
+                    title : 'Cancelled_Report'
+                },
+                {
+                    extend: 'pdf',
+                    title : 'Cancelled_Report'
+                },
+            ],
             "columns": [{
                     data: 'id'
                 },

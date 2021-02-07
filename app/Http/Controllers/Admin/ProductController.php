@@ -1330,8 +1330,21 @@ class ProductController extends Controller
                 }
             }
         }
-
-        return view('backend.product.create-excel', compact('categoryProductList', 'priceTypeList', 'attributeList', 'modifierList', 'globalModifierList', 'branchList', 'categoryAttributeList','categoryProductListHasRac'));
+        $xls_path = $url = action([ProductImportController::class, 'getProductTemplate'], ['ext' => 'xls']);
+        $xlsx_path = $url = action([ProductImportController::class, 'getProductTemplate'], ['ext' => 'xlsx']);
+        return view('backend.product.create-excel', 
+        compact(
+            'categoryProductList',
+            'priceTypeList',
+            'attributeList', 
+            'modifierList', 
+            'globalModifierList', 
+            'branchList', 
+            'categoryAttributeList',
+            'categoryProductListHasRac',
+            'xls_path',
+            'xlsx_path'
+        ));
     }
 
 

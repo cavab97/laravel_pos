@@ -6,10 +6,19 @@
 @section('styles')
     <link rel="stylesheet"
           href="{{asset('backend/plugins/select2/css/select2.min.css')}}">
+    <style>
+        .table-top-bar {
+            margin-top: 1rem !important;
+        }
+        .table-top-bar > div > div > label {
+            margin: auto 0;
+        }
+    </style>
 @endsection
 @section('scripts')
     <script src="{{asset('backend/plugins/select2/js/select2.full.min.js')}}"></script>
     <script>
+        var ext = "";
         $(function () {
             var oTable = $('#shift-list').dataTable({
                 "bStateSave": false,
@@ -33,8 +42,31 @@
                     aoData.push({name: 'columns', value: columns});
                     aoData.push({name: 'terminal_id', value: terminal_id});
                     aoData.push({name: 'branch_id', value: branch_id});
+                    if (ext) {
+                        
+                    }
 
-                },
+                },        
+                dom: '<"row"<"ml-auto d-inline-flex"B>><"row table-top-bar"<l><"ml-auto"f>>tip',
+                buttons: [
+                    {
+                        extend: 'copy',
+                        title : 'Shift_Report'
+                    },
+                     
+                    {
+                        extend: 'csv',
+                        title : 'Shift_Report'
+                    },    
+                    {
+                        extend: 'excel',
+                        title : 'Shift_Report'
+                    },
+                    {
+                        extend: 'pdf',
+                        title : 'Shift_Report'
+                    },
+                ],
                 "columns": [
                     {data: 'shift_id'},
                     {data: "terminal_name"},
@@ -51,21 +83,27 @@
                 "fnInitComplete": function () {
                 },
                 'fnServerData': function (sSource, aoData, fnCallback) {
-                    $.ajax
-                    ({
-                        headers: {
-                            'X-CSRF-TOKEN': '{{csrf_token()}}'
-                        },
-                        'dataType': 'json',
-                        'type': 'POST',
-                        'url': sSource,
-                        'data': aoData,
-                        'success': fnCallback
-                    });
+                    if(ext) {
+                        downloadFile(aoData);
+                    } else {
+                        $.ajax
+                        ({
+                            headers: {
+                                'X-CSRF-TOKEN': '{{csrf_token()}}'
+                            },
+                            'dataType': 'json',
+                            'type': 'POST',
+                            'url': sSource,
+                            'data': aoData,
+                            'success': fnCallback
+                        });
+                    }
                 },
                 "fnDrawCallback": function () {
                     $('body').css('min-height', ($('#shift-list tr').length * 50) + 200);
                     $(window).trigger('resize');
+                    console.log(ext);
+                    ext = "";
                 },
                 "columnDefs": [
                     {
@@ -96,6 +134,34 @@
                 allowClear: true
             });
         });
+        $(document).on('click','#exportCsvDatatable',function(){
+            ext = $(this).data('ext');
+            $("#btnSubmit").click();
+        });
+        $(document).on('click','#exportXls',function(){
+            ext = $(this).data('ext');
+            $("#btnSubmit").click();
+        });
+        $(document).on('click','#exportXlsx',function(){
+            ext = $(this).data('ext');
+            $("#btnSubmit").click();
+        });
+        function downloadFile(aoData) {
+            aoData.push({name: 'ext', value: ext});
+            console.log('123');
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': '{{csrf_token()}}'
+                },
+                'dataType': 'json',
+                'type': 'GET',
+                contentType:false,
+                cache:false,
+                processData:false,
+                'url': adminUrl + '/reports-shift-download',
+                'data': aoData,
+            });
+        }
     </script>
     <style>
         ul.select2-selection__rendered {
@@ -150,8 +216,23 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card">
-                        <div class="card-header bg-secondary">
-                            <h3 class="card-title">{{trans('backend/common.list_shift')}}</h3>
+                        <div class="card-header bg-secondary nav">
+                            <h3 class="card-title my-auto">
+                                <span class="align-middle">{{trans('backend/common.list_shift')}}</span>
+                            </h3>
+                            <div class="ml-auto d-inline-flex">
+                                <li class="nav-item dropdown">
+                                    
+                                    <a class="nav-link  dropdown-toggle pt-1 btn btn-default" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-save"></i> Export
+                                    </a>
+                                    <div class="dropdown-menu export">
+                                    <a class="dropdown-item" id="exportCsvDatatable" data-ext="csv"> <i class="fa fa-file-excel-o mr-2"></i>CSV</a>
+                                    <a class="dropdown-item" id="exportXls" data-ext="xls"> <i class="fa fa-file-excel-o mr-2"></i>Excel (.xls)</a>
+                                    <a class="dropdown-item" id="exportXlsx" data-ext="xlsx"> <i class="fa fa-file-excel-o mr-2"></i>Excel (.xls)</a>
+                                    <div>
+                                    <div class="dropdown-divider"></div>
+                                </li>
+                            </div>
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">

@@ -5,6 +5,14 @@ $lang = \App\Models\Languages::getBackLang();
 @extends('backend.layout')
 @section('styles')
 <link rel="stylesheet" href="{{asset('backend/plugins/select2/css/select2.min.css')}}">
+    <style>
+        .table-top-bar {
+            margin-top: 1rem !important;
+        }
+        .table-top-bar > div > div > label {
+            margin: auto 0;
+        }
+    </style>
 @endsection
 @section('scripts')
 <script src="{{asset('backend/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js')}}"></script>
@@ -49,7 +57,27 @@ $lang = \App\Models\Languages::getBackLang();
                     value: $('#to_date').val()
                 });
 
-            },
+            },    
+            dom: '<"row"<"ml-auto d-inline-flex"B>><"row table-top-bar"<l><"ml-auto"f>>tip',
+            buttons: [
+                {
+                    extend: 'copy',
+                    title : 'Payment_Transaction'
+                },
+                    
+                {
+                    extend: 'csv',
+                    title : 'Payment_Transaction'
+                },    
+                {
+                    extend: 'excel',
+                    title : 'Payment_Transaction'
+                },
+                {
+                    extend: 'pdf',
+                    title : 'Payment_Transaction'
+                },
+            ],
             "columns": [{
                     data: 'id'
                 },

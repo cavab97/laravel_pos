@@ -10,7 +10,7 @@ class Attributes extends Model
     use SoftDeletes;
     public $timestamps = false;
     protected $table = "attributes";
-    protected $primaryKey = "attributes_id";
-    protected $guarded = ['attributes_id'];
+    protected $primaryKey = "attribute_id";
+    protected $guarded = ['attribute_id'];
     protected $dates = ['deleted_at'];
 }

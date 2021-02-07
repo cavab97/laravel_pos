@@ -131,6 +131,7 @@ Route::group(['namespace' => 'Admin'], function () {
         Route::post('reports-category-paginate', 'ReportsController@categoryReportPaginate')->name('reports.categroy_report.paginate');
         Route::get('reports-shift', 'ReportsController@shiftReportIndex')->name('reports.shift.index');
         Route::post('reports-shift-paginate', 'ReportsController@shiftPaginate')->name('reports.shift.paginate');
+        Route::get('reports-shift-download', 'ReportsController@shiftDownload')->name('reports.shift.download');
         Route::get('reports-cancelled', 'ReportsController@cancelledReportIndex')->name('reports.cancelled.index');
         Route::post('reports-cancelled-paginate', 'ReportsController@cancelledPaginate')->name('reports.cancelled.paginate');
         Route::get('reports-payment', 'ReportsController@paymentReportIndex')->name('reports.payment.index');
@@ -161,7 +162,9 @@ Route::group(['namespace' => 'Admin'], function () {
         Route::get('city/{state_id}/list', 'CitiesController@cityByState')->name('city.list');
 
         //export & import
-        Route::get('get-report', 'ProductImportController@getXlsFile')->name('reports.get.product');
+        Route::get('get-report', 'ProductImportController@getProductTemplate')->name('template.get.product');
+        Route::post('upload/import-product-1', 'ProductImportController@templateToArray')->name('template.upload.product');
+        Route::post('upload/import-product-2', 'ProductImportController@productImport')->name('template.import.product');
 
     });
 });

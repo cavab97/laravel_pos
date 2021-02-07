@@ -25,6 +25,7 @@
 <script>
 $(function() {
     $('#import_excel_url').attr('href', '{{ route('admin.product.excel-import') }}');
+    
 });
 </script>
 <div class="card card-secondary">
