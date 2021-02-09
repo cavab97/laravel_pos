@@ -155,6 +155,7 @@ class DatabaseMgmtController extends Controller
         if (empty($tableName))
         return response()->json(['status' => 200, 'show' => false, 'message' => trans('api.success'), 'data'=> [] ]);
         $terminalID = $request->terminal_id;
+        $is_init = $request->is_init;
         $userPIN = $request->pin;
         $userUUID = $request->user_uuid;
         $terminal = Terminal::find($terminalID);
@@ -170,7 +171,11 @@ class DatabaseMgmtController extends Controller
         }
         switch (strtolower($tableName)) {
             case 'users':
-                $data = $user ? $data->whereIn('id', $userIds)->get() : [];
+                if ($is_init) {
+                    $data = $data->get();
+                } else {
+                    $data = $user ? $data->whereIn('id', $userIds)->get() : [];
+                }
                 break;
             default:
             if (Schema::hasColumn($tableName, 'updated_at')) {
