@@ -123,7 +123,7 @@ class ProductImportController extends Controller
         }
         $endColumn = $spreadsheet->getHighestColumn();
         $maxRowCanEdit = 102;
-        $validation = $spreadsheet->getCell('H1')->getDataValidation();
+        $validation = $spreadsheet->getCell('AZ1')->getDataValidation();
 
         $validation->setShowInputMessage(true);
         $validation->setShowErrorMessage(true);
@@ -199,19 +199,19 @@ class ProductImportController extends Controller
         $validation->setErrorStyle(DataValidation::STYLE_STOP );
         $validation->setFormula1('"0,1"');
         $validation->setPrompt("This product is ready to sell?\r\n ".str_pad(0, 2, " ", STR_PAD_LEFT)." = disabled.\r\n ".str_pad(1, 2, " ", STR_PAD_LEFT)." = ready.");
-        
+
         $indexOf = array_search('status', $columnsArray) + 1;
         for ($index=2; $index < $maxRowCanEdit; $index++) {
             $spreadsheet->getCellByColumnAndRow($indexOf,$index)->setDataValidation(clone $validation);
         }
         for ($index=2; $index < $maxRowCanEdit; $index++) {
-            $spreadsheet->getStyle("J".$index)->getNumberFormat()->setFormatCode('0.00'); 
-            $spreadsheet->getStyle("K".$index)->getNumberFormat()->setFormatCode('0.00'); 
-            for ($indexOfAttr=1; $indexOfAttr <= 10; $indexOfAttr++) { 
+            $spreadsheet->getStyle("J".$index)->getNumberFormat()->setFormatCode('0.00');
+            $spreadsheet->getStyle("K".$index)->getNumberFormat()->setFormatCode('0.00');
+            for ($indexOfAttr=1; $indexOfAttr <= 10; $indexOfAttr++) {
                 $indexOf = array_search('attribute_price_'.$indexOfAttr, $columnsArray) + 1;
                 $spreadsheet->getCellByColumnAndRow($indexOf,$index)->getStyle()->getNumberFormat()->setFormatCode('0.00');
             }
-            for ($indexOfModi=1; $indexOfModi <= 5; $indexOfModi++) { 
+            for ($indexOfModi=1; $indexOfModi <= 5; $indexOfModi++) {
                 $indexOf = array_search('modifier_price_'.$indexOfModi, $columnsArray) + 1;
                 $spreadsheet->getCellByColumnAndRow($indexOf,$index)->getStyle()->getNumberFormat()->setFormatCode('0.00');
             }
@@ -245,11 +245,14 @@ class ProductImportController extends Controller
             }
             $validation->setPrompt($stringPromptText);
             $validation->setFormula1('"'.implode(",",$inputValueArray).'"');
+            $indexOf = array_search('price_type', $columnsArray) + 1;
             for ($index=2; $index < $maxRowCanEdit; $index++) {
-                $spreadsheet->getCell('F'.$index)->setDataValidation(clone $validation);
+                $spreadsheet->getCellByColumnAndRow($indexOf, $index)->setDataValidation(clone $validation);
             }
         }
 
+        $inputValueArray = array();
+        $stringPromptText = "";
         //Drop down list for branch
         if(count($branchList) > 0) {
             foreach ($branchList as $branch) {
@@ -258,9 +261,10 @@ class ProductImportController extends Controller
             }
             $validation->setPrompt($stringPromptText);
             $validation->setFormula1('"'.implode(",",$inputValueArray).'"');
-            foreach(range('M','O') as $columnID) {
+            for ($arrayIndex = 1; $arrayIndex <= 10 ; $arrayIndex++) {
+                $indexOf = array_search('branch_'.$arrayIndex, $columnsArray) + 1;
                 for ($index=2; $index < $maxRowCanEdit; $index++) {
-                    $spreadsheet->getCell($columnID.$index)->setDataValidation(clone $validation);
+                    $spreadsheet->getCellByColumnAndRow($indexOf, $index)->setDataValidation(clone $validation);
                 }
             }
         }
@@ -277,8 +281,9 @@ class ProductImportController extends Controller
             }
             $validation->setPrompt($stringPromptText);
             $validation->setFormula1('"'.implode(",",$inputValueArray).'"');
+            $indexOf = array_search('printer_id', $columnsArray) + 1;
             for ($index=2; $index < $maxRowCanEdit; $index++) {
-                $spreadsheet->getCell('R'.$index)->setDataValidation(clone $validation);
+                $spreadsheet->getCellByColumnAndRow($indexOf, $index)->setDataValidation(clone $validation);
             }
         }
 
@@ -294,9 +299,10 @@ class ProductImportController extends Controller
             }
             $validation->setPrompt($stringPromptText);
             $validation->setFormula1('"'.implode(",",$inputValueArray).'"');
-            for ($arrayIndex=18; $arrayIndex < 28 && $arrayIndex < count($columnsArray); $arrayIndex++) {
+            for ($arrayIndex = 1; $arrayIndex <= 10 ; $arrayIndex++) {
+                $indexOf = array_search('attribute_'.$arrayIndex, $columnsArray) + 1;
                 for ($index=2; $index < $maxRowCanEdit; $index++) {
-                    $spreadsheet->getCell($columnsArray[$arrayIndex].$index)->setDataValidation(clone $validation);
+                    $spreadsheet->getCellByColumnAndRow($indexOf,$index)->setDataValidation(clone $validation);
                 }
             }
         }
@@ -313,14 +319,15 @@ class ProductImportController extends Controller
             $validation->setPrompt($stringPromptText);
             $validation->setFormula1('"'.implode(",",$inputValueArray).'"');
 
-            for ($arrayIndex=30; $arrayIndex < count($columnsArray)-2; $arrayIndex++) {
+            for ($arrayIndex=1; $arrayIndex <= 5; $arrayIndex++) {
+                $indexOf = array_search('modifier_'.$arrayIndex, $columnsArray) + 1;
                 for ($index=2; $index < $maxRowCanEdit; $index++) {
-                    $spreadsheet->getCell($columnsArray[$arrayIndex].$index)->setDataValidation(clone $validation);
+                    $spreadsheet->getCellByColumnAndRow($indexOf,$index)->setDataValidation(clone $validation);
                 }
             }
         }
         //Drop down list for category
-        
+
         $inputValueArray = array();
         $stringPromptText = "";
         $categoryList = Category::select('category_id','name')->get();
@@ -340,7 +347,7 @@ class ProductImportController extends Controller
          * Format Sheet
          */
 
-        
+
         $spreadsheet->getStyle('J2:'.$endColumn.$maxRowCanEdit)
         ->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
         $spreadsheet->getStyle('A2:'.$endColumn.$maxRowCanEdit)
@@ -352,7 +359,7 @@ class ProductImportController extends Controller
         $spreadsheet->getProtection()->setSheet(true);
         $spreadsheet->getStyle('A2:'.$endColumn.$maxRowCanEdit)
         ->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
-        
+
         // Save
         // We'll be outputting an excel file
         //header('Content-type: application/vnd.ms-excel');
@@ -369,7 +376,7 @@ class ProductImportController extends Controller
 
     public function templateToArray(Request $request) {
         if ($request->hasFile('file')) {
-                
+
             $file = $request->file;
             $folder = $this->createDirectory('template-product');
             $extension = $file->getClientOriginalExtension();
@@ -390,7 +397,7 @@ class ProductImportController extends Controller
                 $reader->setReadDataOnly(true);
                 $spreadsheet = $reader->load($inputFileName);
                 $spreadsheet = $spreadsheet->getSheet(0);
-                $highestRow = $spreadsheet->getHighestDataRow(); 
+                $highestRow = $spreadsheet->getHighestDataRow();
                 $highestColumn = $spreadsheet->getHighestDataColumn();
                 $colNumber = Coordinate::columnIndexFromString($highestColumn);
                 $dataArray = array();
@@ -412,9 +419,9 @@ class ProductImportController extends Controller
                 } else if($this->headerArray != $rowData) {
                     $errorMessage .= "Row 1, header sequence no correct, please check a try again.";
                 } else {
-                    for ($row = 2; $row <= $highestRow; $row++){ 
+                    for ($row = 2; $row <= $highestRow; $row++){
                         $rowData = $spreadsheet->rangeToArray('A' . $row . ':' . $highestColumn . $row,NULL,TRUE,FALSE)[0];
-                        
+
                         if($this->isEmptyRow($rowData)) { continue; } // skip empty row
                         else {
                             array_push($dataArray,$rowData);
@@ -422,9 +429,9 @@ class ProductImportController extends Controller
                             $duplicateSKUids = Product::where(['sku'=> $rowData[$indexOf]])->pluck('product_id');
                             $duplicateNameIDs = Product::where(['name'=> $rowData[0]])->pluck('product_id');
                             $indexOf = array_search('branch_1', $this->headerArray);
-                            
-                            for ($i=0; $i < 3; $i++) { 
-                                
+
+                            for ($i=0; $i < 3; $i++) {
+
                                 if ($rowData[$indexOf+$i] == null) continue;
                                 else if (Branch::where('branch_id', $rowData[$indexOf+$i])->doesntExist()) {
                                     $errorMessage .= "Row ".$row." has a branch ID no exist. ID : ".$rowData[$indexOf+$i].". Please check a remove it<br>";
@@ -448,7 +455,7 @@ class ProductImportController extends Controller
                                         } else {
                                             $errorMessage .= "Row ".$row." has a duplicate product existed on branch ID : ".$rowData[$indexOf+$i].". Please check a remove it<br>";
                                         }
-                                    } 
+                                    }
                                 }
                             }
                             $indexOf = array_search('SKU', $this->headerArray);
@@ -465,7 +472,7 @@ class ProductImportController extends Controller
                         }
                     }
                 }
-                
+
                 if ($errorMessage) {
                     return response()->json([
                         'status' => 422,
@@ -479,9 +486,9 @@ class ProductImportController extends Controller
                         'data' => $dataArray
                     ]);
                 }
-                
+
             } catch(Exception $e) {
-                Log::debug('Error loading file'.pathinfo($inputFileName,PATHINFO_BASENAME).'": '.$e->getMessage()); 
+                Log::debug('Error loading file'.pathinfo($inputFileName,PATHINFO_BASENAME).'": '.$e->getMessage());
                 return response()->json([
                     'status' => 200,
                     'message' => trans('api.error_loading_file')
@@ -533,11 +540,11 @@ class ProductImportController extends Controller
                 array_push($branchIds, (int) $product[array_search('branch_2', $this->headerArray)]);
             if($product[array_search('branch_3', $this->headerArray)])
                 array_push($branchIds, (int) $product[array_search('branch_3', $this->headerArray)]);
-                
 
-            
-            /* Assign Product Branch */    
-            foreach ($branchIds as $branchIndex => $branchId) {               
+
+
+            /* Assign Product Branch */
+            foreach ($branchIds as $branchIndex => $branchId) {
                 $insertProBranch = [
                     'uuid' => Helper::getUuid(),
                     'product_id' => $productID,
@@ -565,7 +572,7 @@ class ProductImportController extends Controller
                     ProductCategory::create($insertCatData);
                 }
             }
-            
+
             /*insert attribute Data*/
             for ($index=1; $index <= 10; $index++) {
                 $attrName = "attribute_".$index;
@@ -587,7 +594,7 @@ class ProductImportController extends Controller
                     ProductAttribute::create($insertAttData);
                 }
             }
-            
+
             /*insert modifier Data*/
             for ($index=1; $index <= 5; $index++) {
                 $modiName = "modifier_".$index;
@@ -609,7 +616,7 @@ class ProductImportController extends Controller
             }
 
         }
-        
+
         //DB::commit();
         return response()->json(['status' => 200, 'message' => trans('api.success')]);
     }
