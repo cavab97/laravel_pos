@@ -127,13 +127,17 @@ class DatabaseMgmtController extends Controller
 
             }
             $query .= ' '.$column->getName().' '.$dataType;
-            if ($column->getUnsigned() && !empty($column->getAutoincrement())) {
+            if (
+                $column->getUnsigned() &&
+                !empty($column->getAutoincrement()) &&
+                $dataType == 'INTEGER'
+            ) {
                 $query .= ' PRIMARY KEY AUTOINCREMENT';
             } else if ($index == 1) {
                 $query .= ' PRIMARY KEY';
             }
             if(!is_null($column->getDefault())) {
-                $query .= ' DEFAULT '.$column->getDefault();
+                $query .= ' DEFAULT '. ($column->getDefault() ?? 1) ;
             }
             if ($max != $index) {
                 $query .=', ';
