@@ -136,7 +136,7 @@ class DatabaseMgmtController extends Controller
             } else if ($index == 1) {
                 $query .= ' PRIMARY KEY';
             }
-            if(!is_null($column->getDefault())) {
+            if(!is_null($column->getDefault()) && $dataType == 'INTEGER') {
                 $query .= ' DEFAULT '. ($column->getDefault() ?? 1) ;
             }
             if ($max != $index) {
