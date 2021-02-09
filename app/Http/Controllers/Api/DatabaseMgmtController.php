@@ -178,7 +178,7 @@ class DatabaseMgmtController extends Controller
             } else if(Schema::hasColumn($tableName, 'id')) {
                 $data = $data->orderBy('id', 'desc')->get();//->limit(30)
             } else {
-                $data = $data->orderBy->limit(30)->get();
+                $data = $data->get();
             }
                 break;
         }
