@@ -7,7 +7,35 @@
     <script src="{{asset('backend/plugins/chart.js/Chart.min.js')}}"></script>
     <script src="{{asset('backend/plugins/jquery-knob/jquery.knob.min.js')}}"></script>
     <script src="{{asset('backend/plugins/sparklines/sparkline.js')}}"></script>
-    <script src="{{asset('backend/dist/js/pages/dashboard.js')}}"></script>
+    <script>
+    $(function () {
+        'use strict'
+
+        var ticksStyle = {
+            fontColor: '#495057',
+            fontStyle: 'bold'
+        }
+
+        var mode      = 'index'
+        var intersect = true
+
+        var $salesChart = $('#sales-chart')
+        var salesChart  = new Chart($salesChart, {
+            type   : 'bar',
+            data   : {},
+            options: {}
+        })
+
+        var $visitorsChart = $('#visitors-chart')
+        var visitorsChart  = new Chart($visitorsChart, {
+            data   : {},
+            options: {}
+        })
+
+        const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+
+    })
+    </script>
 @endsection
 @section('content')
     <div class="content-wrapper">
@@ -132,13 +160,13 @@
                                 </div>
 
                                 <div class="d-flex flex-row justify-content-end">
-                  <span class="mr-2">
-                    <i class="fas fa-square text-primary"></i> This Week
-                  </span>
+                    <span class="mr-2">
+                        <i class="fas fa-square text-primary"></i> This Week
+                    </span>
 
-                                    <span>
-                    <i class="fas fa-square text-gray"></i> Last Week
-                  </span>
+                    <span>
+                        <i class="fas fa-square text-gray"></i> Last Week
+                    </span>
                                 </div>
                             </div>
                         </div>
