@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddIsSyncToUsersTable extends Migration
+class AddIsSyncToOrderDetailTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class AddIsSyncToUsersTable extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('order_detail', function (Blueprint $table) {
             $table->boolean('is_sync')->default(0);
         });
     }
@@ -25,7 +25,7 @@ class AddIsSyncToUsersTable extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('order_detail', function (Blueprint $table) {
             if (Schema::hasColumn('terminal_log', 'is_sync'))
             {
                 $table->dropColumn(['is_sync']);
