@@ -139,7 +139,7 @@ class Helper extends Model
             'file_name' => $file_name,
             'function' => $function,
             'details' => $details,
-            'created_by' => $created_by,
+            'created_by' => $created_by ?? date('H:i:s'),
             'ip_address' => Request::ip(),
         ];
         $actionData = Logs::create($insertData);

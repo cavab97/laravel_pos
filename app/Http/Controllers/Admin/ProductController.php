@@ -25,6 +25,7 @@ use App\Models\ProductAttribute;
 use App\Models\ProductModifier;
 use App\User;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -357,23 +358,6 @@ class ProductController extends Controller
                         }
                     }
 
-                    /*insert Category Data*/
-                    if ($category_id) {
-                        foreach ($category_id as $key => $value) {
-                            if ($value) {
-                                $insertCatData = [
-                                    'product_id' => $productId,
-                                    'category_id' => $value,
-                                    'branch_id' => 0,
-                                    'display_order' => 0,
-                                    'updated_at' => date('Y-m-d H:i:s'),
-                                    'updated_by' => Auth::user()->id,
-                                ];
-                                ProductCategory::create($insertCatData);
-                            }
-                        }
-                    }
-
                     /*insert attribute Data*/
                     if ($request->cat_attribute_id) {
                         foreach ($request->cat_attribute_id as $catattkey => $catattvalue) {
@@ -443,7 +427,24 @@ class ProductController extends Controller
                                 'updated_by' => Auth::user()->id,
                             ];
                             ProductBranch::create($insertProBranch);
+                            /*insert Category Data*/
+                            if ($category_id) {
+                                foreach ($category_id as $key => $value) {
+                                    if ($value) {
+                                        $insertCatData = [
+                                            'product_id' => $productId,
+                                            'category_id' => $value,
+                                            'branch_id' => $branch_id,
+                                            'display_order' => 0,
+                                            'updated_at' => date('Y-m-d H:i:s'),
+                                            'updated_by' => Auth::user()->id,
+                                        ];
+                                        ProductCategory::create($insertCatData);
+                                    }
+                                }
+                            }
                         }
+
                     }
 
                     Helper::saveLogAction('1', 'Product', 'Store', 'Add new product ' . $productId, Auth::user()->id);
@@ -693,7 +694,7 @@ class ProductController extends Controller
             $price_type_id = $request->price_type_id;
             $price_type_value = $request->price_type_value;
             $description = $request->description;
-
+            $newCategory =[];
             $status = $request->status;
             $productId = $request->product_id;
             if ($request->has('has_inventory')) {
@@ -777,7 +778,7 @@ class ProductController extends Controller
                     }
 
                     /*insert Category Data*/
-                    $productcategoryData = ProductCategory::where('product_id', $productId)->get()->toArray();
+                    $productcategoryData = ProductCategory::where('product_id', $productId)->whereIn('branch_id', $request->branch_id)->get()->toArray();
                     if (isset($productcategoryData) && !empty($productcategoryData)) {
                         $existCategoryArray = array();
                         foreach ($productcategoryData as $key => $val) {
@@ -795,20 +796,24 @@ class ProductController extends Controller
                                 $is_exist = false;
                                 /*New insert*/
                                 if (isset($newCategory) && !empty($newCategory)) {
-                                    foreach ($newCategory as $key => $value) {
-                                        if ($value) {
-                                            $insertCatData = [
-                                                'product_id' => $productId,
-                                                'category_id' => $value,
-                                                'branch_id' => 0,
-                                                'display_order' => 0,
-                                                'status' => 1,
-                                                'updated_at' => date('Y-m-d H:i:s'),
-                                                'updated_by' => Auth::user()->id,
-                                            ];
-                                            ProductCategory::create($insertCatData);
+
+                                    foreach ($request->branch_id as $branch_id) {
+                                        foreach ($newCategory as $key => $value) {
+                                            if ($value) {
+                                                $insertCatData = [
+                                                    'product_id' => $productId,
+                                                    'category_id' => $value,
+                                                    'branch_id' => $branch_id,
+                                                    'display_order' => 0,
+                                                    'status' => 1,
+                                                    'updated_at' => date('Y-m-d H:i:s'),
+                                                    'updated_by' => Auth::user()->id,
+                                                ];
+                                                ProductCategory::create($insertCatData);
+                                            }
                                         }
                                     }
+
                                 }
                                 /*status update*/
                                 if (isset($updateCategoryArray) && !empty($updateCategoryArray)) {
@@ -850,11 +855,13 @@ class ProductController extends Controller
                     } else {
 
                         if (isset($category_id) && !empty($category_id)) {
+
+                            foreach ($request->branch_id as $branch_id) {
                             foreach ($category_id as $key => $value) {
                                 $insertCatData = [
                                     'product_id' => $productId,
                                     'category_id' => $value,
-                                    'branch_id' => 0,
+                                    'branch_id' => $branch_id,
                                     'display_order' => 0,
                                     'status' => 1,
                                     'updated_at' => date('Y-m-d H:i:s'),
@@ -862,6 +869,7 @@ class ProductController extends Controller
                                 ];
                                 ProductCategory::create($insertCatData);
                             }
+                        }
                         }
                     }
 
@@ -1106,7 +1114,7 @@ class ProductController extends Controller
                                                 'product_id' => $productId,
                                                 'branch_id' => $value,
                                                 'warningStockLevel' => $request->warning_stock_level[$value] ?? 0,
-                                                'display_order' => $request->display_order[$value],
+                                                'display_order' => $request->display_order[$value] ?? 1,
                                                 'printer_id' => $request->printer_id[$value],
                                                 'status' => $request->is_enabled_status[$value],
                                                 'updated_at' => date('Y-m-d H:i:s'),
@@ -1121,7 +1129,7 @@ class ProductController extends Controller
                                     foreach ($updateBranchArray as $key => $value) {
                                         $updateObj = [
                                             'warningStockLevel' => $request->warning_stock_level[$value] ?? 0,
-                                            'display_order' => $request->display_order[$value],
+                                            'display_order' => $request->display_order[$value] ?? 1,
                                             'printer_id' => $request->printer_id[$value],
                                             'status' => $request->is_enabled_status[$value],
                                             'updated_at' => date('Y-m-d H:i:s'),
@@ -1129,6 +1137,7 @@ class ProductController extends Controller
                                         ];
 
                                         ProductBranch::where(['branch_id' => $value, 'product_id' => $productId])->update($updateObj);
+
                                     }
                                 }
                                 if (isset($removeBranchArray) && !empty($removeBranchArray)) {
@@ -1332,14 +1341,14 @@ class ProductController extends Controller
         }
         $xls_path = $url = action([ProductImportController::class, 'getProductTemplate'], ['ext' => 'xls']);
         $xlsx_path = $url = action([ProductImportController::class, 'getProductTemplate'], ['ext' => 'xlsx']);
-        return view('backend.product.create-excel', 
+        return view('backend.product.create-excel',
         compact(
             'categoryProductList',
             'priceTypeList',
-            'attributeList', 
-            'modifierList', 
-            'globalModifierList', 
-            'branchList', 
+            'attributeList',
+            'modifierList',
+            'globalModifierList',
+            'branchList',
             'categoryAttributeList',
             'categoryProductListHasRac',
             'xls_path',
