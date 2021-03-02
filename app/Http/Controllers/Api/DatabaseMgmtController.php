@@ -44,7 +44,7 @@ class DatabaseMgmtController extends Controller
         //$data = asset('resources/json/appVersion.json');
         $appVersionList = //json_decode($data, true);
         [
-            "1.0.0+2" => "2021/02/01",
+            "1.0.0+2020" => "2021/02/01",
         ];
         $getDateFromVersion = $appVersionList[array_key_last($appVersionList)];
         if (array_key_exists($appVersion, $appVersionList)) {
